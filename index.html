@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Axoft × Сколково — Вход</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:#1e2849; --teal:#00b0bd; --green:#00b37d; --blue:#00aeef;
+      --bg:#f0f2f7; --sur:#fff; --bdr:rgba(30,40,73,.1);
+      --txt:#1e2849; --txt2:#6b7290; --r:12px; --rs:8px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Golos Text',sans-serif;background:var(--bg);min-height:100vh;}
+
+    .tb{position:fixed;top:0;left:0;right:0;height:64px;background:var(--navy);
+      display:flex;align-items:center;padding:0 24px;gap:12px;z-index:100;}
+    .ax-badge{background:var(--teal);color:#fff;font-family:'Unbounded',sans-serif;
+      font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;letter-spacing:.5px;}
+    .tb-sep{width:1px;height:24px;background:rgba(255,255,255,.18);}
+    .sko-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+    .tb-sko{display:flex;align-items:center;gap:8px;}
+    .tb-sko span{color:rgba(255,255,255,.8);font-size:13px;}
+
+    .wrap{display:flex;align-items:center;justify-content:center;
+      min-height:100vh;padding:80px 16px 32px;}
+    .card{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      width:100%;max-width:480px;overflow:hidden;box-shadow:0 4px 24px rgba(30,40,73,.08);}
+    .card-h{background:var(--navy);padding:28px 32px;}
+    .card-title{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;
+      color:#fff;margin-bottom:4px;}
+    .card-sub{font-size:12px;color:rgba(255,255,255,.55);}
+
+    .tabs{display:flex;border-bottom:1px solid var(--bdr);}
+    .tab{flex:1;padding:14px;font-size:13px;font-weight:600;text-align:center;
+      cursor:pointer;color:var(--txt2);border:none;background:transparent;
+      transition:all .2s;font-family:'Golos Text',sans-serif;}
+    .tab.active{color:var(--teal);border-bottom:2px solid var(--teal);}
+
+    .form-body{padding:24px 32px;}
+    .field{margin-bottom:16px;}
+    .label{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:5px;display:block;}
+    .label span{color:#c00;}
+    .input{width:100%;padding:10px 12px;border:1px solid var(--bdr);border-radius:var(--rs);
+      font-family:'Golos Text',sans-serif;font-size:13px;color:var(--txt);
+      background:#f7f8fb;transition:border .2s;}
+    .input:focus{outline:none;border-color:var(--teal);background:#fff;}
+    select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7290' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+    .hint{font-size:11px;color:var(--txt2);margin-top:4px;}
+    .check-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt);}
+    .check-row input{accent-color:var(--teal);width:15px;height:15px;}
+
+    .divider{height:1px;background:var(--bdr);margin:4px 0 16px;}
+    .btn-submit{width:100%;padding:12px;background:var(--teal);color:#fff;border:none;
+      border-radius:var(--rs);font-family:'Golos Text',sans-serif;font-size:14px;
+      font-weight:600;cursor:pointer;transition:background .2s;}
+    .btn-submit:hover{background:#00c9d8;}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;}
+
+    .disclaimer{font-size:11px;color:var(--txt2);text-align:center;margin-top:14px;line-height:1.5;}
+    .error-msg{background:rgba(200,0,0,.07);border:1px solid rgba(200,0,0,.2);
+      border-radius:var(--rs);padding:10px 14px;font-size:12px;color:#c00;
+      margin-bottom:16px;display:none;}
+    .error-msg.show{display:block;}
+  </style>
+</head>
+<body>
+
+<header class="tb">
+  <div class="ax-badge">AXOFT</div>
+  <div class="tb-sep"></div>
+  <div class="tb-sko"><div class="sko-dot"></div><span>Сколково</span></div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="card-h">
+      <div class="card-title">Личный кабинет вендора</div>
+      <div class="card-sub">Программа Axoft × Сколково — Channel Readiness</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-login"    onclick="showTab('login')">Войти</button>
+      <button class="tab"        id="tab-register" onclick="showTab('register')">Регистрация</button>
+    </div>
+
+    <!-- ВХОД -->
+    <div id="form-login" class="form-body">
+      <div class="error-msg" id="login-error"></div>
+      <div class="field">
+        <label class="label" for="l-email">Корпоративный email <span>*</span></label>
+        <input class="input" id="l-email" type="email" placeholder="info@company.ru" autocomplete="email">
+      </div>
+      <div class="field">
+        <label class="label" for="l-password">Пароль <span>*</span></label>
+        <input class="input" id="l-password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="divider"></div>
+      <button class="btn-submit" id="btn-login">Войти</button>
+    </div>
+
+    <!-- РЕГИСТРАЦИЯ -->
+    <div id="form-register" class="form-body" style="display:none">
+      <div class="error-msg" id="reg-error"></div>
+
+      <div class="field">
+        <label class="label" for="r-company">Название компании <span>*</span></label>
+        <input class="input" id="r-company" type="text" placeholder="ООО Ромашка">
+      </div>
+      <div class="field">
+        <label class="label" for="r-inn">ИНН организации <span>*</span></label>
+        <input class="input" id="r-inn" type="text" placeholder="1234567890" maxlength="10" inputmode="numeric">
+        <div class="hint">ИНН юридического лица (10 цифр)</div>
+      </div>
+      <div class="field">
+        <label class="label" for="r-direction">Направление <span>*</span></label>
+        <select class="input" id="r-direction">
+          <option value="">— выберите —</option>
+          <option value="ИИ — ML/AI для B2B">ИИ — ML/AI для B2B</option>
+          <option value="Кибербезопасность">Кибербезопасность</option>
+          <option value="BI / Аналитика">BI / Аналитика</option>
+          <option value="DevOps / MLOps">DevOps / MLOps</option>
+          <option value="Иное">Иное</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label" for="r-stage">Стадия компании <span>*</span></label>
+        <select class="input" id="r-stage">
+          <option value="">— выберите —</option>
+          <option value="Идея/pre-MVP">Идея/pre-MVP</option>
+          <option value="Стартап (до 3 лет) есть MVP">Стартап (до 3 лет) есть MVP</option>
+          <option value="Стартап (3–7 лет)">Стартап (3–7 лет)</option>
+          <option value="Зрелая компания">Зрелая компания</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="check-row">
+          <input type="checkbox" id="r-skolkovo">
+          <label for="r-skolkovo">Резидент Сколково</label>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="field">
+        <label class="label" for="r-email">Корпоративный email <span>*</span></label>
+        <input class="input" id="r-email" type="email" placeholder="info@company.ru" autocomplete="email">
+        <div class="hint">Используйте корпоративный email</div>
+      </div>
+      <div class="field">
+        <label class="label" for="r-password">Пароль <span>*</span></label>
+        <input class="input" id="r-password" type="password" placeholder="Минимум 8 символов" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label class="label" for="r-password2">Повтор пароля <span>*</span></label>
+        <input class="input" id="r-password2" type="password" placeholder="Повторите пароль" autocomplete="new-password">
+      </div>
+      <div class="divider"></div>
+      <button class="btn-submit" id="btn-register">Зарегистрироваться</button>
+      <div class="disclaimer">
+        Регистрируя компанию, вы подтверждаете, что являетесь её представителем.<br>
+        Персональные данные физических лиц не собираются и не хранятся.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import Auth from './js/auth.js';
+
+if (Auth.isLoggedIn()) {
+  window.location.href = 'cabinet.html';
+}
+
+window.showTab = function(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('form-login').style.display    = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+};
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function clearError(id) {
+  const el = document.getElementById(id);
+  el.textContent = '';
+  el.classList.remove('show');
+}
+
+document.getElementById('btn-register').addEventListener('click', async () => {
+  clearError('reg-error');
+  const btn = document.getElementById('btn-register');
+
+  const company   = document.getElementById('r-company').value.trim();
+  const inn       = document.getElementById('r-inn').value.trim();
+  const direction = document.getElementById('r-direction').value;
+  const stage     = document.getElementById('r-stage').value;
+  const skolkovo  = document.getElementById('r-skolkovo').checked;
+  const email     = document.getElementById('r-email').value.trim().toLowerCase();
+  const password  = document.getElementById('r-password').value;
+  const password2 = document.getElementById('r-password2').value;
+
+  if (!company || !inn || !direction || !stage || !email || !password) {
+    showError('reg-error', 'Заполните все обязательные поля');
+    return;
+  }
+  if (inn.length !== 10) {
+    showError('reg-error', 'ИНН должен содержать 10 цифр');
+    return;
+  }
+  if (!/^\d+$/.test(inn)) {
+    showError('reg-error', 'ИНН должен содержать только цифры');
+    return;
+  }
+  if (password.length < 8) {
+    showError('reg-error', 'Пароль должен содержать минимум 8 символов');
+    return;
+  }
+  if (password !== password2) {
+    showError('reg-error', 'Пароли не совпадают');
+    return;
+  }
+
+  btn.textContent = 'Регистрируем...';
+  btn.disabled = true;
+
+  try {
+    await Auth.register({ company, inn, direction, stage, skolkovo, email, password });
+    window.location.href = 'cabinet.html';
+  } catch (e) {
+    showError('reg-error', e.message);
+    btn.textContent = 'Зарегистрироваться';
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('btn-login').addEventListener('click', async () => {
+  clearError('login-error');
+  const btn = document.getElementById('btn-login');
+
+  const email    = document.getElementById('l-email').value.trim().toLowerCase();
+  const password = document.getElementById('l-password').value;
+
+  if (!email || !password) {
+    showError('login-error', 'Введите email и пароль');
+    return;
+  }
+
+  btn.textContent = 'Входим...';
+  btn.disabled = true;
+
+  try {
+    await Auth.login(email, password);
+    window.location.href = 'cabinet.html';
+  } catch (e) {
+    showError('login-error', e.message);
+    btn.textContent = 'Войти';
+    btn.disabled = false;
+  }
+});
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const loginVisible = document.getElementById('form-login').style.display !== 'none';
+  if (loginVisible) document.getElementById('btn-login').click();
+  else document.getElementById('btn-register').click();
+});
+</script>
+</body>
+</html>
