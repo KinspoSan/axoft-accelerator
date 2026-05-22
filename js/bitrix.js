@@ -1,45 +1,41 @@
-// Bitrix24 REST API wrapper
-const BITRIX_WEBHOOK = 'https://vibecode.bitrix24.tech/rest/1/vibe_api_9Rt9spXZAf9D6H4ip0gMXvH0OSafIh56_52e672';
+const WEBHOOK = 'https://axoft.bitrix24.ru/rest/1/itnzkkug13yjhs7v';
 
 const Bitrix = {
   async call(method, params = {}) {
-    const url = `${BITRIX_WEBHOOK}/${method}.json`;
-    const response = await fetch(url, {
+    const res = await fetch(`${WEBHOOK}/${method}.json`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
-    const data = await response.json();
+    const data = await res.json();
     if (data.error) throw new Error(data.error_description || data.error);
     return data.result;
+  },
+
+  async findLeadByEmail(email) {
+    const result = await this.call('crm.lead.list', {
+      filter: { 'EMAIL': email },
+      select: ['ID', 'TITLE', 'COMPANY_TITLE', 'STATUS_ID']
+    });
+    return result && result.length > 0 ? result[0] : null;
   },
 
   async createLead(vendorData) {
     return await this.call('crm.lead.add', {
       fields: {
         TITLE:         `Новый вендор: ${vendorData.company}`,
-        NAME:          vendorData.contactName || vendorData.company,
         EMAIL:         [{ VALUE: vendorData.email, VALUE_TYPE: 'WORK' }],
         COMPANY_TITLE: vendorData.company,
-        UF_CRM_INN:    vendorData.inn,
-        COMMENTS: `Направление: ${vendorData.direction}
+        COMMENTS: `ИНН: ${vendorData.inn}
+Направление: ${vendorData.direction}
 Стадия: ${vendorData.stage}
 Резидент Сколково: ${vendorData.skolkovo ? 'Да' : 'Нет'}
-Тариф: UP BASE
-Источник: ЛК Axoft × Сколково`.trim(),
+Источник: ЛК Axoft × Сколково`,
         SOURCE_ID:      'WEB',
         STATUS_ID:      'NEW',
         ASSIGNED_BY_ID: 1
       }
     });
-  },
-
-  async findLeadByEmail(email) {
-    const result = await this.call('crm.lead.list', {
-      filter: { 'EMAIL': email },
-      select: ['ID', 'TITLE', 'NAME', 'COMPANY_TITLE', 'COMMENTS', 'STATUS_ID']
-    });
-    return result && result.length > 0 ? result[0] : null;
   },
 
   async createDeal(orderData, vendorProfile) {
@@ -56,9 +52,7 @@ Email: ${vendorProfile.email}
 
 Сервис: ${orderData.serviceName}
 Блок: ${orderData.block}
-Стоимость: ${orderData.priceDisplay}
-Оплата: ${orderData.paymentType}
-Тариф вендора: ${vendorProfile.tier}`.trim(),
+Стоимость: ${orderData.priceDisplay}`,
         ...(vendorProfile.leadId ? { LEAD_ID: vendorProfile.leadId } : {})
       }
     });
@@ -66,23 +60,27 @@ Email: ${vendorProfile.email}
 
   async getDeals(email) {
     const result = await this.call('crm.deal.list', {
-      filter: { 'TITLE': `%${email}%` },
-      select: ['ID', 'TITLE', 'OPPORTUNITY', 'CURRENCY_ID', 'STAGE_ID', 'DATE_CREATE', 'COMMENTS']
+      filter: { '%TITLE': email },
+      select: ['ID', 'TITLE', 'OPPORTUNITY', 'CURRENCY_ID', 'STAGE_ID', 'DATE_CREATE']
     });
     return result || [];
   },
 
   async addActivity(leadId, message) {
-    return await this.call('crm.activity.add', {
-      fields: {
-        OWNER_TYPE_ID: 1,
-        OWNER_ID:      leadId,
-        TYPE_ID:       6,
-        SUBJECT:       'Действие в ЛК',
-        DESCRIPTION:   message,
-        COMPLETED:     'Y'
-      }
-    });
+    try {
+      await this.call('crm.activity.add', {
+        fields: {
+          OWNER_TYPE_ID: 1,
+          OWNER_ID:      leadId,
+          TYPE_ID:       6,
+          SUBJECT:       'Действие в ЛК',
+          DESCRIPTION:   message,
+          COMPLETED:     'Y'
+        }
+      });
+    } catch (e) {
+      console.warn('Activity not saved:', e.message);
+    }
   }
 };
 
