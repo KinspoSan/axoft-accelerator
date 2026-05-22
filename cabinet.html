@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Axoft × Сколково — Личный кабинет</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    :root{
+      --navy:#1e2849;--teal:#00b0bd;--green:#00b37d;--blue:#00aeef;
+      --bg:#f0f2f7;--sur:#fff;--bdr:rgba(30,40,73,.1);
+      --txt:#1e2849;--txt2:#6b7290;--r:12px;--rs:8px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Golos Text',sans-serif;background:var(--bg);min-height:100vh;display:flex;}
+
+    /* ── Sidebar ── */
+    .sb{width:220px;background:var(--navy);min-height:100vh;position:fixed;left:0;top:0;
+      display:flex;flex-direction:column;z-index:50;}
+    .sb-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+    .ax-badge{background:var(--teal);color:#fff;font-family:'Unbounded',sans-serif;
+      font-size:10px;font-weight:700;padding:4px 8px;border-radius:5px;letter-spacing:.5px;}
+    .sb-sko{display:flex;align-items:center;gap:6px;margin-top:8px;}
+    .sko-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+    .sb-sko span{color:rgba(255,255,255,.6);font-size:11px;}
+
+    .sb-nav{flex:1;padding:12px 0;}
+    .nav-section{padding:8px 18px 4px;font-size:10px;font-weight:600;
+      color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;}
+    .nb{display:flex;align-items:center;gap:10px;padding:9px 18px;
+      color:rgba(255,255,255,.7);font-size:13px;font-weight:500;
+      cursor:pointer;border:none;background:transparent;width:100%;text-align:left;
+      border-radius:0;transition:all .2s;text-decoration:none;}
+    .nb:hover,.nb.active{background:rgba(255,255,255,.08);color:#fff;}
+    .nb.active{border-left:3px solid var(--teal);}
+    .nb i{font-size:16px;width:18px;text-align:center;flex-shrink:0;}
+    .nb .badge{margin-left:auto;background:var(--teal);color:#fff;
+      font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center;}
+
+    .sb-user{padding:16px 18px;border-top:1px solid rgba(255,255,255,.08);}
+    .u-row{display:flex;align-items:center;gap:10px;}
+    .av{width:34px;height:34px;border-radius:50%;background:var(--teal);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+    .u-info{flex:1;min-width:0;}
+    .u-name{color:#fff;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .u-role{color:rgba(255,255,255,.45);font-size:10px;margin-top:1px;}
+    .btn-logout{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);
+      padding:4px;border-radius:4px;transition:color .2s;margin-left:4px;}
+    .btn-logout:hover{color:rgba(255,255,255,.8);}
+
+    /* ── Main ── */
+    .main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    .topbar{background:var(--sur);border-bottom:1px solid var(--bdr);
+      padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:40;}
+    .tb-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--navy);}
+    .tb-right{display:flex;align-items:center;gap:12px;}
+    .pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;
+      font-size:11px;font-weight:600;}
+    .pill.pg{background:rgba(0,179,125,.1);color:var(--green);}
+    .pill.pt{background:rgba(0,174,239,.1);color:var(--blue);}
+    .pill.pp{background:rgba(0,176,189,.1);color:var(--teal);}
+
+    .content{padding:28px;flex:1;}
+    .page{display:none;}
+    .page.active{display:block;}
+
+    /* ── Cards ── */
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+    .stat-card{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);padding:20px;}
+    .sc-label{font-size:11px;color:var(--txt2);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+    .sc-val{font-size:28px;font-weight:700;color:var(--navy);font-family:'Unbounded',sans-serif;line-height:1;}
+    .sc-sub{font-size:12px;color:var(--txt2);margin-top:4px;}
+    .sc-icon{font-size:20px;margin-bottom:8px;}
+
+    /* ── Dashboard hero ── */
+    .dash-hero{background:linear-gradient(135deg,var(--navy) 0%,#2a3875 100%);
+      border-radius:var(--r);padding:28px 32px;margin-bottom:24px;color:#fff;}
+    .ph-label{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;}
+    .ph-t{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;margin-bottom:4px;}
+    .ph-sub{font-size:13px;color:rgba(255,255,255,.6);}
+
+    /* ── Progress steps ── */
+    .steps{display:flex;gap:0;margin-bottom:24px;background:var(--sur);
+      border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden;}
+    .step{flex:1;padding:16px 20px;border-right:1px solid var(--bdr);position:relative;}
+    .step:last-child{border-right:none;}
+    .step-n{width:24px;height:24px;border-radius:50%;background:var(--bdr);
+      display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+      color:var(--txt2);margin-bottom:8px;}
+    .step.done .step-n{background:var(--green);color:#fff;}
+    .step.active .step-n{background:var(--teal);color:#fff;}
+    .step-title{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:2px;}
+    .step-sub{font-size:11px;color:var(--txt2);}
+    .step.done .step-title{color:var(--green);}
+    .step.active .step-title{color:var(--teal);}
+
+    /* ── Tier cards ── */
+    .tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+    @media(max-width:700px){.tier-grid{grid-template-columns:1fr;}}
+    .tier-card{background:var(--sur);border-radius:var(--r);border:2px solid var(--bdr);
+      padding:24px;transition:border-color .2s;position:relative;overflow:hidden;}
+    .tier-card.current{border-color:var(--teal);}
+    .tier-card.current::before{content:'Ваш тариф';position:absolute;top:14px;right:14px;
+      background:var(--teal);color:#fff;font-size:10px;font-weight:700;
+      padding:3px 8px;border-radius:4px;}
+    .tier-card.strat-card{border-color:rgba(0,179,125,.4);}
+    .tier-name{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;
+      color:var(--navy);margin-bottom:4px;}
+    .tier-price{font-size:22px;font-weight:700;color:var(--teal);margin-bottom:12px;}
+    .tier-price small{font-size:13px;font-weight:400;color:var(--txt2);}
+    .tier-feat{list-style:none;margin-bottom:16px;}
+    .tier-feat li{font-size:12px;color:var(--txt);padding:4px 0;display:flex;gap:8px;}
+    .tier-feat li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--rs);
+      font-family:'Golos Text',sans-serif;font-size:13px;font-weight:600;
+      cursor:pointer;border:none;transition:all .2s;text-decoration:none;}
+    .btn-p{background:var(--teal);color:#fff;}
+    .btn-p:hover{background:#00c9d8;}
+    .btn-o{background:transparent;color:var(--teal);border:1px solid var(--teal);}
+    .btn-o:hover{background:rgba(0,176,189,.08);}
+    .btn-g{background:transparent;color:var(--txt2);border:1px solid var(--bdr);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+    /* ── Services ── */
+    .svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+    .svcc{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      padding:20px;transition:box-shadow .2s;}
+    .svcc:hover{box-shadow:0 4px 16px rgba(30,40,73,.1);}
+    .svc-block{font-size:10px;font-weight:700;color:var(--txt2);letter-spacing:.8px;
+      text-transform:uppercase;margin-bottom:10px;}
+    .svc-name{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+    .svc-desc{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:14px;}
+    .svc-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .svc-price{font-size:16px;font-weight:700;color:var(--navy);}
+    .svc-price small{font-size:11px;font-weight:400;color:var(--txt2);}
+    .btn-order{background:var(--teal);color:#fff;border:none;padding:8px 16px;
+      border-radius:var(--rs);font-family:'Golos Text',sans-serif;font-size:13px;
+      font-weight:600;cursor:pointer;transition:background .2s;}
+    .btn-order:hover{background:#00c9d8;}
+    .btn-order:disabled{opacity:.6;cursor:not-allowed;}
+    .tag-tier{font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px;margin-bottom:10px;display:inline-block;}
+    .tag-base{background:rgba(0,174,239,.1);color:var(--blue);}
+    .tag-strat{background:rgba(0,179,125,.1);color:var(--green);}
+    .tag-free{background:rgba(30,40,73,.07);color:var(--txt2);}
+
+    /* ── Orders table ── */
+    .ot{width:100%;border-collapse:collapse;}
+    .ot th{text-align:left;font-size:11px;font-weight:600;color:var(--txt2);
+      text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;
+      border-bottom:2px solid var(--bdr);}
+    .ot td{padding:12px;border-bottom:1px solid var(--bdr);font-size:13px;color:var(--txt);}
+    .ot tbody tr:last-child td{border-bottom:none;}
+    .ot tbody tr:hover td{background:rgba(30,40,73,.02);}
+    .stag{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+    .sa2{background:rgba(0,174,239,.1);color:var(--blue);}
+    .sr2{background:rgba(255,165,0,.1);color:#e6a800;}
+    .sd{background:rgba(0,179,125,.1);color:var(--green);}
+
+    /* ── Settings ── */
+    .set-section{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      margin-bottom:16px;overflow:hidden;}
+    .set-head{padding:16px 20px;border-bottom:1px solid var(--bdr);
+      font-size:13px;font-weight:700;color:var(--navy);}
+    .set-row{display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid var(--bdr);}
+    .set-row:last-child{border-bottom:none;}
+    .set-k{font-size:12px;color:var(--txt2);font-weight:600;width:200px;flex-shrink:0;}
+    .set-v{font-size:13px;color:var(--txt);font-weight:500;}
+
+    /* ── Page header ── */
+    .page-hd{margin-bottom:24px;}
+    .page-hd h2{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;
+      color:var(--navy);margin-bottom:4px;}
+    .page-hd p{font-size:13px;color:var(--txt2);}
+
+    /* ── Responsive ── */
+    @media(max-width:768px){
+      .sb{width:60px;}
+      .sb-logo .ax-badge,.sb-sko,.u-info,.nb span,.nav-section,.u-name,.u-role{display:none;}
+      .main{margin-left:60px;}
+      .nb{padding:12px;justify-content:center;}
+      .sb-user{padding:12px 8px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="ax-badge">AXOFT</div>
+    <div class="sb-sko"><div class="sko-dot"></div><span>Сколково</span></div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-section">Навигация</div>
+    <button class="nb active" onclick="goPage('dash')">
+      <i class="ti ti-dashboard"></i><span>Дашборд</span>
+    </button>
+    <button class="nb" onclick="goPage('services')">
+      <i class="ti ti-apps"></i><span>Сервисы</span>
+    </button>
+    <button class="nb" onclick="goPage('orders')">
+      <i class="ti ti-shopping-cart"></i><span>Заказы</span>
+      <span class="badge" id="orders-badge">0</span>
+    </button>
+    <button class="nb" onclick="goPage('tariffs')">
+      <i class="ti ti-star"></i><span>Тарифы</span>
+    </button>
+    <div class="nav-section">Аккаунт</div>
+    <button class="nb" onclick="goPage('settings')">
+      <i class="ti ti-settings"></i><span>Настройки</span>
+    </button>
+  </nav>
+
+  <div class="sb-user">
+    <div class="u-row">
+      <div class="av" id="user-avatar">АИ</div>
+      <div class="u-info">
+        <div class="u-name" id="user-name">Загрузка...</div>
+        <div class="u-role">Вендор · UP BASE</div>
+      </div>
+      <button class="btn-logout" onclick="AuthLogout()" title="Выйти">
+        <i class="ti ti-logout" style="font-size:15px"></i>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <header class="topbar">
+    <div class="tb-title" id="page-title">Дашборд</div>
+    <div class="tb-right">
+      <span class="pill pg"><i class="ti ti-building" style="font-size:12px"></i>UP BASE</span>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ДАШБОРД -->
+    <div class="page active" id="page-dash">
+      <div class="dash-hero">
+        <div class="ph-label">Личный кабинет вендора</div>
+        <div class="ph-t">Добро пожаловать, <span id="dash-company">...</span>!</div>
+        <div class="ph-sub">Программа Axoft × Сколково — Channel Readiness</div>
+      </div>
+
+      <div class="steps">
+        <div class="step done">
+          <div class="step-n">1</div>
+          <div class="step-title">Регистрация</div>
+          <div class="step-sub">Аккаунт создан</div>
+        </div>
+        <div class="step active">
+          <div class="step-n">2</div>
+          <div class="step-title">Знакомство с Axoft</div>
+          <div class="step-sub">Запланируйте встречу</div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-title">Аудит готовности</div>
+          <div class="step-sub">Оцените зрелость продукта</div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-title">Запуск в канале</div>
+          <div class="step-sub">Первые партнёрские продажи</div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="sc-icon">📋</div>
+          <div class="sc-label">Активных заказов</div>
+          <div class="sc-val" id="dash-orders-count">0</div>
+          <div class="sc-sub">Сервисов оформлено</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon">⭐</div>
+          <div class="sc-label">Тариф</div>
+          <div class="sc-val" style="font-size:18px">UP BASE</div>
+          <div class="sc-sub">Обновите до UP STRAT</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon">📅</div>
+          <div class="sc-label">Дата регистрации</div>
+          <div class="sc-val" id="dash-reg-date" style="font-size:18px">—</div>
+          <div class="sc-sub">В программе Axoft × Сколково</div>
+        </div>
+      </div>
+
+      <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);padding:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px">Быстрые действия</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-p" onclick="goPage('services')">
+            <i class="ti ti-apps" style="font-size:14px"></i>Каталог сервисов
+          </button>
+          <button class="btn btn-o" onclick="goPage('orders')">
+            <i class="ti ti-shopping-cart" style="font-size:14px"></i>Мои заказы
+          </button>
+          <button class="btn btn-g" onclick="goPage('tariffs')">
+            <i class="ti ti-star" style="font-size:14px"></i>Тарифы
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- СЕРВИСЫ -->
+    <div class="page" id="page-services">
+      <div class="page-hd">
+        <h2>Каталог сервисов</h2>
+        <p>Выберите и закажите сервисы для развития в канале Axoft</p>
+      </div>
+
+      <div style="margin-bottom:16px;font-size:12px;font-weight:600;color:var(--txt2)">
+        БЛОК 1 — АНАЛИТИКА И СТРАТЕГИЯ
+      </div>
+      <div class="svc-grid" style="margin-bottom:28px;">
+
+        <div class="svcc"
+          data-service-id="strategy-1"
+          data-service-name="Стратегическая сессия с командой Axoft"
+          data-service-block="Блок 1"
+          data-service-price="0"
+          data-service-price-display="Бесплатно">
+          <span class="tag-tier tag-free">Включено</span>
+          <div class="svc-name">Стратегическая сессия с командой Axoft</div>
+          <div class="svc-desc">Знакомство, анализ продукта, определение точек роста в дистрибьюторском канале</div>
+          <div class="svc-foot">
+            <div class="svc-price">Бесплатно</div>
+            <button class="btn-order" onclick="handleOrder(this.closest('.svcc'))">Записаться</button>
+          </div>
+        </div>
+
+        <div class="svcc"
+          data-service-id="audit-1"
+          data-service-name="Аудит готовности к дистрибьюции"
+          data-service-block="Блок 1"
+          data-service-price="150000"
+          data-service-price-display="150 000 ₽">
+          <span class="tag-tier tag-base">UP BASE</span>
+          <div class="svc-name">Аудит готовности к дистрибьюции</div>
+          <div class="svc-desc">Оценка зрелости продукта, партнёрской документации и процессов для работы через канал</div>
+          <div class="svc-foot">
+            <div class="svc-price">150 000 ₽ <small>/ разово</small></div>
+            <button class="btn-order" onclick="handleOrder(this.closest('.svcc'))">Заказать</button>
+          </div>
+        </div>
+
+        <div class="svcc"
+          data-service-id="market-1"
+          data-service-name="Анализ рынка и конкурентов"
+          data-service-block="Блок 1"
+          data-service-price="200000"
+          data-service-price-display="200 000 ₽">
+          <span class="tag-tier tag-base">UP BASE</span>
+          <div class="svc-name">Анализ рынка и конкурентов</div>
+          <div class="svc-desc">Позиционирование продукта в конкурентной среде, выявление незанятых ниш в канале</div>
+          <div class="svc-foot">
+            <div class="svc-price">200 000 ₽ <small>/ разово</small></div>
+            <button class="btn-order" onclick="handleOrder(this.closest('.svcc'))">Заказать</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-bottom:16px;font-size:12px;font-weight:600;color:var(--txt2)">
+        БЛОК 2 — ПАРТНЁРСКАЯ ДОКУМЕНТАЦИЯ
+      </div>
+      <div class="svc-grid" style="margin-bottom:28px;">
+
+        <div class="svcc"
+          data-service-id="docs-1"
+          data-service-name="Партнёрский пакет документов"
+          data-service-block="Блок 2"
+          data-service-price="120000"
+          data-service-price-display="120 000 ₽">
+          <span class="tag-tier tag-base">UP BASE</span>
+          <div class="svc-name">Партнёрский пакет документов</div>
+          <div class="svc-desc">Разработка партнёрского соглашения, прайс-листа для реселлеров, условий сотрудничества</div>
+          <div class="svc-foot">
+            <div class="svc-price">120 000 ₽ <small>/ разово</small></div>
+            <button class="btn-order" onclick="handleOrder(this.closest('.svcc'))">Заказать</button>
+          </div>
+        </div>
+
+        <div class="svcc"
+          data-service-id="training-1"
+          data-service-name="Обучение отдела продаж партнёров"
+          data-service-block="Блок 2"
+          data-service-price="180000"
+          data-service-price-display="180 000 ₽">
+          <span class="tag-tier tag-strat">UP STRAT</span>
+          <div class="svc-name">Обучение отдела продаж партнёров</div>
+          <div class="svc-desc">Проведение обучающих сессий для менеджеров по продажам реселлеров и дистрибьюторов</div>
+          <div class="svc-foot">
+            <div class="svc-price">180 000 ₽ <small>/ программа</small></div>
+            <button class="btn-order" onclick="handleOrder(this.closest('.svcc'))">Заказать</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-bottom:16px;font-size:12px;font-weight:600;color:var(--txt2)">
+        БЛОК 3 — МАРКЕТИНГ И ПРОДВИЖЕНИЕ
+      </div>
+      <div class="svc-grid">
+
+        <div class="svcc"
+          data-service-id="marketing-1"
+          data-service-name="Co-marketing кампания с Axoft"
+          data-service-block="Блок 3"
+          data-service-price="350000"
+          data-service-price-display="350 000 ₽">
+          <span class="tag-tier tag-strat">UP STRAT</span>
+          <div class="svc-name">Co-marketing кампания с Axoft</div>
+          <div class="svc-desc">Совместная маркетинговая кампания с использованием ресурсов и базы клиентов Axoft</div>
+          <div class="svc-foot">
+            <div class="svc-price">350 000 ₽ <small>/ кампания</small></div>
+            <button class="btn-order" onclick="handleOrder(this.closest('.svcc'))">Заказать</button>
+          </div>
+        </div>
+
+        <div class="svcc"
+          data-service-id="event-1"
+          data-service-name="Участие в партнёрской конференции"
+          data-service-block="Блок 3"
+          data-service-price="250000"
+          data-service-price-display="250 000 ₽">
+          <span class="tag-tier tag-base">UP BASE</span>
+          <div class="svc-name">Участие в партнёрской конференции</div>
+          <div class="svc-desc">Стенд и выступление на ежегодной конференции партнёров Axoft (300+ участников)</div>
+          <div class="svc-foot">
+            <div class="svc-price">250 000 ₽ <small>/ мероприятие</small></div>
+            <button class="btn-order" onclick="handleOrder(this.closest('.svcc'))">Заказать</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ЗАКАЗЫ -->
+    <div class="page" id="page-orders">
+      <div class="page-hd">
+        <h2>Мои заказы</h2>
+        <p>История заказанных сервисов и их статусы</p>
+      </div>
+      <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden;">
+        <div id="orders-table-container" style="padding:20px;text-align:center;color:var(--txt2)">
+          Загрузка заказов...
+        </div>
+      </div>
+    </div>
+
+    <!-- ТАРИФЫ -->
+    <div class="page" id="page-tariffs">
+      <div class="page-hd">
+        <h2>Тарифы программы</h2>
+        <p>Выберите подходящий уровень участия в программе Axoft × Сколково</p>
+      </div>
+
+      <div class="tier-grid">
+        <div class="tier-card current" id="tier-base-card">
+          <div class="tier-name">UP BASE</div>
+          <div class="tier-price">Базовый <small>тариф</small></div>
+          <ul class="tier-feat">
+            <li>Стратегическая сессия с Axoft</li>
+            <li>Аудит готовности к дистрибьюции</li>
+            <li>Анализ рынка и конкурентов</li>
+            <li>Партнёрский пакет документов</li>
+            <li>Участие в партнёрской конференции</li>
+            <li>Доступ к базе партнёров Axoft</li>
+          </ul>
+          <button class="btn btn-g" disabled>Ваш текущий тариф</button>
+        </div>
+        <div class="tier-card strat-card" id="tier-strat-card">
+          <div class="tier-name">UP STRAT</div>
+          <div class="tier-price">Стратегический <small>тариф</small></div>
+          <ul class="tier-feat">
+            <li>Всё из UP BASE</li>
+            <li>Обучение отдела продаж партнёров</li>
+            <li>Co-marketing кампания с Axoft</li>
+            <li>Персональный менеджер Axoft</li>
+            <li>Приоритетное размещение в каталоге</li>
+            <li>Расширенная аналитика канала</li>
+          </ul>
+          <button class="btn btn-p" onclick="requestTierUpgrade()">
+            <i class="ti ti-star" style="font-size:14px"></i>Запросить апгрейд
+          </button>
+        </div>
+      </div>
+
+      <div style="background:rgba(0,176,189,.05);border:1px solid rgba(0,176,189,.2);
+        border-radius:var(--r);padding:16px 20px;font-size:13px;color:var(--txt);">
+        <strong>Важно:</strong> Изменение тарифа согласовывается с менеджером программы.
+        Для вопросов: <a href="mailto:program@axoft.ru" style="color:var(--teal)">program@axoft.ru</a>
+      </div>
+    </div>
+
+    <!-- НАСТРОЙКИ -->
+    <div class="page" id="page-settings">
+      <div class="page-hd">
+        <h2>Настройки аккаунта</h2>
+        <p>Данные вашей компании в программе Axoft × Сколково</p>
+      </div>
+
+      <div class="set-section">
+        <div class="set-head">Данные юридического лица</div>
+        <div class="set-row">
+          <div class="set-k">Название компании</div>
+          <div class="set-v" id="set-company">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">ИНН организации</div>
+          <div class="set-v" id="set-inn">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Направление</div>
+          <div class="set-v" id="set-direction">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Стадия компании</div>
+          <div class="set-v" id="set-stage">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Резидент Сколково</div>
+          <div class="set-v" id="set-skolkovo">—</div>
+        </div>
+      </div>
+
+      <div class="set-section">
+        <div class="set-head">Аккаунт</div>
+        <div class="set-row">
+          <div class="set-k">Корпоративный email</div>
+          <div class="set-v" id="set-email">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Тариф</div>
+          <div class="set-v" id="set-tier">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Дата регистрации</div>
+          <div class="set-v" id="set-reg-date">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button class="btn btn-g" onclick="AuthLogout()">
+          <i class="ti ti-logout" style="font-size:14px"></i>Выйти из аккаунта
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<script>
+// Page navigation
+const pageTitles = {
+  dash: 'Дашборд', services: 'Каталог сервисов',
+  orders: 'Мои заказы', tariffs: 'Тарифы', settings: 'Настройки'
+};
+
+window.goPage = function(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[id] || id;
+  const btns = document.querySelectorAll('.nb');
+  btns.forEach(b => {
+    if (b.getAttribute('onclick') === `goPage('${id}')`) b.classList.add('active');
+  });
+};
+
+window.requestTierUpgrade = function() {
+  showToast('Запрос отправлен! Менеджер свяжется с вами для согласования тарифа UP STRAT.');
+};
+</script>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
