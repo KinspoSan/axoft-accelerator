@@ -64,6 +64,8 @@
       border-radius:var(--rs);padding:10px 14px;font-size:12px;color:#c00;
       margin-bottom:16px;display:none;}
     .error-msg.show{display:block;}
+    @keyframes spin{to{transform:translateY(-50%) rotate(360deg);}}
+    .company-autofill{background:rgba(0,179,125,.04)!important;border-color:rgba(0,179,125,.3)!important;}
   </style>
 </head>
 <body>
@@ -106,13 +108,23 @@
       <div class="error-msg" id="reg-error"></div>
 
       <div class="field">
-        <label class="label" for="r-company">Название компании <span>*</span></label>
-        <input class="input" id="r-company" type="text" placeholder="ООО Ромашка">
-      </div>
-      <div class="field">
         <label class="label" for="r-inn">ИНН организации <span>*</span></label>
-        <input class="input" id="r-inn" type="text" placeholder="1234567890" maxlength="10" inputmode="numeric">
-        <div class="hint">ИНН юридического лица (10 цифр)</div>
+        <div style="position:relative;">
+          <input class="input" id="r-inn" type="text" placeholder="1234567890" maxlength="10" inputmode="numeric" autocomplete="off" style="padding-right:36px;">
+          <div id="inn-spinner" style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;border:2px solid var(--bdr);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;"></div>
+        </div>
+        <div class="hint" id="inn-hint">ИНН юридического лица (10 цифр)</div>
+      </div>
+
+      <div class="field" id="company-field">
+        <label class="label" for="r-company">Название компании <span>*</span></label>
+        <div style="position:relative;">
+          <input class="input" id="r-company" type="text" placeholder="Заполнится автоматически по ИНН" style="padding-right:36px;">
+          <button type="button" id="company-edit-btn" title="Редактировать" onclick="enableCompanyEdit()" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--txt2);padding:4px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+        </div>
+        <div class="hint" id="company-hint" style="display:none;"></div>
       </div>
       <div class="field">
         <label class="label" for="r-direction">Направление <span>*</span></label>
@@ -168,10 +180,12 @@
 <script type="module">
 import Auth from './js/auth.js';
 
-if (Auth.isLoggedIn()) {
-  window.location.href = 'cabinet.html';
-}
+// ── Вставь сюда свой DaData API-ключ (бесплатно: dadata.ru/profile/#info)
+const DADATA_TOKEN = '';
 
+if (Auth.isLoggedIn()) window.location.href = 'cabinet.html';
+
+// ── Вкладки ───────────────────────────────────────────────────────
 window.showTab = function(tab) {
   document.getElementById('tab-login').classList.toggle('active', tab === 'login');
   document.getElementById('tab-register').classList.toggle('active', tab === 'register');
@@ -181,21 +195,121 @@ window.showTab = function(tab) {
 
 function showError(id, msg) {
   const el = document.getElementById(id);
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = msg; el.classList.add('show');
 }
 function clearError(id) {
   const el = document.getElementById(id);
-  el.textContent = '';
-  el.classList.remove('show');
+  el.textContent = ''; el.classList.remove('show');
 }
 
+// ── Редактирование названия вручную ──────────────────────────────
+window.enableCompanyEdit = function() {
+  const inp = document.getElementById('r-company');
+  inp.readOnly = false;
+  inp.classList.remove('company-autofill');
+  inp.focus();
+  document.getElementById('company-edit-btn').style.display = 'none';
+  document.getElementById('company-hint').style.display = 'none';
+};
+
+// ── Поиск компании по ИНН через DaData ───────────────────────────
+let innTimer = null;
+
+async function lookupInn(inn) {
+  if (!DADATA_TOKEN) return; // нет токена — ручной ввод
+  const spinner = document.getElementById('inn-spinner');
+  const hint    = document.getElementById('inn-hint');
+  const compInp = document.getElementById('r-company');
+  const editBtn = document.getElementById('company-edit-btn');
+  const compHint= document.getElementById('company-hint');
+
+  spinner.style.display = 'block';
+  hint.textContent = 'Ищем в ЕГРЮЛ...';
+
+  try {
+    const res = await fetch(
+      'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Token ${DADATA_TOKEN}`
+        },
+        body: JSON.stringify({ query: inn, count: 1 })
+      }
+    );
+    const data = await res.json();
+    const s = data.suggestions?.[0];
+
+    if (s) {
+      const d = s.data;
+      const isActive = d.state?.status === 'ACTIVE';
+
+      compInp.value    = s.value;
+      compInp.readOnly = true;
+      compInp.classList.add('company-autofill');
+      editBtn.style.display = 'block';
+
+      const status = isActive
+        ? '<span style="color:var(--green)">●</span> Действующая'
+        : '<span style="color:#c00">●</span> Недействующая';
+      compHint.innerHTML  = `${status} — ОГРН ${d.ogrn || '—'}`;
+      compHint.style.display = 'block';
+
+      hint.textContent = '✓ Компания найдена в ЕГРЮЛ';
+      hint.style.color = 'var(--green)';
+    } else {
+      hint.textContent = 'Компания не найдена — введите название вручную';
+      hint.style.color = 'var(--txt2)';
+      compInp.readOnly = false;
+      compInp.placeholder = 'Введите название компании';
+      compInp.focus();
+    }
+  } catch (e) {
+    hint.textContent = 'Нет связи — введите название вручную';
+    hint.style.color = 'var(--txt2)';
+    compInp.readOnly = false;
+  } finally {
+    spinner.style.display = 'none';
+  }
+}
+
+document.getElementById('r-inn').addEventListener('input', function() {
+  const inn = this.value.replace(/\D/g, '');
+  this.value = inn;
+
+  const hint    = document.getElementById('inn-hint');
+  const compInp = document.getElementById('r-company');
+  const editBtn = document.getElementById('company-edit-btn');
+  const compHint= document.getElementById('company-hint');
+
+  // Сброс если ИНН изменился
+  compInp.value    = '';
+  compInp.readOnly = false;
+  compInp.classList.remove('company-autofill');
+  compInp.placeholder = 'Заполнится автоматически по ИНН';
+  editBtn.style.display = 'none';
+  compHint.style.display = 'none';
+  hint.style.color = 'var(--txt2)';
+
+  clearTimeout(innTimer);
+
+  if (inn.length === 10) {
+    hint.textContent = 'ИНН введён — проверяем...';
+    innTimer = setTimeout(() => lookupInn(inn), 400);
+  } else {
+    hint.textContent = `ИНН юридического лица (10 цифр) — введено ${inn.length}`;
+  }
+});
+
+// ── Регистрация ───────────────────────────────────────────────────
 document.getElementById('btn-register').addEventListener('click', async () => {
   clearError('reg-error');
   const btn = document.getElementById('btn-register');
 
-  const company   = document.getElementById('r-company').value.trim();
   const inn       = document.getElementById('r-inn').value.trim();
+  const company   = document.getElementById('r-company').value.trim();
   const direction = document.getElementById('r-direction').value;
   const stage     = document.getElementById('r-stage').value;
   const skolkovo  = document.getElementById('r-skolkovo').checked;
@@ -203,16 +317,21 @@ document.getElementById('btn-register').addEventListener('click', async () => {
   const password  = document.getElementById('r-password').value;
   const password2 = document.getElementById('r-password2').value;
 
-  if (!company || !inn || !direction || !stage || !email || !password) {
-    showError('reg-error', 'Заполните все обязательные поля');
+  if (!inn || inn.length !== 10 || !/^\d+$/.test(inn)) {
+    showError('reg-error', 'Введите корректный ИНН (10 цифр)');
+    document.getElementById('r-inn').focus();
     return;
   }
-  if (inn.length !== 10) {
-    showError('reg-error', 'ИНН должен содержать 10 цифр');
+  if (!company) {
+    showError('reg-error', 'Название компании не заполнено');
     return;
   }
-  if (!/^\d+$/.test(inn)) {
-    showError('reg-error', 'ИНН должен содержать только цифры');
+  if (!direction || !stage) {
+    showError('reg-error', 'Выберите направление и стадию');
+    return;
+  }
+  if (!email) {
+    showError('reg-error', 'Введите корпоративный email');
     return;
   }
   if (password.length < 8) {
@@ -237,10 +356,10 @@ document.getElementById('btn-register').addEventListener('click', async () => {
   }
 });
 
+// ── Вход ─────────────────────────────────────────────────────────
 document.getElementById('btn-login').addEventListener('click', async () => {
   clearError('login-error');
   const btn = document.getElementById('btn-login');
-
   const email    = document.getElementById('l-email').value.trim().toLowerCase();
   const password = document.getElementById('l-password').value;
 
@@ -248,10 +367,8 @@ document.getElementById('btn-login').addEventListener('click', async () => {
     showError('login-error', 'Введите email и пароль');
     return;
   }
-
   btn.textContent = 'Входим...';
   btn.disabled = true;
-
   try {
     await Auth.login(email, password);
     window.location.href = 'cabinet.html';
@@ -262,7 +379,6 @@ document.getElementById('btn-login').addEventListener('click', async () => {
   }
 });
 
-// Enter key support
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const loginVisible = document.getElementById('form-login').style.display !== 'none';
