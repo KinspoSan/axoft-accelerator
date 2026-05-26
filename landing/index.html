@@ -501,6 +501,71 @@
       color: #ffffffb3;
     }
 
+    /* ── EMAIL FORM ─────────────────────────────────────────────────────── */
+    .email-label {
+      color: #ffffffb3;
+      font-size: 13px;
+      margin-top: 28px;
+      margin-bottom: 12px;
+    }
+
+    .email-form {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .email-form input[type="email"] {
+      flex: 1;
+      padding: 13px 16px;
+      border: 1px solid #ffffff30;
+      border-radius: 10px;
+      background: #ffffff14;
+      color: var(--white);
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border .2s, background .2s;
+    }
+
+    .email-form input[type="email"]::placeholder { color: #ffffff55; }
+    .email-form input[type="email"]:focus {
+      border-color: var(--teal);
+      background: #ffffff20;
+    }
+
+    .email-form button {
+      padding: 13px 22px;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s, opacity .2s;
+    }
+
+    .email-form button:hover    { background: #00c9d8; }
+    .email-form button:disabled { opacity: .6; cursor: not-allowed; }
+
+    .email-success {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-top: 28px;
+      padding: 14px 22px;
+      background: #00b0bd1f;
+      border: 1px solid #00b0bd5c;
+      border-radius: 10px;
+      color: var(--teal);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
     /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
     @media (max-width: 980px) {
       .benefits-grid   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -520,6 +585,8 @@
       .countdown       { gap: 8px; }
       .cd-sep          { padding-top: 14px; font-size: 32px; }
       footer           { flex-direction: column; align-items: flex-start; }
+      .email-form      { flex-direction: column; }
+      .email-form button { width: 100%; }
     }
   </style>
 </head>
@@ -532,7 +599,7 @@
     <div class="brand-divider"></div>
     <img src="logos/axoft.png" alt="Axoft" height="41">
   </div>
-  <div class="header-badge">Регистрация откроется 6 июня 2026</div>
+  <div class="header-badge">Регистрация откроется 22 июня 2026</div>
 </header>
 
 <!-- HERO -->
@@ -574,7 +641,17 @@
     </div>
   </div>
 
-  <div class="countdown-note">Регистрация откроется 6 июня 2026</div>
+  <div class="countdown-note">Регистрация откроется 22 июня 2026</div>
+
+  <p class="email-label">Оставьте email — пришлём, когда откроется регистрация</p>
+  <form class="email-form" id="email-form">
+    <input type="email" id="email-input" placeholder="ваш@company.ru" autocomplete="email" required>
+    <button type="submit">Уведомить меня</button>
+  </form>
+  <div class="email-success" id="email-success">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    Отлично! Пришлём письмо, когда регистрация откроется
+  </div>
 </section>
 
 <!-- BENEFITS -->
@@ -747,7 +824,7 @@
   <div class="timeline-grid">
     <div class="tl-card">
       <div class="tl-num">01</div>
-      <div class="tl-label">Старт с 6 июня 2026</div>
+      <div class="tl-label">Старт с 22 июня 2026</div>
       <h3>Сбор заявок</h3>
       <p>Компании подают заявки, заполняют анкету и прикладывают презентацию продукта.</p>
     </div>
@@ -786,7 +863,7 @@
 </footer>
 
 <script>
-  const TARGET = new Date('2026-06-06T00:00:00');
+  const TARGET = new Date('2026-06-22T00:00:00');
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -814,6 +891,44 @@
 
   tick();
   setInterval(tick, 1000);
+
+  // ── EMAIL CAPTURE ──────────────────────────────────────────────────────────
+  // Укажи URL эндпоинта для сохранения адресов.
+  // Принимает POST { email, source: 'landing', ts: ISO-string }.
+  // Варианты: Formspree (https://formspree.io/f/<id>), n8n webhook, Bitrix24.
+  // Если пусто — email сохраняется только в localStorage под ключом 'up_leads'.
+  const LEADS_ENDPOINT = '';
+
+  document.getElementById('email-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn   = e.target.querySelector('button');
+    const email = document.getElementById('email-input').value.trim().toLowerCase();
+    const leads = JSON.parse(localStorage.getItem('up_leads') || '[]');
+
+    if (leads.includes(email)) { showEmailSuccess(); return; }
+
+    btn.textContent = '…';
+    btn.disabled    = true;
+
+    if (LEADS_ENDPOINT) {
+      try {
+        await fetch(LEADS_ENDPOINT, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email, source: 'landing', ts: new Date().toISOString() })
+        });
+      } catch (_) { /* сохраним локально в любом случае */ }
+    }
+
+    leads.push(email);
+    localStorage.setItem('up_leads', JSON.stringify(leads));
+    showEmailSuccess();
+  });
+
+  function showEmailSuccess() {
+    document.getElementById('email-form').style.display    = 'none';
+    document.getElementById('email-success').style.display = 'flex';
+  }
 </script>
 </body>
 </html>
