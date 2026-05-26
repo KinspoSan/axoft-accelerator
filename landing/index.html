@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UP: Axoft & Сколково — Регистрация скоро откроется</title>
+  <meta name="description" content="Акселератор UP: Axoft & Сколково. Программа для технологических компаний — выход на корпоративный рынок через канал Axoft. Регистрация откроется 6 июня 2026.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:  #1e2849;
+      --green: #b1ec52;
+      --green-digital: #b4ff0a;
+      --blue:  #00adef;
+      --teal:  #00b0bd;
+      --mint:  #00b27c;
+      --gray:  #4d5759;
+      --soft:  #f6f6f6;
+      --white: #fff;
+      --line:  #4d57592e;
+      --shadow: 0 22px 70px #1e284924;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Manrope', Arial, sans-serif;
+      background: var(--white);
+      color: var(--gray);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── HEADER ─────────────────────────────────────────────────────────── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #ffffffeb;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 76px;
+      padding: 14px clamp(18px, 4vw, 58px);
+    }
+
+    .brand-pair {
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand-pair img {
+      object-fit: contain;
+      width: auto;
+      max-height: 41px;
+    }
+
+    .brand-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--gray);
+      opacity: .85;
+      flex: none;
+    }
+
+    .header-badge {
+      background: #b1ec521f;
+      border: 1px solid #b1ec525c;
+      border-radius: 999px;
+      color: #006d4c;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 14px;
+      white-space: nowrap;
+    }
+
+    /* ── HERO ───────────────────────────────────────────────────────────── */
+    .hero {
+      background:
+        linear-gradient(120deg, #1e2849f5, #1e2849d4),
+        radial-gradient(circle at 78% 18%, #00adef47, transparent 34%),
+        radial-gradient(circle at 18% 90%, #b1ec523d, transparent 32%),
+        var(--navy);
+      color: var(--white);
+      padding: clamp(56px, 8vw, 100px) clamp(18px, 5vw, 72px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(#ffffff0a 1px, transparent 1px),
+        linear-gradient(90deg, #ffffff0a 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(transparent, #000 20% 80%, transparent);
+      -webkit-mask-image: linear-gradient(transparent, #000 20% 80%, transparent);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #b1ec521f;
+      border: 1px solid #b1ec525c;
+      border-radius: 999px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 14px;
+      min-height: 30px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      flex: none;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .5; transform: scale(.7); }
+    }
+
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 66px);
+      font-weight: 800;
+      line-height: 1.05;
+      color: var(--white);
+      max-width: 880px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span { color: var(--green); }
+
+    .hero-desc {
+      color: #ffffffc7;
+      font-size: clamp(16px, 1.4vw, 18px);
+      line-height: 1.65;
+      max-width: 680px;
+      margin-bottom: 48px;
+    }
+
+    /* ── COUNTDOWN ──────────────────────────────────────────────────────── */
+    .countdown-label {
+      color: #ffffffb3;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 20px;
+    }
+
+    .countdown {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(12px, 2vw, 28px);
+      margin-bottom: 28px;
+    }
+
+    .cd-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cd-value {
+      background: #ffffff14;
+      border: 1px solid #ffffff2e;
+      border-radius: 12px;
+      color: var(--white);
+      font-size: clamp(44px, 7vw, 88px);
+      font-weight: 800;
+      line-height: 1;
+      min-width: clamp(80px, 12vw, 140px);
+      padding: clamp(14px, 2vw, 22px) clamp(10px, 1.5vw, 18px);
+      text-align: center;
+      letter-spacing: -.02em;
+      transition: color .3s;
+    }
+
+    .cd-caption {
+      color: #ffffff70;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .cd-sep {
+      color: #ffffff40;
+      font-size: clamp(36px, 5vw, 70px);
+      font-weight: 800;
+      line-height: 1;
+      padding-top: clamp(14px, 2vw, 22px);
+      user-select: none;
+    }
+
+    .countdown-note {
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 700;
+      background: #b1ec521f;
+      border: 1px solid #b1ec5257;
+      border-radius: 999px;
+      padding: 8px 20px;
+    }
+
+    /* ── BENEFITS ───────────────────────────────────────────────────────── */
+    .section {
+      padding: clamp(58px, 8vw, 100px) clamp(18px, 5vw, 72px);
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-heading h2 {
+      color: var(--navy);
+      font-size: clamp(30px, 4vw, 52px);
+      font-weight: 800;
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+
+    .section-heading p {
+      color: var(--gray);
+      font-size: 17px;
+      line-height: 1.65;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .benefits {
+      background: var(--soft);
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .benefit-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: clamp(20px, 2.5vw, 32px);
+      display: grid;
+      align-content: start;
+      gap: 12px;
+      box-shadow: 0 8px 28px #1e28490a;
+      transition: box-shadow .2s, transform .2s;
+    }
+
+    .benefit-card:hover {
+      box-shadow: 0 16px 44px #1e28491a;
+      transform: translateY(-2px);
+    }
+
+    .benefit-icon {
+      width: 44px;
+      height: 44px;
+      background: #00b27c1a;
+      border-radius: 10px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--mint);
+    }
+
+    .benefit-card strong {
+      color: var(--navy);
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.25;
+      display: block;
+    }
+
+    .benefit-card p {
+      color: var(--gray);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── DIRECTIONS ─────────────────────────────────────────────────────── */
+    .directions { background: var(--white); }
+
+    .directions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .dir-card {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dir-icon {
+      width: 44px;
+      height: 44px;
+      background: #00b27c1a;
+      border-radius: 10px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--mint);
+      flex: none;
+    }
+
+    .dir-card h3 {
+      color: var(--navy);
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin: 0;
+    }
+
+    .dir-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    .dir-tags span {
+      background: var(--white);
+      color: var(--navy);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* ── TIMELINE ───────────────────────────────────────────────────────── */
+    .timeline {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .timeline .section-heading h2 { color: var(--white); }
+    .timeline .section-heading p  { color: #ffffffb3; }
+
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .tl-card {
+      background: #ffffff0f;
+      border: 1px solid #ffffff24;
+      border-radius: 12px;
+      padding: 24px;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .tl-num {
+      color: var(--green);
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .tl-label {
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .tl-card h3 {
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 800;
+      margin: 4px 0 0;
+    }
+
+    .tl-card p {
+      color: #ffffffb8;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .tl-card.is-final {
+      box-shadow: inset 4px 0 0 var(--green);
+      background: linear-gradient(135deg, #b1ec5229, #ffffff0f), #ffffff0f;
+      border-color: #b1ec524a;
+    }
+
+    /* ── PARTNER STRIP ──────────────────────────────────────────────────── */
+    .partner-strip {
+      background: var(--soft);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .partner-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .partner-text h2 {
+      color: var(--navy);
+      font-size: clamp(22px, 3vw, 34px);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .partner-text p {
+      color: var(--gray);
+      font-size: 15px;
+      line-height: 1.65;
+      max-width: 640px;
+    }
+
+    .partner-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      flex: none;
+    }
+
+    .stat-box {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px 20px;
+      min-width: 140px;
+    }
+
+    .stat-box strong {
+      color: var(--navy);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 800;
+      display: block;
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+
+    .stat-box span {
+      color: var(--mint);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────────────────── */
+    footer {
+      background: var(--navy);
+      color: #ffffffb3;
+      padding: 30px clamp(18px, 5vw, 72px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+
+    footer .brand-pair img { max-height: 34px; }
+    footer .brand-pair img:first-child { filter: brightness(0) invert(); }
+    footer .brand-divider  { background: #ffffff55; }
+
+    footer p {
+      font-size: 13px;
+      color: #ffffffb3;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
+    @media (max-width: 980px) {
+      .benefits-grid   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .timeline-grid   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .partner-inner   { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .site-header     { min-height: 64px; padding: 12px 16px; }
+      .brand-pair img  { max-height: 32px; }
+      .brand-divider   { height: 32px; }
+      .header-badge    { display: none; }
+      .benefits-grid   { grid-template-columns: 1fr; }
+      .directions-grid { grid-template-columns: 1fr; }
+      .timeline-grid   { grid-template-columns: 1fr; }
+      .partner-stats   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .countdown       { gap: 8px; }
+      .cd-sep          { padding-top: 14px; font-size: 32px; }
+      footer           { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="brand-pair">
+    <img src="logos/skolkovo.png" alt="Сколково" height="41">
+    <div class="brand-divider"></div>
+    <img src="logos/axoft.png" alt="Axoft" height="41">
+  </div>
+  <div class="header-badge">Регистрация откроется 6 июня 2026</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow">
+    <span class="eyebrow-dot"></span>
+    Скоро открытие регистрации
+  </div>
+
+  <h1>Начните корпоративные продажи<br>через канал <span>Axoft</span></h1>
+
+  <p class="hero-desc">
+    Акселератор UP: Axoft & Сколково — программа для технологических компаний,
+    которые готовы выйти на корпоративный рынок. Получите новый канал сбыта,
+    экспертную поддержку и доступ к 37 000+ заказчикам.
+  </p>
+
+  <div class="countdown-label">До открытия регистрации осталось</div>
+
+  <div class="countdown" id="countdown">
+    <div class="cd-unit">
+      <div class="cd-value" id="cd-days">00</div>
+      <div class="cd-caption">Дней</div>
+    </div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit">
+      <div class="cd-value" id="cd-hours">00</div>
+      <div class="cd-caption">Часов</div>
+    </div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit">
+      <div class="cd-value" id="cd-minutes">00</div>
+      <div class="cd-caption">Минут</div>
+    </div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit">
+      <div class="cd-value" id="cd-seconds">00</div>
+      <div class="cd-caption">Секунд</div>
+    </div>
+  </div>
+
+  <div class="countdown-note">Регистрация откроется 6 июня 2026</div>
+</section>
+
+<!-- BENEFITS -->
+<section class="section benefits">
+  <div class="section-heading">
+    <h2>Что даёт программа</h2>
+    <p>Участники получают реальные инструменты для выхода на корпоративный рынок — не просто менторство, а возможности для роста бизнеса.</p>
+  </div>
+
+  <div class="benefits-grid">
+    <div class="benefit-card">
+      <div class="benefit-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <strong>Грант на доработку</strong>
+      <p>Финалисты получают возможность дорастить решение до уровня, необходимого для корпоративного канала.</p>
+    </div>
+
+    <div class="benefit-card">
+      <div class="benefit-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <strong>Контракт с Axoft</strong>
+      <p>Победители получают дистрибьюторский контракт и доступ к партнёрской сети с оборотом 61+ млрд ₽.</p>
+    </div>
+
+    <div class="benefit-card">
+      <div class="benefit-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <strong>Экспертиза канала</strong>
+      <p>Работа с экспертами Axoft по партнёрской модели, ценообразованию и позиционированию продукта.</p>
+    </div>
+
+    <div class="benefit-card">
+      <div class="benefit-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <strong>Доступ к рынкам</strong>
+      <p>Независимо от результата — нетворкинг с партнёрами Axoft и присутствие на Demo Day перед корпоративными заказчиками.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNER STRIP -->
+<section class="section partner-strip">
+  <div class="partner-inner">
+    <div class="partner-text">
+      <h2>Партнёр: Axoft</h2>
+      <p>22 года на рынке, 3 300+ активных партнёров и 37 000+ корпоративных заказчиков. Axoft открывает технологическим компаниям прямой путь к корпоративным продажам через отлаженный дистрибьюторский канал.</p>
+    </div>
+    <div class="partner-stats">
+      <div class="stat-box">
+        <strong>61+</strong>
+        <span>млрд ₽ оборот 2025</span>
+      </div>
+      <div class="stat-box">
+        <strong>37К+</strong>
+        <span>корп. заказчиков</span>
+      </div>
+      <div class="stat-box">
+        <strong>3 300+</strong>
+        <span>партнёров</span>
+      </div>
+      <div class="stat-box">
+        <strong>22</strong>
+        <span>представительства</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIRECTIONS -->
+<section class="section directions">
+  <div class="section-heading">
+    <h2>Направления отбора</h2>
+    <p>Программа открыта для технологических компаний из шести отраслей.</p>
+  </div>
+
+  <div class="directions-grid">
+    <div class="dir-card">
+      <div class="dir-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M21.17 8H12V2.83"/>
+        </svg>
+      </div>
+      <h3>Искусственный интеллект</h3>
+      <div class="dir-tags">
+        <span>ML-платформы</span><span>GenAI</span><span>NLP</span><span>Computer Vision</span>
+      </div>
+    </div>
+
+    <div class="dir-card">
+      <div class="dir-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+        </svg>
+      </div>
+      <h3>Цифровизация промышленности</h3>
+      <div class="dir-tags">
+        <span>SCADA</span><span>MES</span><span>IoT</span><span>Digital Twin</span>
+      </div>
+    </div>
+
+    <div class="dir-card">
+      <div class="dir-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.11 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 2.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/>
+        </svg>
+      </div>
+      <h3>UC и коммуникации</h3>
+      <div class="dir-tags">
+        <span>ВКС</span><span>Почта</span><span>Мессенджеры</span><span>Телефония</span>
+      </div>
+    </div>
+
+    <div class="dir-card">
+      <div class="dir-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h3>Безопасная разработка ПО</h3>
+      <div class="dir-tags">
+        <span>SAST</span><span>DAST</span><span>SOCA</span><span>DevSecOps</span>
+      </div>
+    </div>
+
+    <div class="dir-card">
+      <div class="dir-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>
+        </svg>
+      </div>
+      <h3>Промышленная роботизация</h3>
+      <div class="dir-tags">
+        <span>AMR</span><span>Коллаборативные роботы</span><span>Автоматизация</span>
+      </div>
+    </div>
+
+    <div class="dir-card">
+      <div class="dir-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12l7-7 7 7M5 19l7-7 7 7"/>
+        </svg>
+      </div>
+      <h3>БАС / Анти-БПЛА</h3>
+      <div class="dir-tags">
+        <span>БПЛА мониторинг</span><span>Обнаружение</span><span>Противодействие</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section timeline">
+  <div class="section-heading">
+    <h2>График программы</h2>
+    <p>Четыре этапа от подачи заявки до выхода на рынок.</p>
+  </div>
+
+  <div class="timeline-grid">
+    <div class="tl-card">
+      <div class="tl-num">01</div>
+      <div class="tl-label">Старт с 6 июня 2026</div>
+      <h3>Сбор заявок</h3>
+      <p>Компании подают заявки, заполняют анкету и прикладывают презентацию продукта.</p>
+    </div>
+
+    <div class="tl-card">
+      <div class="tl-num">02</div>
+      <div class="tl-label">Этап 2</div>
+      <h3>Оценка заявок</h3>
+      <p>Проверка соответствия критериям и передача отобранных проектов экспертному жюри.</p>
+    </div>
+
+    <div class="tl-card">
+      <div class="tl-num">03</div>
+      <div class="tl-label">Этап 3</div>
+      <h3>Работа с экспертами</h3>
+      <p>Разбор продукта, партнёрской модели и ценообразования с командой Axoft.</p>
+    </div>
+
+    <div class="tl-card is-final">
+      <div class="tl-num">04</div>
+      <div class="tl-label">Финал</div>
+      <h3>Demo Day</h3>
+      <p>Презентация финалистов перед корпоративными заказчиками и партнёрами Axoft.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="brand-pair">
+    <img src="logos/skolkovo.png" alt="Сколково" height="34">
+    <div class="brand-divider"></div>
+    <img src="logos/axoft.png" alt="Axoft" height="34">
+  </div>
+  <p>© 2026 UP: Axoft & Фонд «Сколково»</p>
+</footer>
+
+<script>
+  const TARGET = new Date('2026-06-06T00:00:00');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const diff = TARGET - new Date();
+
+    if (diff <= 0) {
+      document.getElementById('countdown').innerHTML =
+        '<div style="background:#b1ec521f;border:1px solid #b1ec525c;border-radius:16px;padding:22px 40px;color:var(--green);font-size:28px;font-weight:800;">Регистрация открыта!</div>';
+      document.querySelector('.countdown-label').textContent = '';
+      document.querySelector('.countdown-note').textContent  = 'Регистрация открыта — подайте заявку';
+      return;
+    }
+
+    const days    = Math.floor(diff / 864e5);
+    const hours   = Math.floor((diff % 864e5) / 36e5);
+    const minutes = Math.floor((diff % 36e5)  / 6e4);
+    const seconds = Math.floor((diff % 6e4)   / 1e3);
+
+    document.getElementById('cd-days').textContent    = pad(days);
+    document.getElementById('cd-hours').textContent   = pad(hours);
+    document.getElementById('cd-minutes').textContent = pad(minutes);
+    document.getElementById('cd-seconds').textContent = pad(seconds);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
