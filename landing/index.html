@@ -7,15 +7,13 @@
   <meta name="description" content="Акселератор UP: Axoft & Сколково. Программа для технологических компаний — выход на корпоративный рынок через канал Axoft. Регистрация откроется 6 июня 2026.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --navy:  #1e2849;
-      --green: #b1ec52;
-      --green-digital: #b4ff0a;
+      --green: #00b27c;
       --blue:  #00adef;
       --teal:  #00b0bd;
-      --mint:  #00b27c;
       --gray:  #4d5759;
       --soft:  #f6f6f6;
       --white: #fff;
@@ -28,7 +26,7 @@
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Manrope', Arial, sans-serif;
+      font-family: 'Roboto', Arial, sans-serif;
       background: var(--white);
       color: var(--gray);
     }
@@ -73,10 +71,10 @@
     }
 
     .header-badge {
-      background: #b1ec521f;
-      border: 1px solid #b1ec525c;
+      background: #00b27c1f;
+      border: 1px solid #00b27c5c;
       border-radius: 999px;
-      color: #006d4c;
+      color: var(--navy);
       font-size: 12px;
       font-weight: 800;
       padding: 6px 14px;
@@ -88,7 +86,7 @@
       background:
         linear-gradient(120deg, #1e2849f5, #1e2849d4),
         radial-gradient(circle at 78% 18%, #00adef47, transparent 34%),
-        radial-gradient(circle at 18% 90%, #b1ec523d, transparent 32%),
+        radial-gradient(circle at 18% 90%, #00b27c3d, transparent 32%),
         var(--navy);
       color: var(--white);
       padding: clamp(56px, 8vw, 100px) clamp(18px, 5vw, 72px);
@@ -118,12 +116,12 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #b1ec521f;
-      border: 1px solid #b1ec525c;
+      background: #00b0bd1f;
+      border: 1px solid #00b0bd5c;
       border-radius: 999px;
-      color: var(--green);
+      color: var(--teal);
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 700;
       padding: 6px 14px;
       min-height: 30px;
       margin-bottom: 24px;
@@ -135,7 +133,7 @@
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: var(--green);
+      background: var(--teal);
       flex: none;
       animation: pulse 2s ease-in-out infinite;
     }
@@ -154,7 +152,7 @@
       margin-bottom: 20px;
     }
 
-    .hero h1 span { color: var(--green); }
+    .hero h1 span { color: var(--teal); }
 
     .hero-desc {
       color: #ffffffc7;
@@ -221,11 +219,11 @@
     }
 
     .countdown-note {
-      color: var(--green);
+      color: var(--teal);
       font-size: 14px;
       font-weight: 700;
-      background: #b1ec521f;
-      border: 1px solid #b1ec5257;
+      background: #00b0bd1f;
+      border: 1px solid #00b0bd57;
       border-radius: 999px;
       padding: 8px 20px;
     }
@@ -290,7 +288,7 @@
       border-radius: 10px;
       display: inline-grid;
       place-items: center;
-      color: var(--mint);
+      color: var(--green);
     }
 
     .benefit-card strong {
@@ -334,7 +332,7 @@
       border-radius: 10px;
       display: inline-grid;
       place-items: center;
-      color: var(--mint);
+      color: var(--green);
       flex: none;
     }
 
@@ -418,8 +416,8 @@
 
     .tl-card.is-final {
       box-shadow: inset 4px 0 0 var(--green);
-      background: linear-gradient(135deg, #b1ec5229, #ffffff0f), #ffffff0f;
-      border-color: #b1ec524a;
+      background: linear-gradient(135deg, #00b27c29, #ffffff0f), #ffffff0f;
+      border-color: #00b27c4a;
     }
 
     /* ── PARTNER STRIP ──────────────────────────────────────────────────── */
@@ -475,7 +473,7 @@
     }
 
     .stat-box span {
-      color: var(--mint);
+      color: var(--green);
       font-size: 12px;
       font-weight: 800;
       text-transform: uppercase;
@@ -797,7 +795,7 @@
 
     if (diff <= 0) {
       document.getElementById('countdown').innerHTML =
-        '<div style="background:#b1ec521f;border:1px solid #b1ec525c;border-radius:16px;padding:22px 40px;color:var(--green);font-size:28px;font-weight:800;">Регистрация открыта!</div>';
+        '<div style="background:#00b0bd1f;border:1px solid #00b0bd5c;border-radius:16px;padding:22px 40px;color:var(--teal);font-size:28px;font-weight:700;">Регистрация открыта!</div>';
       document.querySelector('.countdown-label').textContent = '';
       document.querySelector('.countdown-note').textContent  = 'Регистрация открыта — подайте заявку';
       return;
