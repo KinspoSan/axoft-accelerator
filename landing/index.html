@@ -512,9 +512,15 @@
 
     .email-form {
       display: flex;
+      flex-direction: column;
       gap: 10px;
       width: 100%;
       max-width: 460px;
+    }
+
+    .email-row {
+      display: flex;
+      gap: 10px;
     }
 
     .email-form input[type="email"] {
@@ -536,7 +542,7 @@
       background: #ffffff20;
     }
 
-    .email-form button {
+    .email-row button {
       padding: 13px 22px;
       background: var(--teal);
       color: var(--white);
@@ -550,8 +556,47 @@
       transition: background .2s, opacity .2s;
     }
 
-    .email-form button:hover    { background: #00c9d8; }
-    .email-form button:disabled { opacity: .6; cursor: not-allowed; }
+    .email-row button:hover    { background: #00c9d8; }
+    .email-row button:disabled { opacity: .6; cursor: not-allowed; }
+
+    .consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .consent-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      flex: none;
+      margin-top: 2px;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+
+    .consent-row label {
+      font-size: 12px;
+      color: #ffffffa0;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .consent-row label a {
+      color: var(--teal);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .consent-row label a:hover { color: #00e5f5; }
+
+    .consent-error {
+      display: none;
+      font-size: 12px;
+      color: #ff7070;
+      margin-top: -4px;
+    }
+
+    .consent-error.show { display: block; }
 
     .email-success {
       display: none;
@@ -586,8 +631,8 @@
       .countdown       { gap: 8px; }
       .cd-sep          { padding-top: 14px; font-size: 32px; }
       footer           { flex-direction: column; align-items: flex-start; }
-      .email-form      { flex-direction: column; }
-      .email-form button { width: 100%; }
+      .email-row       { flex-direction: column; }
+      .email-row button { width: 100%; }
     }
   </style>
 </head>
@@ -646,8 +691,15 @@
 
   <p class="email-label">Оставьте email — пришлём, когда откроется регистрация</p>
   <form class="email-form" id="email-form">
-    <input type="email" id="email-input" placeholder="ваш@company.ru" autocomplete="email" required>
-    <button type="submit">Уведомить меня</button>
+    <div class="email-row">
+      <input type="email" id="email-input" placeholder="ваш@company.ru" autocomplete="email" required>
+      <button type="submit" id="email-submit">Уведомить меня</button>
+    </div>
+    <div class="consent-row">
+      <input type="checkbox" id="consent-check">
+      <label for="consent-check">Принимаю условия <a href="https://axoftglobal.ru/user-agreement" target="_blank" rel="noopener noreferrer">обработки и хранения персональных данных</a></label>
+    </div>
+    <div class="consent-error" id="consent-error">Необходимо принять условия обработки данных</div>
   </form>
   <div class="email-success" id="email-success">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -749,7 +801,7 @@
       </div>
       <h3>Искусственный интеллект</h3>
       <div class="dir-tags">
-        <span>ML-платформы</span><span>GenAI</span><span>NLP</span><span>Computer Vision</span>
+        <span>Машинное обучение</span><span>Генеративные модели</span><span>Обработка текста</span><span>Компьютерное зрение</span>
       </div>
     </div>
 
@@ -761,7 +813,7 @@
       </div>
       <h3>Цифровизация промышленности</h3>
       <div class="dir-tags">
-        <span>SCADA</span><span>MES</span><span>IoT</span><span>Digital Twin</span>
+        <span>Диспетчеризация</span><span>Управление производством</span><span>Промышленный интернет</span><span>Цифровые двойники</span>
       </div>
     </div>
 
@@ -771,9 +823,9 @@
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.11 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 2.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/>
         </svg>
       </div>
-      <h3>UC и коммуникации</h3>
+      <h3>Корпоративные коммуникации</h3>
       <div class="dir-tags">
-        <span>ВКС</span><span>Почта</span><span>Мессенджеры</span><span>Телефония</span>
+        <span>Видеоконференции</span><span>Корпоративная почта</span><span>Мессенджеры</span><span>Телефония</span>
       </div>
     </div>
 
@@ -783,9 +835,9 @@
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
       </div>
-      <h3>Безопасная разработка ПО</h3>
+      <h3>Безопасная разработка программ</h3>
       <div class="dir-tags">
-        <span>SAST</span><span>DAST</span><span>SOCA</span><span>DevSecOps</span>
+        <span>Анализ кода</span><span>Тестирование безопасности</span><span>Мониторинг угроз</span><span>Безопасные практики</span>
       </div>
     </div>
 
@@ -797,7 +849,7 @@
       </div>
       <h3>Промышленная роботизация</h3>
       <div class="dir-tags">
-        <span>AMR</span><span>Коллаборативные роботы</span><span>Автоматизация</span>
+        <span>Мобильные роботы</span><span>Роботы-помощники</span><span>Производственная автоматизация</span>
       </div>
     </div>
 
@@ -807,9 +859,9 @@
           <path d="M5 12l7-7 7 7M5 19l7-7 7 7"/>
         </svg>
       </div>
-      <h3>БАС / Анти-БПЛА</h3>
+      <h3>Беспилотные системы</h3>
       <div class="dir-tags">
-        <span>БПЛА мониторинг</span><span>Обнаружение</span><span>Противодействие</span>
+        <span>Мониторинг с воздуха</span><span>Обнаружение угроз</span><span>Противодействие</span>
       </div>
     </div>
   </div>
@@ -894,18 +946,49 @@
   setInterval(tick, 1000);
 
   // ── EMAIL CAPTURE ──────────────────────────────────────────────────────────
-  // Укажи URL эндпоинта для сохранения адресов.
-  // Принимает POST { email, source: 'landing', ts: ISO-string }.
-  // Варианты: Formspree (https://formspree.io/f/<id>), n8n webhook, Bitrix24.
-  // Если пусто — email сохраняется только в localStorage под ключом 'up_leads'.
-  const LEADS_ENDPOINT = '';
+  // Google Таблица: https://docs.google.com/spreadsheets/d/1l0vMtoDsZT6VbkimqBnAoqVCdPb8fF_LvXW3lGYrxNY/edit
+  //
+  // Как подключить (один раз):
+  // 1. Откройте таблицу → Расширения → Apps Script
+  // 2. Вставьте код ниже в редактор и сохраните:
+  //
+  //    function doPost(e) {
+  //      var sheet = SpreadsheetApp.getActiveSheet();
+  //      if (sheet.getLastRow() === 0) {
+  //        sheet.appendRow(['Email', 'Источник', 'Дата и время']);
+  //      }
+  //      sheet.appendRow([
+  //        e.parameter.email || '',
+  //        e.parameter.source || 'landing',
+  //        e.parameter.ts || new Date().toLocaleString('ru')
+  //      ]);
+  //      return ContentService
+  //        .createTextOutput(JSON.stringify({ status: 'ok' }))
+  //        .setMimeType(ContentService.MimeType.JSON);
+  //    }
+  //
+  // 3. Нажмите «Развернуть» → «Новое развёртывание»
+  //    Тип: Веб-приложение, Выполнять как: Я, Доступ: Все
+  // 4. Скопируйте URL развёртывания и вставьте его в LEADS_ENDPOINT ниже.
+
+  const LEADS_ENDPOINT = ''; // ← вставьте URL из шага 4
 
   document.getElementById('email-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn   = e.target.querySelector('button');
-    const email = document.getElementById('email-input').value.trim().toLowerCase();
-    const leads = JSON.parse(localStorage.getItem('up_leads') || '[]');
+    const btn       = document.getElementById('email-submit');
+    const consentEl = document.getElementById('consent-check');
+    const errorEl   = document.getElementById('consent-error');
+    const email     = document.getElementById('email-input').value.trim().toLowerCase();
 
+    // Проверка согласия
+    if (!consentEl.checked) {
+      errorEl.classList.add('show');
+      consentEl.focus();
+      return;
+    }
+    errorEl.classList.remove('show');
+
+    const leads = JSON.parse(localStorage.getItem('up_leads') || '[]');
     if (leads.includes(email)) { showEmailSuccess(); return; }
 
     btn.textContent = '…';
@@ -913,17 +996,22 @@
 
     if (LEADS_ENDPOINT) {
       try {
-        await fetch(LEADS_ENDPOINT, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ email, source: 'landing', ts: new Date().toISOString() })
-        });
+        const params = new URLSearchParams();
+        params.append('email',  email);
+        params.append('source', 'landing');
+        params.append('ts',     new Date().toLocaleString('ru'));
+        await fetch(LEADS_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
       } catch (_) { /* сохраним локально в любом случае */ }
     }
 
     leads.push(email);
     localStorage.setItem('up_leads', JSON.stringify(leads));
     showEmailSuccess();
+  });
+
+  // Сбросить ошибку согласия при клике по чекбоксу
+  document.getElementById('consent-check').addEventListener('change', () => {
+    document.getElementById('consent-error').classList.remove('show');
   });
 
   function showEmailSuccess() {
