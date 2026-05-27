@@ -945,33 +945,11 @@
   tick();
   setInterval(tick, 1000);
 
-  // ── EMAIL CAPTURE ──────────────────────────────────────────────────────────
-  // Google Таблица: https://docs.google.com/spreadsheets/d/1l0vMtoDsZT6VbkimqBnAoqVCdPb8fF_LvXW3lGYrxNY/edit
-  //
-  // Как подключить (один раз):
-  // 1. Откройте таблицу → Расширения → Apps Script
-  // 2. Вставьте код ниже в редактор и сохраните:
-  //
-  //    function doPost(e) {
-  //      var sheet = SpreadsheetApp.getActiveSheet();
-  //      if (sheet.getLastRow() === 0) {
-  //        sheet.appendRow(['Email', 'Источник', 'Дата и время']);
-  //      }
-  //      sheet.appendRow([
-  //        e.parameter.email || '',
-  //        e.parameter.source || 'landing',
-  //        e.parameter.ts || new Date().toLocaleString('ru')
-  //      ]);
-  //      return ContentService
-  //        .createTextOutput(JSON.stringify({ status: 'ok' }))
-  //        .setMimeType(ContentService.MimeType.JSON);
-  //    }
-  //
-  // 3. Нажмите «Развернуть» → «Новое развёртывание»
-  //    Тип: Веб-приложение, Выполнять как: Я, Доступ: Все
-  // 4. Скопируйте URL развёртывания и вставьте его в LEADS_ENDPOINT ниже.
+  // ── EMAIL CAPTURE → Bitrix24 CRM ───────────────────────────────────────────
+  // Лиды с лендинга попадают в Bitrix24 с пометкой [Лендинг UP] в названии.
+  // CRM → Лиды → фильтр по "[Лендинг UP]"
 
-  const LEADS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxckazXKnXXuxygW6vQXLJNc25pIiSGa1luNhrUErAgz28Vpe1qwA3OduwDGZW_MYKOrg/exec';
+  const BITRIX_WEBHOOK = 'https://axoft.bitrix24.ru/rest/1/itnzkkug13yjhs7v';
 
   document.getElementById('email-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -994,15 +972,22 @@
     btn.textContent = '…';
     btn.disabled    = true;
 
-    if (LEADS_ENDPOINT) {
-      try {
-        const params = new URLSearchParams();
-        params.append('email',  email);
-        params.append('source', 'landing');
-        params.append('ts',     new Date().toLocaleString('ru'));
-        await fetch(LEADS_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
-      } catch (_) { /* сохраним локально в любом случае */ }
-    }
+    try {
+      await fetch(`${BITRIX_WEBHOOK}/crm.lead.add.json`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fields: {
+            TITLE:       `[Лендинг UP] ${email}`,
+            EMAIL:       [{ VALUE: email, VALUE_TYPE: 'WORK' }],
+            SOURCE_ID:   'WEB',
+            STATUS_ID:   'NEW',
+            COMMENTS:    `Источник: лендинг Axoft × Сколково\nДата: ${new Date().toLocaleString('ru')}`,
+            ASSIGNED_BY_ID: 1
+          }
+        })
+      });
+    } catch (_) { /* сохраняем локально если Bitrix недоступен */ }
 
     leads.push(email);
     localStorage.setItem('up_leads', JSON.stringify(leads));
