@@ -972,22 +972,35 @@
     btn.textContent = '…';
     btn.disabled    = true;
 
+    const params = new URLSearchParams();
+    params.append('fields[TITLE]',                    `[Лендинг UP] ${email}`);
+    params.append('fields[EMAIL][0][VALUE]',          email);
+    params.append('fields[EMAIL][0][VALUE_TYPE]',     'WORK');
+    params.append('fields[SOURCE_ID]',                'WEB');
+    params.append('fields[STATUS_ID]',                'NEW');
+    params.append('fields[COMMENTS]',                 `Источник: лендинг Axoft × Сколково\nДата: ${new Date().toLocaleString('ru')}`);
+    params.append('fields[ASSIGNED_BY_ID]',           '1');
+
+    let bitrixOk = false;
     try {
-      await fetch(`${BITRIX_WEBHOOK}/crm.lead.add.json`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fields: {
-            TITLE:       `[Лендинг UP] ${email}`,
-            EMAIL:       [{ VALUE: email, VALUE_TYPE: 'WORK' }],
-            SOURCE_ID:   'WEB',
-            STATUS_ID:   'NEW',
-            COMMENTS:    `Источник: лендинг Axoft × Сколково\nДата: ${new Date().toLocaleString('ru')}`,
-            ASSIGNED_BY_ID: 1
-          }
-        })
+      const res  = await fetch(`${BITRIX_WEBHOOK}/crm.lead.add.json`, {
+        method: 'POST',
+        body:   params
       });
-    } catch (_) { /* сохраняем локально если Bitrix недоступен */ }
+      const data = await res.json();
+      bitrixOk   = !!data.result;
+    } catch (err) {
+      console.error('Bitrix24 error:', err);
+    }
+
+    if (!bitrixOk) {
+      btn.textContent = 'Уведомить меня';
+      btn.disabled    = false;
+      const errEl = document.getElementById('consent-error');
+      errEl.textContent = 'Не удалось отправить заявку. Попробуйте ещё раз.';
+      errEl.classList.add('show');
+      return;
+    }
 
     leads.push(email);
     localStorage.setItem('up_leads', JSON.stringify(leads));
