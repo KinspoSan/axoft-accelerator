@@ -425,13 +425,14 @@
       background: var(--soft);
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
+      padding: clamp(36px, 5vw, 56px) clamp(18px, 5vw, 72px);
     }
 
     .partner-inner {
       display: grid;
       grid-template-columns: 1fr auto;
       align-items: center;
-      gap: 32px;
+      gap: 48px;
     }
 
     .partner-text h2 {
@@ -451,30 +452,30 @@
     .partner-stats {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      gap: 14px;
       flex: none;
     }
 
     .stat-box {
       background: var(--white);
       border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 18px 20px;
-      min-width: 140px;
+      border-radius: 12px;
+      padding: 28px 32px;
+      min-width: 180px;
     }
 
     .stat-box strong {
       color: var(--navy);
-      font-size: clamp(24px, 3vw, 36px);
+      font-size: clamp(36px, 4vw, 52px);
       font-weight: 800;
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       line-height: 1;
     }
 
     .stat-box span {
       color: var(--green);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: .04em;
