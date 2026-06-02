@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ЛК Axoft × Сколково</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root{--navy:#1e2849;--nl:#273361;--nd:#141b33;--teal:#00b0bd;--tl:#00c9d8;--tdim:rgba(0,176,189,.12);--green:#00b37d;--gdim:rgba(0,179,125,.12);--blue:#00aeef;--bdim:rgba(0,174,239,.12);--sw:240px;--th:64px;--bg:#f0f2f7;--sur:#fff;--sur2:#f7f8fb;--bdr:rgba(30,40,73,.1);--txt:#1e2849;--txt2:#6b7290;--txt3:#a0a6be;--r:12px;--rs:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+
+/* TOPBAR */
+.tb{position:fixed;top:0;left:0;right:0;height:var(--th);background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100}
+.tb-logo{display:flex;align-items:center;gap:12px}
+.ax-badge{background:var(--teal);color:#fff;font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;letter-spacing:.5px}
+.tb-sep{width:1px;height:24px;background:rgba(255,255,255,.18)}
+.tb-sko{display:flex;align-items:center;gap:8px}
+.sko-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.tb-sko span{color:rgba(255,255,255,.8);font-size:13px;font-weight:500}
+.tb-r{display:flex;align-items:center;gap:12px}
+.tier-sw{display:flex;align-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px;gap:2px}
+.ts{padding:4px 14px;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.45);transition:all .2s;letter-spacing:.3px;font-family:'Golos Text',sans-serif}
+.ts.ab{background:var(--teal);color:#fff}
+.ts.as{background:var(--green);color:#fff}
+.nb{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s}
+.nb:hover{background:rgba(255,255,255,.13)}
+.nb-dot{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:#ff5c5c;border:2px solid var(--navy)}
+.uc{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 12px 4px 4px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);transition:background .2s}
+.uc:hover{background:rgba(255,255,255,.13)}
+.av{width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.uc span{color:rgba(255,255,255,.85);font-size:13px}
+
+/* SIDEBAR */
+.sb{position:fixed;top:var(--th);left:0;bottom:0;width:var(--sw);background:var(--nd);padding:20px 0;display:flex;flex-direction:column;z-index:50;border-right:1px solid rgba(255,255,255,.05)}
+.sb-lbl{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;padding:0 24px;margin-bottom:4px}
+.sb-sec{padding:0 12px;margin-bottom:6px}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);color:rgba(255,255,255,.55);font-size:14px;cursor:pointer;transition:all .18s;user-select:none}
+.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.ni.act{background:rgba(0,176,189,.15);color:var(--teal)}
+.ni i{font-size:18px;width:20px;text-align:center;flex-shrink:0}
+.nbadge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.bt{background:var(--teal);color:#fff}
+.bo{background:#ff8c42;color:#fff}
+.sb-bot{margin-top:auto;padding:16px 12px;border-top:1px solid rgba(255,255,255,.06)}
+.tc{border-radius:var(--rs);padding:14px;border:1px solid}
+.tc.base{background:rgba(0,176,189,.1);border-color:rgba(0,176,189,.25)}
+.tc.strat{background:rgba(0,179,125,.1);border-color:rgba(0,179,125,.3)}
+.tc-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.tc-lbl.base{color:var(--teal)}
+.tc-lbl.strat{color:var(--green)}
+.tc-name{font-size:15px;color:#fff;font-family:'Unbounded',sans-serif;font-weight:600;margin-bottom:6px}
+.tc-desc{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5}
+.tc-btn{margin-top:10px;width:100%;padding:7px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s;font-family:'Golos Text',sans-serif}
+.tc-btn.base{background:var(--teal);color:#fff}
+.tc-btn.strat{background:var(--green);color:#fff}
+
+/* MAIN */
+.main{margin-left:var(--sw);margin-top:var(--th);padding:28px 32px}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:16px}
+.ph-t{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:600;color:var(--navy)}
+.ph-s{font-size:13px;color:var(--txt2);margin-top:3px}
+.ha{display:flex;gap:10px;flex-shrink:0}
+.btn{padding:8px 18px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;display:inline-flex;align-items:center;gap:6px;font-family:'Golos Text',sans-serif}
+.btn-p{background:var(--teal);color:#fff}
+.btn-p:hover{background:var(--tl)}
+.btn-o{background:transparent;color:var(--navy);border:1px solid var(--bdr)}
+.btn-o:hover{background:var(--sur2)}
+.btn-g{background:var(--green);color:#fff}
+
+/* WELCOME CARD */
+.wc{background:var(--navy);border-radius:var(--r);padding:28px 32px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:relative;overflow:hidden}
+.wc::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(0,176,189,.07);pointer-events:none}
+.wc-gr{font-size:11px;color:var(--teal);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.wc-t{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:10px}
+.wc-s{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;max-width:420px;margin-bottom:18px}
+.wc-act{display:flex;gap:10px;flex-wrap:wrap}
+.wc-ring{width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.05);border:2px solid rgba(0,176,189,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.wc-n{font-family:'Unbounded',sans-serif;font-size:32px;font-weight:700;color:var(--teal);line-height:1}
+.wc-nl{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px}
+.wc-rs{font-size:11px;color:rgba(255,255,255,.4);margin-top:8px;text-align:center}
+
+/* ONBOARDING STRIP */
+.obs{display:flex;margin-bottom:22px;background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden}
+.os{flex:1;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;border-right:1px solid var(--bdr);cursor:pointer;transition:background .15s;position:relative}
+.os:last-child{border-right:none}
+.os:hover{background:var(--sur2)}
+.os-n{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'Unbounded',sans-serif}
+.os-done .os-n{background:var(--gdim);color:var(--green)}
+.os-act .os-n{background:var(--teal);color:#fff}
+.os-pend .os-n{background:var(--bg);color:var(--txt3);border:1.5px solid var(--bdr)}
+.os-lock .os-n{background:var(--bg);color:var(--txt3)}
+.os-lbl{font-size:11px;font-weight:600;text-align:center}
+.os-done .os-lbl{color:var(--green)}
+.os-act .os-lbl{color:var(--teal)}
+.os-pend .os-lbl,.os-lock .os-lbl{color:var(--txt3)}
+.os-sub{font-size:10px;color:var(--txt3);text-align:center;line-height:1.3}
+.os-act::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--teal)}
+.os-done::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--green)}
+
+/* STATS */
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.sc{background:var(--sur);border-radius:var(--r);padding:18px;border:1px solid var(--bdr)}
+.sc-i{width:38px;height:38px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:19px}
+.it{background:var(--tdim);color:var(--teal)}
+.ig{background:var(--gdim);color:var(--green)}
+.ib{background:var(--bdim);color:var(--blue)}
+.in{background:rgba(30,40,73,.08);color:var(--navy)}
+.sc-v{font-size:24px;font-weight:700;color:var(--navy);font-family:'Unbounded',sans-serif;line-height:1;margin-bottom:4px}
+.sc-l{font-size:12px;color:var(--txt2)}
+.sc-h{font-size:11px;color:var(--txt3);margin-top:5px}
+
+/* PILLS */
+.pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.pt{background:var(--tdim);color:var(--teal)}
+.pg{background:var(--gdim);color:var(--green)}
+.pb{background:var(--bdim);color:var(--blue)}
+.pn{background:rgba(30,40,73,.08);color:var(--navy)}
+.po{background:rgba(255,140,66,.12);color:#d06000}
+.pgr{background:var(--bg);color:var(--txt3)}
+
+/* CARDS */
+.card{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden}
+.ch{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr)}
+.ct{font-size:14px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px}
+.ct i{color:var(--teal);font-size:16px}
+.cb{padding:18px 20px}
+.cl{font-size:12px;color:var(--teal);cursor:pointer}
+.cl:hover{text-decoration:underline}
+.two{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-bottom:22px}
+
+/* QUICK ACTIONS */
+.qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.qa{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);padding:18px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:10px}
+.qa:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:0 4px 16px rgba(30,40,73,.08)}
+.qa-i{width:40px;height:40px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:20px}
+.qa-n{font-size:13px;font-weight:600;color:var(--navy)}
+.qa-s{font-size:12px;color:var(--txt2);line-height:1.4}
+.qa-arr{color:var(--teal);font-size:16px;margin-top:auto;align-self:flex-start}
+
+/* STRAT MANAGER */
+.mgr{background:var(--sur);border-radius:var(--r);border:1px solid rgba(0,179,125,.25);padding:18px;display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.mgr-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--green),#00d49a);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.mgr-n{font-size:14px;font-weight:600;color:var(--navy)}
+.mgr-r{font-size:12px;color:var(--txt2);margin-top:2px}
+.mgr-act{margin-left:auto;display:flex;gap:8px}
+
+/* STRAT RESOURCES */
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.res{background:var(--sur2);border-radius:var(--rs);border:1px solid var(--bdr);padding:12px}
+.res-v{font-size:16px;font-weight:700;color:var(--navy);font-family:'Unbounded',sans-serif}
+.res-l{font-size:11px;color:var(--txt2);margin-top:2px}
+
+/* NOTIFICATIONS */
+.notif{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--bdr)}
+.notif:last-child{border-bottom:none}
+.nd{width:8px;height:8px;border-radius:50%;background:var(--teal);margin-top:5px;flex-shrink:0}
+.nd.gr{background:var(--txt3)}
+.nt{font-size:13px;color:var(--navy);line-height:1.45}
+.nm{font-size:11px;color:var(--txt3);margin-top:3px}
+
+/* SVC ITEM in dashboard */
+.svc-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--bdr)}
+.svc-item:last-child{border-bottom:none}
+.svc-il{display:flex;align-items:center;gap:10px}
+.svc-ico{width:32px;height:32px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.svc-nm{font-size:13px;font-weight:500;color:var(--navy)}
+.svc-ct{font-size:11px;color:var(--txt2)}
+.svc-pr{font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap}
+.fr-c{color:var(--green)}
+
+/* PATH */
+.pg2{display:flex;flex-direction:column;gap:10px}
+.ps{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden}
+.ps.psa{border-color:var(--teal);border-width:1.5px}
+.ps.pss{border-color:rgba(0,179,125,.35);border-width:1.5px}
+.ps.psl{opacity:.55}
+.ps-h{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;transition:background .15s}
+.ps-h:hover{background:var(--sur2)}
+.sn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;flex-shrink:0}
+.sn-d{background:var(--green);color:#fff}
+.sn-a{background:var(--teal);color:#fff}
+.sn-p{background:var(--sur2);color:var(--txt2);border:1.5px solid var(--bdr)}
+.sn-l{background:var(--bg);color:var(--txt3)}
+.si{flex:1}
+.si-n{font-size:14px;font-weight:600;color:var(--navy)}
+.si-d{font-size:12px;color:var(--txt2);margin-top:2px}
+.sa{color:var(--txt3);transition:transform .25s;font-size:18px}
+.sa.op{transform:rotate(180deg)}
+.ps-b{padding:0 18px 16px 64px;display:none}
+.ps-b.op{display:block}
+.st{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;color:var(--navy)}
+.st i{font-size:15px}
+.std i{color:var(--green)}
+.stt i{color:var(--txt3)}
+
+/* INFO/STRAT BOXES */
+.ibox{background:rgba(0,176,189,.06);border:1px solid rgba(0,176,189,.2);border-radius:var(--rs);padding:10px 14px;font-size:12px;color:var(--txt2);display:flex;align-items:flex-start;gap:8px;margin-top:10px}
+.ibox i{color:var(--teal);font-size:15px;flex-shrink:0;margin-top:1px}
+.sbox{background:rgba(0,179,125,.07);border:1px solid rgba(0,179,125,.2);border-radius:var(--rs);padding:10px 14px;font-size:12px;color:var(--txt2);display:flex;align-items:center;gap:8px;margin-top:10px}
+.sbox i{color:var(--green);font-size:16px;flex-shrink:0}
+
+/* TIER DIFF */
+.td{border-radius:var(--rs);padding:14px;margin-bottom:16px;border:1px solid}
+.td.base{background:rgba(0,176,189,.06);border-color:rgba(0,176,189,.2)}
+.td.strat{background:rgba(0,179,125,.06);border-color:rgba(0,179,125,.25)}
+.td-t{font-size:13px;font-weight:600;margin-bottom:8px}
+.td.base .td-t{color:var(--teal)}
+.td.strat .td-t{color:var(--green)}
+.td-li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt2);padding:3px 0}
+.td-li i{font-size:13px}
+.td.base .td-li i{color:var(--teal)}
+.td.strat .td-li i{color:var(--green)}
+
+/* SERVICES */
+.sf{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.fb{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--sur);color:var(--txt2);transition:all .15s;font-family:'Golos Text',sans-serif}
+.fb.fa{background:var(--navy);color:#fff;border-color:var(--navy)}
+.fb:hover:not(.fa){background:var(--sur2)}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.svcc{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);padding:18px;display:flex;flex-direction:column;transition:box-shadow .18s}
+.svcc:hover{box-shadow:0 4px 16px rgba(30,40,73,.08)}
+.svcc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px}
+.svcc-t{font-size:13px;font-weight:600;color:var(--navy);line-height:1.4}
+.svcc-e{font-size:11px;color:var(--txt2);margin-top:3px}
+.svcc-pr{font-size:14px;font-weight:700;color:var(--navy);white-space:nowrap}
+.svcc-pr.fr{color:var(--green)}
+.svcc-pr.sk{color:var(--blue)}
+.svcc-d{font-size:12px;color:var(--txt2);line-height:1.5;flex:1;margin-bottom:14px}
+.svcc-ft{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sb2{padding:7px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:'Golos Text',sans-serif}
+.sp{background:var(--teal);color:#fff}
+.sp:hover{background:var(--tl)}
+.ss{background:transparent;color:var(--teal);border:1px solid var(--teal)}
+.ss:hover{background:var(--tdim)}
+.sv{background:var(--gdim);color:var(--green);border:1px solid rgba(0,179,125,.3)}
+.sv:hover{background:rgba(0,179,125,.2)}
+.sg2{background:var(--bdim);color:var(--blue);border:1px solid rgba(0,174,239,.3)}
+
+/* PACKAGES */
+.pkg-g{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pkg{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s}
+.pkg:hover{box-shadow:0 6px 24px rgba(30,40,73,.1)}
+.pkg-h{padding:22px 22px 18px}
+.pkg-badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:10px;display:inline-block;margin-bottom:12px}
+.pkg-tt{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.pkg-goal{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:14px}
+.pkg-price{font-size:20px;font-weight:700;font-family:'Unbounded',sans-serif}
+.pkg-eng{display:flex;align-items:center;gap:8px;padding:10px 22px;background:var(--sur2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);font-size:11px;color:var(--txt2)}
+.pkg-eng-dots{display:flex;gap:3px;flex-shrink:0}
+.pkg-eng-dot{width:9px;height:9px;border-radius:50%}
+.pkg-eng-dot.on{background:var(--teal)}
+.pkg-eng-dot.on.g{background:var(--green)}
+.pkg-eng-dot.on.b{background:var(--blue)}
+.pkg-eng-dot.off{background:var(--bdr)}
+.pkg-b{padding:18px 22px;flex:1}
+.pkg-sec-lbl{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.pkg-li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:12px;color:var(--txt);line-height:1.45;border-bottom:1px solid var(--bdr)}
+.pkg-li:last-child{border-bottom:none}
+.pkg-li i{font-size:14px;flex-shrink:0;margin-top:1px}
+.pkg-res{background:var(--sur2);border-radius:var(--rs);padding:10px 12px;font-size:11px;color:var(--txt2);line-height:1.5;margin-top:12px}
+.pkg-res strong{color:var(--navy);font-weight:600}
+.pkg-ft{padding:16px 22px;border-top:1px solid var(--bdr);display:flex;align-items:center;gap:8px}
+/* COMPARISON TABLE */
+.cmp-wrap{margin-top:28px}
+.cmp-lbl{font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
+.cmp{width:100%;border-collapse:collapse;font-size:12px}
+.cmp th{padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:var(--navy);border-bottom:2px solid var(--bdr);background:var(--sur2)}
+.cmp th:first-child{text-align:left}
+.cmp td{padding:9px 14px;text-align:center;border-bottom:1px solid var(--bdr);color:var(--txt2)}
+.cmp td:first-child{text-align:left;font-weight:500;color:var(--navy)}
+.cmp tr:last-child td{border-bottom:none}
+.cmp tr:hover td{background:var(--sur2)}
+.cmp-y{color:var(--green);font-size:15px}
+.cmp-n{color:var(--bdr);font-size:16px}
+.cmp-num{color:var(--teal);font-weight:700}
+.cmp-pr{font-weight:700;color:var(--navy)}
+
+/* ORDERS */
+.ot{width:100%;border-collapse:collapse}
+.ot th{text-align:left;font-size:11px;color:var(--txt2);font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--bdr)}
+.ot td{padding:13px 14px;font-size:13px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.ot tr:last-child td{border-bottom:none}
+.ot tr:hover td{background:var(--sur2)}
+.stag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;display:inline-block}
+.sa2{background:var(--tdim);color:var(--teal)}
+.sr2{background:rgba(255,140,66,.12);color:#d06000}
+.sd{background:var(--gdim);color:var(--green)}
+
+/* MATERIALS */
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mc{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.mc:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(30,40,73,.08)}
+.mth{height:80px;display:flex;align-items:center;justify-content:center;font-size:32px}
+.mv{background:linear-gradient(135deg,var(--navy),var(--nl))}
+.md{background:linear-gradient(135deg,#1a3a6b,#0d5f99)}
+.mc2{background:linear-gradient(135deg,#0d5c4a,#0a7a60)}
+.mb{padding:12px}
+.m-tag{font-size:10px;font-weight:700;margin-bottom:5px}
+.m-nm{font-size:12px;font-weight:600;color:var(--navy);line-height:1.4}
+.m-mt{font-size:11px;color:var(--txt3);margin-top:4px}
+
+/* VOUCHER */
+.vou{background:var(--sur2);border-radius:var(--rs);border:1px dashed var(--bdr);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.vou:last-child{margin-bottom:0}
+.vou-b{color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;white-space:nowrap}
+
+/* SUPPORT */
+.cc{background:var(--navy);border-radius:var(--r);padding:20px;color:#fff}
+.cc h3{font-size:15px;font-weight:600;margin-bottom:6px}
+.cc p{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:12px;line-height:1.5}
+.cc-v{font-size:16px;font-weight:600;color:var(--teal)}
+.faq-item{background:var(--sur);border-radius:var(--rs);border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
+.faq-q{padding:13px 16px;font-size:13px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .15s}
+.faq-q:hover{background:var(--sur2)}
+.faq-a{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s;font-size:13px;color:var(--txt2);line-height:1.6}
+.faq-a.op{max-height:200px;padding:0 16px 14px}
+
+/* SETTINGS */
+.set-s{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);margin-bottom:16px;overflow:hidden}
+.set-h{padding:14px 20px;border-bottom:1px solid var(--bdr);font-size:13px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px}
+.set-h i{color:var(--teal);font-size:16px}
+.set-r{display:flex;align-items:center;padding:13px 20px;border-bottom:1px solid var(--bdr)}
+.set-r:last-child{border-bottom:none}
+.set-l{font-size:13px;font-weight:500;color:var(--navy);flex:0 0 200px}
+.set-v{font-size:13px;color:var(--txt2);flex:1}
+.set-e{color:var(--teal);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px}
+.set-e:hover{text-decoration:underline}
+
+/* PAGES */
+.page{display:none}
+.page.act{display:block}
+
+/* ── ДИАГНОСТИКА ──────────────────────────────────── */
+.diag-wrap{--dg-navy:#1B3A6B;--dg-blue:#2E6EB5;--dg-blue-lt:#EDF4FC;--dg-green:#1A7A4A;--dg-green-lt:#E2F4EB;--dg-teal-d:#1A6B6B;--dg-teal-lt:#E0F2F2;--dg-amber:#B06000;--dg-amber-lt:#FFF3DC;--dg-red:#A02020;--dg-red-lt:#FDE8E8;--dg-grey:#3A3A3A;font-family:'Golos Text',sans-serif;font-size:15px;color:var(--dg-grey)}
+.dg-prog{background:var(--navy);border-radius:var(--r);overflow:hidden;margin-bottom:20px;padding:12px 0 16px}
+.dg-prog-track{display:flex;position:relative;padding:0 24px}
+.dg-prog-line{position:absolute;top:14px;left:24px;right:24px;height:2px;background:rgba(255,255,255,.15)}
+.dg-prog-fill{position:absolute;top:14px;left:24px;height:2px;background:var(--teal);transition:width .4s;z-index:1}
+.dg-prog-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;z-index:2}
+.dg-prog-dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:rgba(255,255,255,.5);transition:all .3s}
+.dg-prog-step.active .dg-prog-dot{background:var(--teal);border-color:#00d9e8;color:#fff}
+.dg-prog-step.done .dg-prog-dot{background:var(--green);border-color:#52C68A;color:#fff}
+.dg-prog-lbl{font-size:11px;color:rgba(255,255,255,.5)}
+.dg-prog-step.active .dg-prog-lbl,.dg-prog-step.done .dg-prog-lbl{color:rgba(255,255,255,.85)}
+.dg-card{background:#fff;border-radius:var(--r);border:1px solid var(--bdr);padding:28px 32px;margin-bottom:16px;box-shadow:0 2px 14px rgba(30,40,73,.06)}
+.dg-scr{display:none}.dg-scr.on{display:block}
+.dg-cat-hdr{display:flex;align-items:flex-start;gap:14px;padding-bottom:16px;border-bottom:2px solid var(--bdr);margin-bottom:26px}
+.dg-cat-pill{padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;margin-top:2px}
+.dg-cat-ttl{font-size:18px;font-weight:700;color:var(--navy)}
+.dg-cat-sub{font-size:13px;color:#888;margin-top:3px}
+.dg-g-q{margin-bottom:26px}
+.dg-g-q-lbl{font-weight:600;color:var(--navy);margin-bottom:10px;font-size:15px;display:flex;align-items:flex-start;gap:9px}
+.dg-g-q-lbl .n{background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.dg-opts{display:flex;flex-direction:column;gap:7px}
+.dg-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:var(--rs);cursor:pointer;transition:border-color .15s,background .15s}
+.dg-opt:hover{border-color:var(--teal);background:var(--tdim)}.dg-opt.sel{border-color:var(--teal);background:var(--tdim)}
+.dg-opt.warn{border-color:#E8B060;background:var(--dg-amber-lt)}.dg-opt.stop{border-color:#E08080;background:var(--dg-red-lt)}
+.dg-opt input[type=radio]{margin-top:3px;accent-color:var(--teal);flex-shrink:0}
+.dg-opt-txt{font-size:14px;line-height:1.5;color:var(--dg-grey)}
+.dg-badge{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:6px}
+.dg-badge-w{background:#FFE8B0;color:#8A5000}.dg-badge-s{background:#FFD0D0;color:#900}
+.dg-fail-box{border-radius:var(--rs);padding:16px 20px;margin-top:16px;display:none}.dg-fail-box.on{display:block}
+.dg-fail-title{font-weight:700;font-size:15px;margin-bottom:6px}.dg-fail-txt{font-size:14px}
+.dg-cat-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px}
+.dg-cn{padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;background:var(--sur2);color:#888;border:1.5px solid var(--bdr)}
+.dg-cn.act{color:#fff;border-color:transparent;background:var(--teal)}.dg-cn.done{background:var(--gdim);color:var(--green);border-color:rgba(0,179,125,.3)}
+.dg-sq{margin-bottom:28px}
+.dg-sq-lbl{font-weight:600;color:var(--navy);margin-bottom:11px;font-size:15px;display:flex;align-items:flex-start;gap:8px}
+.dg-wt{font-size:11px;background:var(--sur2);color:#777;padding:2px 8px;border-radius:10px;white-space:nowrap;margin-top:2px}
+.dg-sopts{display:flex;flex-direction:column;gap:6px}
+.dg-sopt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:var(--rs);cursor:pointer;transition:border-color .15s,background .15s}
+.dg-sopt:hover{border-color:var(--teal);background:var(--tdim)}.dg-sopt.sel{border-color:var(--teal);background:var(--tdim)}
+.dg-sopt input[type=radio]{margin-top:3px;accent-color:var(--teal);flex-shrink:0}
+.dg-sn{font-weight:700;color:var(--teal);min-width:18px;font-size:14px}
+.dg-st{font-size:14px;line-height:1.5;color:var(--dg-grey)}
+.dg-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:26px}
+.dg-btn{padding:11px 26px;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:'Golos Text',sans-serif}
+.dg-btn-p{background:var(--teal);color:#fff}.dg-btn-p:hover{background:var(--tl)}.dg-btn-p:disabled{background:#bbb;cursor:not-allowed}
+.dg-btn-s{background:#fff;color:var(--navy);border:1.5px solid var(--bdr)}.dg-btn-s:hover{border-color:var(--teal);color:var(--teal)}
+.dg-wc-hero{text-align:center;padding:8px 0 24px}
+.dg-wc-hero h1{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:10px;font-family:'Unbounded',sans-serif;line-height:1.3}
+.dg-wc-hero p{font-size:14px;color:#666;max-width:520px;margin:0 auto 22px}
+.dg-wc-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:26px}
+.dg-tag{padding:4px 14px;border-radius:20px;font-size:13px;font-weight:600}
+.dg-tag-bl{background:var(--tdim);color:var(--teal)}.dg-tag-gn{background:var(--gdim);color:var(--green)}
+.dg-wc-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.dg-ws{background:var(--sur2);border-radius:var(--rs);padding:18px 14px;text-align:center}
+.dg-ws-ic{font-size:28px;margin-bottom:8px}.dg-ws-tt{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}.dg-ws-tx{font-size:12px;color:#777}
+.dg-ring-wrap{width:150px;height:150px;margin:0 auto 20px;position:relative}
+.dg-ring-wrap svg{transform:rotate(-90deg)}
+.dg-ring-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.dg-ring-num{font-size:38px;font-weight:800;color:var(--navy);line-height:1}.dg-ring-max{font-size:13px;color:#999}
+.dg-res-lvl{text-align:center;font-size:19px;font-weight:700;margin-bottom:5px}
+.dg-res-desc{text-align:center;color:#666;font-size:14px;margin-bottom:28px;max-width:540px;margin-left:auto;margin-right:auto}
+.dg-bar-section{margin:20px 0 24px}.dg-bar-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px}
+.dg-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.dg-bar-lbl{width:185px;font-size:13px;color:var(--navy);font-weight:600;flex-shrink:0}
+.dg-bar-track{flex:1;height:9px;background:var(--sur2);border-radius:5px;overflow:hidden}
+.dg-bar-fill{height:100%;border-radius:5px;transition:width .7s}
+.dg-bar-val{width:44px;text-align:right;font-size:13px;font-weight:700}
+.dg-recs-wrap{margin-top:24px}.dg-recs-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px}
+.dg-rec{display:flex;gap:11px;padding:13px 15px;border-radius:var(--rs);margin-bottom:9px;border:1.5px solid var(--bdr)}
+.dg-rec-ico{font-size:17px;font-weight:700;flex-shrink:0;margin-top:1px;width:20px;text-align:center}
+.dg-rec-cat{font-size:11px;color:#999;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}.dg-rec-txt{font-size:14px;color:var(--dg-grey)}
+.dg-rec-ok{border-color:#9EDDB9;background:var(--gdim)}.dg-rec-wn{border-color:#F0C868;background:#FFFBEE}.dg-rec-bd{border-color:#F0A0A0;background:var(--dg-red-lt)}
+.dg-pkg-block{margin-top:26px;padding:22px 24px;border-radius:var(--rs);border:2px solid var(--bdr);background:var(--sur2)}
+.dg-pkg-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.dg-pkg-title{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:'Unbounded',sans-serif}
+.dg-pkg-desc{font-size:14px;color:#555;line-height:1.6}
+.dg-note{font-size:12px;color:#aaa;text-align:center;margin-top:14px}
+</style>
+</head>
+<body>
+
+<header class="tb">
+  <div class="tb-logo">
+    <div class="ax-badge">AXOFT</div>
+    <div class="tb-sep"></div>
+    <div class="tb-sko"><div class="sko-dot"></div><span>Сколково</span></div>
+  </div>
+  <div class="tb-r">
+    <div class="tier-sw">
+      <button class="ts ab" id="ts-base" onclick="setTier('base')">UP BASE</button>
+      <button class="ts" id="ts-strat" onclick="setTier('strat')">UP STRATEGIC</button>
+    </div>
+    <button class="nb"><i class="ti ti-bell" style="font-size:16px"></i><div class="nb-dot"></div></button>
+    <div class="uc"><div class="av">АИ</div><span>АИСофт</span></div>
+  </div>
+</header>
+
+<nav class="sb">
+  <div class="sb-lbl">Навигация</div>
+  <div class="sb-sec">
+    <div class="ni act" onclick="goPage('dash')"><i class="ti ti-layout-dashboard"></i>Дашборд</div>
+    <div class="ni" onclick="goPage('path')"><i class="ti ti-route"></i>Мой путь<span class="nbadge bt" id="path-badge">1/7</span></div>
+    <div class="ni" onclick="goPage('diag')"><i class="ti ti-stethoscope"></i>Диагностика</div>
+    <div class="ni" onclick="goPage('services')"><i class="ti ti-apps"></i>Сервисы</div>
+    <div class="ni" onclick="goPage('orders')"><i class="ti ti-shopping-cart"></i>Заказы<span class="nbadge bo" id="orders-badge">0</span></div>
+    <div class="ni" onclick="goPage('materials')"><i class="ti ti-books"></i>Материалы</div>
+  </div>
+  <div class="sb-lbl" style="margin-top:16px">Аккаунт</div>
+  <div class="sb-sec">
+    <div class="ni" onclick="goPage('support')"><i class="ti ti-headset"></i>Поддержка</div>
+    <div class="ni" onclick="goPage('settings')"><i class="ti ti-settings"></i>Настройки</div>
+  </div>
+  <div class="sb-bot">
+    <div class="tc base" id="sb-base">
+      <div class="tc-lbl base">Текущий тариф</div>
+      <div class="tc-name">UP BASE</div>
+      <div class="tc-desc">Автоматизированный трек. Пройдите этапы — Axoft оценит вас.</div>
+      <button class="tc-btn base" onclick="goPage('path')">Мой прогресс →</button>
+    </div>
+    <div class="tc strat" id="sb-strat" style="display:none">
+      <div class="tc-lbl strat">Текущий тариф</div>
+      <div class="tc-name">UP STRATEGIC</div>
+      <div class="tc-desc">Персональный трек. Менеджер Анна С. сопровождает вас.</div>
+      <button class="tc-btn strat" onclick="goPage('path')">Мой прогресс →</button>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<div id="page-dash" class="page act">
+  <div class="ph">
+    <div>
+      <div class="ph-t">Добро пожаловать, АИСофт!</div>
+      <div class="ph-s" id="dash-sub">Программа запущена · Этап 1 из 7 · UP BASE · Направление: ИИ</div>
+    </div>
+    <div class="ha">
+      <button class="btn btn-o" onclick="goPage('services')"><i class="ti ti-apps" style="font-size:14px"></i>Сервисы</button>
+      <button class="btn btn-p" id="dash-cta" onclick="goPage('path')"><i class="ti ti-route" style="font-size:14px"></i>Начать путь</button>
+    </div>
+  </div>
+
+  <!-- Welcome: BASE -->
+  <div class="wc" id="wc-base">
+    <div>
+      <div class="wc-gr">🎉 Регистрация завершена</div>
+      <div class="wc-t">Вы в программе<br>Axoft × Сколково</div>
+      <div class="wc-s">Регистрация пройдена. Впереди 6 этапов, которые приведут к дистрибьюторскому контракту и каналу 3 500+ партнёров Axoft.</div>
+      <div class="wc-act">
+        <button class="btn btn-p" onclick="goPage('path')"><i class="ti ti-route" style="font-size:13px"></i>Начать путь</button>
+        <button class="btn btn-o" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2)" onclick="goPage('materials')"><i class="ti ti-books" style="font-size:13px"></i>Материалы</button>
+      </div>
+    </div>
+    <div style="flex-shrink:0;text-align:center">
+      <div class="wc-ring"><div class="wc-n">1</div><div class="wc-nl">из 7 этапов</div></div>
+      <div class="wc-rs">Регистрация завершена ✓</div>
+    </div>
+  </div>
+
+  <!-- Welcome: STRAT -->
+  <div class="wc" id="wc-strat" style="display:none;background:linear-gradient(135deg,#0a3a2a,#0d5c4a)">
+    <div>
+      <div class="wc-gr" style="color:var(--green)">🏆 UP STRATEGIC активирован</div>
+      <div class="wc-t">Вы в персональном треке</div>
+      <div class="wc-s">Axoft выбрал вас для стратегического партнёрства. Менеджер Анна С. уже готова сопровождать вас к контракту.</div>
+      <div class="wc-act">
+        <button class="btn btn-g" onclick="goPage('path')"><i class="ti ti-route" style="font-size:13px"></i>Мой путь</button>
+        <button class="btn btn-o" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2)" onclick="goPage('services')"><i class="ti ti-apps" style="font-size:13px"></i>Все сервисы</button>
+      </div>
+    </div>
+    <div style="flex-shrink:0;text-align:center">
+      <div class="wc-ring" style="border-color:rgba(0,179,125,.4)"><div class="wc-n" style="color:var(--green)">6</div><div class="wc-nl">из 7 этапов</div></div>
+      <div class="wc-rs">UP STRATEGIC активен</div>
+    </div>
+  </div>
+
+  <!-- Onboarding strip: BASE -->
+  <div class="obs" id="ob-base">
+    <div class="os os-act" onclick="goPage('path')"><div class="os-n">1</div><div class="os-lbl">Регистрация</div><div class="os-sub">Вы здесь</div></div>
+    <div class="os os-pend" onclick="goPage('path')"><div class="os-n">2</div><div class="os-lbl">Анкета</div><div class="os-sub">Следующий</div></div>
+    <div class="os os-pend"><div class="os-n">3</div><div class="os-lbl">Сервисы</div><div class="os-sub">Бесплатные</div></div>
+    <div class="os os-pend"><div class="os-n">4</div><div class="os-lbl">Платные</div><div class="os-sub">ТД, упаковка</div></div>
+    <div class="os os-pend"><div class="os-n">5</div><div class="os-lbl">Оценка</div><div class="os-sub">Axoft решает</div></div>
+    <div class="os os-lock"><div class="os-n"><i class="ti ti-lock" style="font-size:12px"></i></div><div class="os-lbl">Strategic</div><div class="os-sub">По решению</div></div>
+    <div class="os os-lock"><div class="os-n"><i class="ti ti-lock" style="font-size:12px"></i></div><div class="os-lbl">Контракт</div><div class="os-sub">Финал</div></div>
+  </div>
+
+  <!-- Onboarding strip: STRAT -->
+  <div class="obs" id="ob-strat" style="display:none">
+    <div class="os os-done"><div class="os-n"><i class="ti ti-check" style="font-size:12px"></i></div><div class="os-lbl">Регистрация</div><div class="os-sub">Готово</div></div>
+    <div class="os os-done"><div class="os-n"><i class="ti ti-check" style="font-size:12px"></i></div><div class="os-lbl">Анкета</div><div class="os-sub">Готово</div></div>
+    <div class="os os-done"><div class="os-n"><i class="ti ti-check" style="font-size:12px"></i></div><div class="os-lbl">Сервисы</div><div class="os-sub">Готово</div></div>
+    <div class="os os-done"><div class="os-n"><i class="ti ti-check" style="font-size:12px"></i></div><div class="os-lbl">Платные</div><div class="os-sub">Готово</div></div>
+    <div class="os os-done"><div class="os-n"><i class="ti ti-check" style="font-size:12px"></i></div><div class="os-lbl">Оценка</div><div class="os-sub">Готово</div></div>
+    <div class="os os-act"><div class="os-n" style="background:var(--green);color:#fff">6</div><div class="os-lbl" style="color:var(--green)">Strategic</div><div class="os-sub">Вы здесь</div></div>
+    <div class="os os-pend"><div class="os-n">7</div><div class="os-lbl">Контракт</div><div class="os-sub">Следующий</div></div>
+  </div>
+
+  <!-- Stats: BASE -->
+  <div class="sr" id="stats-base">
+    <div class="sc"><div class="sc-i it"><i class="ti ti-route"></i></div><div class="sc-v">1/7</div><div class="sc-l">Текущий этап</div><div class="sc-h">Регистрация пройдена</div></div>
+    <div class="sc"><div class="sc-i ig"><i class="ti ti-ticket"></i></div><div class="sc-v">—</div><div class="sc-l">Ваучеры</div><div class="sc-h">Только для Strategic</div></div>
+    <div class="sc"><div class="sc-i ib"><i class="ti ti-books"></i></div><div class="sc-v">0/3</div><div class="sc-l">Курсов пройдено</div><div class="sc-h">Начните с диагностики</div></div>
+    <div class="sc"><div class="sc-i in"><i class="ti ti-building-skyscraper"></i></div><div class="sc-v" style="font-size:16px">UP BASE</div><div class="sc-l">Тариф</div><div class="sc-h">Авто-трек активен</div></div>
+  </div>
+
+  <!-- Stats: STRAT -->
+  <div class="sr" id="stats-strat" style="display:none">
+    <div class="sc"><div class="sc-i ig"><i class="ti ti-route"></i></div><div class="sc-v">6/7</div><div class="sc-l">Текущий этап</div><div class="sc-h">UP STRATEGIC активен</div></div>
+    <div class="sc"><div class="sc-i it"><i class="ti ti-ticket"></i></div><div class="sc-v">3</div><div class="sc-l">Ваучера Axoft</div><div class="sc-h">Баланс: 280 000 ₽</div></div>
+    <div class="sc"><div class="sc-i ib"><i class="ti ti-books"></i></div><div class="sc-v">3/3</div><div class="sc-l">Курсов пройдено</div><div class="sc-h">Все завершены ✓</div></div>
+    <div class="sc"><div class="sc-i in"><i class="ti ti-user-check"></i></div><div class="sc-v" style="font-size:15px">Анна С.</div><div class="sc-l">Менеджер</div><div class="sc-h">Персональный трек</div></div>
+  </div>
+
+  <!-- QA: BASE -->
+  <div id="qa-base">
+    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Первые шаги</div>
+    <div class="qa-grid">
+      <div class="qa" onclick="goPage('diag')"><div class="qa-i ig"><i class="ti ti-stethoscope"></i></div><div class="qa-n">Пройти диагностику</div><div class="qa-s">Бесплатный чек-лист: 13 критериев, 5 категорий — балл и рекомендации за 10-12 минут</div><i class="ti ti-arrow-right qa-arr"></i></div>
+      <div class="qa" onclick="goPage('services')"><div class="qa-i it"><i class="ti ti-search"></i></div><div class="qa-n">Заказать аудит</div><div class="qa-s">Экспертная оценка готовности продукта к каналу — от 100 000 ₽</div><i class="ti ti-arrow-right qa-arr"></i></div>
+      <div class="qa" onclick="goPage('services')"><div class="qa-i in"><i class="ti ti-apps"></i></div><div class="qa-n">Изучить пакеты</div><div class="qa-s">3 пакета консалтинга: бесплатно, от 100 тыс. ₽, от 300 тыс. ₽</div><i class="ti ti-arrow-right qa-arr"></i></div>
+    </div>
+  </div>
+
+  <!-- QA: STRAT -->
+  <div id="qa-strat" style="display:none">
+    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Стратегический трек</div>
+    <div class="mgr">
+      <div class="mgr-av">АС</div>
+      <div><div class="mgr-n">Анна Смирнова</div><div class="mgr-r">Персональный менеджер Axoft · UP STRATEGIC</div></div>
+      <div class="mgr-act">
+        <button class="btn btn-o" style="font-size:12px;padding:6px 14px"><i class="ti ti-message-2" style="font-size:13px"></i>Написать</button>
+        <button class="btn btn-p" style="font-size:12px;padding:6px 14px"><i class="ti ti-calendar" style="font-size:13px"></i>Встреча</button>
+      </div>
+    </div>
+    <div class="res-grid">
+      <div class="res"><div style="font-size:20px;margin-bottom:6px">💰</div><div class="res-v">280 000 ₽</div><div class="res-l">Баланс ваучеров</div></div>
+      <div class="res"><div style="font-size:20px;margin-bottom:6px">🎯</div><div class="res-v">Demo Day</div><div class="res-l">Вы в списке 20</div></div>
+      <div class="res"><div style="font-size:20px;margin-bottom:6px">📣</div><div class="res-v">Axoft Online</div><div class="res-l">Карточка размещена</div></div>
+      <div class="res"><div style="font-size:20px;margin-bottom:6px">🤝</div><div class="res-v">3 500+</div><div class="res-l">Партнёров канала</div></div>
+    </div>
+  </div>
+
+  <!-- Recommended + Notifications -->
+  <div class="two" style="margin-top:18px">
+    <div class="card">
+      <div class="ch"><div class="ct"><i class="ti ti-star"></i>Рекомендуемые сервисы</div><div class="cl" onclick="goPage('services')">Все сервисы <i class="ti ti-arrow-right" style="font-size:12px"></i></div></div>
+      <div class="cb" style="padding:10px 20px">
+        <div class="svc-item"><div class="svc-il"><div class="svc-ico ig"><i class="ti ti-play"></i></div><div><div class="svc-nm">Пакет 1: Диагностика</div><div class="svc-ct">Бесплатно · видеокурс, чек-лист, встреча</div></div></div><button class="btn btn-g" style="font-size:11px;padding:5px 12px" onclick="goPage('services')">Начать</button></div>
+        <div class="svc-item"><div class="svc-il"><div class="svc-ico it"><i class="ti ti-search"></i></div><div><div class="svc-nm">Пакет 2: Аудит</div><div class="svc-ct">от 100 000 ₽ · экспертная оценка</div></div></div><button class="btn btn-p" style="font-size:11px;padding:5px 12px" onclick="goPage('services')">Подробнее</button></div>
+        <div class="svc-item"><div class="svc-il"><div class="svc-ico ib"><i class="ti ti-briefcase"></i></div><div><div class="svc-nm">Пакет 3: Упаковка</div><div class="svc-ct">от 300 000 ₽ · полная готовность к каналу</div></div></div><button class="btn btn-p" style="font-size:11px;padding:5px 12px" onclick="goPage('services')">Подробнее</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct"><i class="ti ti-bell"></i>Уведомления</div><span class="pill pt" id="notif-cnt">1 новое</span></div>
+      <div class="cb" style="padding:10px 20px">
+        <div id="notif-base">
+          <div class="notif"><div class="nd"></div><div><div class="nt">Добро пожаловать в программу Axoft × Сколково! Регистрация прошла успешно.</div><div class="nm">Только что</div></div></div>
+          <div class="notif"><div class="nd gr"></div><div><div class="nt">Следующий шаг — заполните анкету компании (этап 2). Займёт ~15 минут.</div><div class="nm">Рекомендация</div></div></div>
+          <div class="notif"><div class="nd gr"></div><div><div class="nt">3 бесплатных материала доступны прямо сейчас в разделе «Материалы».</div><div class="nm">Рекомендация</div></div></div>
+        </div>
+        <div id="notif-strat" style="display:none">
+          <div class="notif"><div class="nd" style="background:var(--green)"></div><div><div class="nt">🏆 Axoft перевёл вас в UP STRATEGIC. Менеджер Анна С. свяжется сегодня.</div><div class="nm">Сегодня, 09:15</div></div></div>
+          <div class="notif"><div class="nd"></div><div><div class="nt">Карточка продукта размещена на Axoft Online. Партнёры видят ваше предложение.</div><div class="nm">Вчера, 14:30</div></div></div>
+          <div class="notif"><div class="nd gr"></div><div><div class="nt">Вы включены в список кандидатов для Demo Day.</div><div class="nm">2 дня назад</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PATH -->
+<div id="page-path" class="page">
+  <div class="ph"><div><div class="ph-t">Мой путь</div><div class="ph-s" id="path-sub">7 этапов программы · Текущий: Этап 1 — Регистрация</div></div></div>
+  <div class="td base" id="pd-base"><div class="td-t"><i class="ti ti-info-circle"></i> UP BASE — автоматизированный трек</div><div class="td-li"><i class="ti ti-check"></i>Этапы 1–5 в самостоятельном режиме</div><div class="td-li"><i class="ti ti-check"></i>Пакет «Диагностика» доступен бесплатно сразу</div><div class="td-li"><i class="ti ti-lock"></i>Этапы 6–7 только по решению Axoft</div></div>
+  <div class="td strat" id="pd-strat" style="display:none"><div class="td-t"><i class="ti ti-star"></i> UP STRATEGIC — персональный трек</div><div class="td-li"><i class="ti ti-check"></i>Персональный менеджер сопровождает все этапы</div><div class="td-li"><i class="ti ti-check"></i>Все сервисы через ваучеры</div><div class="td-li"><i class="ti ti-check"></i>Прямой путь к дистрибьюторскому контракту</div></div>
+  <div class="pg2">
+    <div class="ps psa" id="ps1"><div class="ps-h" onclick="ts(this)"><div class="sn sn-a" id="sn1">1</div><div class="si"><div class="si-n">Регистрация</div><div class="si-d">Создание учётной записи, подтверждение email</div></div><span class="pill pt" id="sp1">Активен</span><i class="ti ti-chevron-down sa op"></i></div><div class="ps-b op"><div class="st std"><i class="ti ti-circle-check"></i>Учётная запись создана</div><div class="st std"><i class="ti ti-circle-check"></i>Email подтверждён</div><div class="st std"><i class="ti ti-circle-check"></i>Базовый профиль заполнен</div><div class="ibox"><i class="ti ti-arrow-right"></i>Следующий шаг: пройдите пакет «Диагностика» — бесплатный видеокурс, чек-лист и онбординг-встреча (этап 2)</div><div style="margin-top:10px"><button class="btn btn-g" onclick="goPage('services')">К диагностике →</button></div></div></div>
+    <div class="ps" id="ps2"><div class="ps-h" onclick="ts(this)"><div class="sn sn-p" id="sn2">2</div><div class="si"><div class="si-n">Диагностика</div><div class="si-d">Бесплатный пакет — понять стартовую позицию</div></div><span class="pill pn" id="sp2">Следующий</span><i class="ti ti-chevron-down sa"></i></div><div class="ps-b"><div class="st stt" id="s2t1"><i class="ti ti-circle"></i>Видеокурс «Как устроена двухуровневая дистрибуция»</div><div class="st stt" id="s2t2"><i class="ti ti-circle"></i>Чек-лист самооценки готовности продукта к каналу</div><div class="st stt" id="s2t3"><i class="ti ti-circle"></i>Онбординг-встреча с менеджером Axoft (до 1 ч.)</div><div class="ibox"><i class="ti ti-info-circle"></i>Пакет полностью бесплатный. Кейсы и материалы доступны в разделе «Материалы».</div><div style="margin-top:10px"><button class="btn btn-g" onclick="goPage('services')"><i class="ti ti-play" style="font-size:13px"></i>Начать диагностику</button></div></div></div>
+    <div class="ps" id="ps3"><div class="ps-h" onclick="ts(this)"><div class="sn sn-p" id="sn3">3</div><div class="si"><div class="si-n">Аудит</div><div class="si-d">Экспертная оценка и дорожная карта готовности</div></div><span class="pill pn" id="sp3">Ожидание</span><i class="ti ti-chevron-down sa"></i></div><div class="ps-b"><div class="st stt" id="s3t1"><i class="ti ti-circle"></i>Детальный аудит продукта на готовность к дистрибуции</div><div class="st stt" id="s3t2"><i class="ti ti-circle"></i>Анализ конкурентов в партнёрском канале</div><div class="st stt" id="s3t3"><i class="ti ti-circle"></i>2-3 рабочих сессии с экспертами Axoft</div><div class="ibox"><i class="ti ti-clock"></i>Стоимость: от 100 000 ₽ (разово). Итог — отчёт с конкретным планом действий.</div><div style="margin-top:10px"><button class="btn btn-o" onclick="goPage('services')"><i class="ti ti-apps" style="font-size:13px"></i>Узнать подробнее</button></div></div></div>
+    <div class="ps" id="ps4"><div class="ps-h" onclick="ts(this)"><div class="sn sn-p" id="sn4">4</div><div class="si"><div class="si-n">Упаковка</div><div class="si-d">Коммерческая упаковка и партнёрская программа</div></div><span class="pill pn" id="sp4">Ожидание</span><i class="ti ti-chevron-down sa"></i></div><div class="ps-b"><div class="st stt" id="s4t1"><i class="ti ti-circle"></i>Разработка УТП, позиционирования и one-pager</div><div class="st stt" id="s4t2"><i class="ti ti-circle"></i>Партнёрская программа и маркетинговые материалы</div><div class="st stt" id="s4t3"><i class="ti ti-circle"></i>5+ рабочих сессий, финальная оценка готовности</div><div class="ibox"><i class="ti ti-clock"></i>Стоимость: от 300 000 ₽. По завершении — полная готовность к двухуровневой дистрибуции.</div><div style="margin-top:10px"><button class="btn btn-o" onclick="goPage('services')"><i class="ti ti-apps" style="font-size:13px"></i>Каталог пакетов</button></div></div></div>
+    <div class="ps" id="ps5"><div class="ps-h" onclick="ts(this)"><div class="sn sn-p" id="sn5">5</div><div class="si"><div class="si-n">Оценка Axoft</div><div class="si-d">Axoft решает, кого взять в стратегический трек</div></div><span class="pill pn" id="sp5">Ожидание</span><i class="ti ti-chevron-down sa"></i></div><div class="ps-b"><div class="st stt" id="s5t1"><i class="ti ti-circle"></i>Заочный отбор: 300 → 30–40 компаний</div><div class="st stt" id="s5t2"><i class="ti ti-circle"></i>Очный отбор: 30–40 → 20 компаний для Demo Day</div><div class="ibox"><i class="ti ti-info-circle"></i>Переход автоматический после завершения пакетов «Аудит» и «Упаковка»</div></div></div>
+    <div class="ps pss" id="ps6"><div class="ps-h" onclick="ts(this)"><div class="sn sn-l" id="sn6"><i class="ti ti-lock" style="font-size:12px"></i></div><div class="si"><div class="si-n">UP STRATEGIC</div><div class="si-d">Персональный менеджер + ресурсы</div></div><span class="pill" style="background:rgba(0,179,125,.1);color:var(--green)" id="sp6">По решению Axoft</span><i class="ti ti-chevron-down sa"></i></div><div class="ps-b"><div class="st stt" id="s6t1"><i class="ti ti-circle"></i>Персональный менеджер Axoft</div><div class="st stt" id="s6t2"><i class="ti ti-circle"></i>Все сервисы через ваучеры</div><div class="st stt" id="s6t3"><i class="ti ti-circle"></i>Размещение на Axoft Online</div><div class="st stt" id="s6t4"><i class="ti ti-circle"></i>Участие в Demo Day</div><div class="sbox" id="s6-lock"><i class="ti ti-lock"></i>Доступно только по решению Axoft после оценки</div></div></div>
+    <div class="ps psl" id="ps7"><div class="ps-h" onclick="ts(this)"><div class="sn sn-l"><i class="ti ti-lock" style="font-size:12px"></i></div><div class="si"><div class="si-n">Дистрибьюторский контракт</div><div class="si-d">Выход на канал 3 500+ партнёров Axoft</div></div><span class="pill pgr" id="sp7">Финальный</span><i class="ti ti-chevron-down sa"></i></div><div class="ps-b"><div class="st stt"><i class="ti ti-circle"></i>Подписание дистрибьюторского договора</div><div class="st stt"><i class="ti ti-circle"></i>Онбординг в партнёрский портал</div><div class="st stt"><i class="ti ti-circle"></i>Первые продажи через партнёрский канал</div></div></div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<div id="page-services" class="page">
+  <div class="ph"><div><div class="ph-t">Каталог сервисов</div><div class="ph-s" id="svc-sub">3 пакета консалтинга · Диагностика, Аудит, Упаковка</div></div></div>
+  <div class="sf">
+    <button class="fb fa" onclick="flt(this,'all')">Все пакеты</button>
+    <button class="fb" onclick="flt(this,'p1')">Диагностика</button>
+    <button class="fb" onclick="flt(this,'p2')">Аудит</button>
+    <button class="fb" onclick="flt(this,'p3')">Упаковка</button>
+  </div>
+  <div class="pkg-g">
+
+    <!-- ПАКЕТ 1: ДИАГНОСТИКА -->
+    <div class="pkg" data-pkg="p1">
+      <div class="pkg-h">
+        <span class="pkg-badge" style="background:var(--gdim);color:var(--green)">Пакет 1</span>
+        <div class="pkg-tt">Диагностика</div>
+        <div class="pkg-goal">Понять стартовую позицию и логику партнёрского канала</div>
+        <div class="pkg-price fr">Бесплатно</div>
+      </div>
+      <div class="pkg-eng">
+        <div class="pkg-eng-dots">
+          <div class="pkg-eng-dot on g"></div>
+          <div class="pkg-eng-dot off"></div>
+          <div class="pkg-eng-dot off"></div>
+        </div>
+        <span>Вовлечённость Axoft: минимальная (1 встреча)</span>
+      </div>
+      <div class="pkg-b">
+        <div class="pkg-sec-lbl">Что входит</div>
+        <div class="pkg-li"><i class="ti ti-video" style="color:var(--green)"></i>Видеокурс: как устроена двухуровневая дистрибуция</div>
+        <div class="pkg-li"><i class="ti ti-list-check" style="color:var(--green)"></i>Чек-лист самооценки готовности продукта к каналу</div>
+        <div class="pkg-li"><i class="ti ti-user-check" style="color:var(--green)"></i>Онбординг-встреча с менеджером Axoft (до 1 ч.)</div>
+        <div class="pkg-li"><i class="ti ti-book-2" style="color:var(--green)"></i>Кейсы: как вендоры переходили на дистрибуцию</div>
+        <div class="pkg-res"><strong>Результат:</strong> Понимаете логику канала и видите собственные пробелы через чек-лист</div>
+      </div>
+      <div class="pkg-ft">
+        <button class="btn btn-g" style="flex:1" onclick="goPage('materials')"><i class="ti ti-play" style="font-size:13px"></i>Начать бесплатно</button>
+      </div>
+    </div>
+
+    <!-- ПАКЕТ 2: АУДИТ -->
+    <div class="pkg" data-pkg="p2">
+      <div class="pkg-h">
+        <span class="pkg-badge" style="background:var(--tdim);color:var(--teal)">Пакет 2</span>
+        <div class="pkg-tt">Аудит</div>
+        <div class="pkg-goal">Получить экспертную оценку и дорожную карту готовности</div>
+        <div class="pkg-price" style="color:var(--navy)">от 100 000 ₽</div>
+      </div>
+      <div class="pkg-eng">
+        <div class="pkg-eng-dots">
+          <div class="pkg-eng-dot on"></div>
+          <div class="pkg-eng-dot on"></div>
+          <div class="pkg-eng-dot off"></div>
+        </div>
+        <span>Вовлечённость Axoft: средняя (2-3 рабочих сессии)</span>
+      </div>
+      <div class="pkg-b">
+        <div class="pkg-sec-lbl">Что входит</div>
+        <div class="pkg-li"><i class="ti ti-search" style="color:var(--teal)"></i>Детальный аудит продукта на готовность к дистрибуции</div>
+        <div class="pkg-li"><i class="ti ti-chart-bar" style="color:var(--teal)"></i>Анализ конкурентов: кто в канале и на каких условиях</div>
+        <div class="pkg-li"><i class="ti ti-eye" style="color:var(--teal)"></i>Оценка продукта глазами реселлера</div>
+        <div class="pkg-li"><i class="ti ti-alert-triangle" style="color:var(--teal)"></i>Выявление пробелов: продукт, упаковка, ценообразование, документация</div>
+        <div class="pkg-li"><i class="ti ti-users" style="color:var(--teal)"></i>2-3 рабочих сессии с экспертами Axoft</div>
+        <div class="pkg-li"><i class="ti ti-file-text" style="color:var(--teal)"></i>Итоговый отчёт: разрыв-анализ и дорожная карта</div>
+        <div class="pkg-res"><strong>Результат:</strong> Знаете, что мешает войти в канал, и имеете документированный план действий</div>
+      </div>
+      <div class="pkg-ft">
+        <button class="sb2 ss vouch-btn" style="display:none">По ваучеру</button>
+        <button class="btn btn-p" style="flex:1" onclick="goPage('support')"><i class="ti ti-send" style="font-size:13px"></i>Заказать аудит</button>
+      </div>
+    </div>
+
+    <!-- ПАКЕТ 3: УПАКОВКА -->
+    <div class="pkg" data-pkg="p3">
+      <div class="pkg-h">
+        <span class="pkg-badge" style="background:var(--bdim);color:var(--blue)">Пакет 3</span>
+        <div class="pkg-tt">Упаковка</div>
+        <div class="pkg-goal">Подготовить всё необходимое для работы с партнёрским каналом</div>
+        <div class="pkg-price" style="color:var(--navy)">от 300 000 ₽</div>
+      </div>
+      <div class="pkg-eng">
+        <div class="pkg-eng-dots">
+          <div class="pkg-eng-dot on b"></div>
+          <div class="pkg-eng-dot on b"></div>
+          <div class="pkg-eng-dot on b"></div>
+        </div>
+        <span>Вовлечённость Axoft: высокая (5+ сессий, выделенный ресурс)</span>
+      </div>
+      <div class="pkg-b">
+        <div class="pkg-sec-lbl">Что входит</div>
+        <div class="pkg-li"><i class="ti ti-target" style="color:var(--blue)"></i>Разработка УТП для B2B и партнёрского канала</div>
+        <div class="pkg-li"><i class="ti ti-briefcase" style="color:var(--blue)"></i>Позиционирование продукта в портфеле реселлера</div>
+        <div class="pkg-li"><i class="ti ti-file-invoice" style="color:var(--blue)"></i>One-pager для партнёра + коммерческое предложение</div>
+        <div class="pkg-li"><i class="ti ti-speakerphone" style="color:var(--blue)"></i>Маркетинговые материалы для реселлеров</div>
+        <div class="pkg-li"><i class="ti ti-git-branch" style="color:var(--blue)"></i>Разработка партнёрской программы</div>
+        <div class="pkg-li"><i class="ti ti-school" style="color:var(--blue)"></i>Обучающие материалы для реселлеров</div>
+        <div class="pkg-li"><i class="ti ti-users" style="color:var(--blue)"></i>5+ рабочих сессий с выделенной командой Axoft</div>
+        <div class="pkg-li"><i class="ti ti-check-all" style="color:var(--blue)"></i>Финальная сессия: оценка готовности к дистрибуции</div>
+        <div class="pkg-res"><strong>Результат:</strong> Готовы к двухуровневой дистрибуции: упаковка, партнёрская программа, материалы для реселлеров</div>
+      </div>
+      <div class="pkg-ft">
+        <button class="sb2 sv vouch-btn" style="display:none">По ваучеру</button>
+        <button class="btn btn-p" style="flex:1" onclick="goPage('support')"><i class="ti ti-send" style="font-size:13px"></i>Заказать</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- СРАВНЕНИЕ ПАКЕТОВ -->
+  <div class="cmp-wrap">
+    <div class="cmp-lbl">Сравнение пакетов</div>
+    <div class="card" style="overflow:hidden">
+      <div style="overflow-x:auto">
+        <table class="cmp">
+          <thead>
+            <tr>
+              <th style="width:42%">Что входит</th>
+              <th>Диагностика<br><span style="font-size:10px;font-weight:400;color:var(--green)">Бесплатно</span></th>
+              <th>Аудит<br><span style="font-size:10px;font-weight:400;color:var(--teal)">от 100 000 ₽</span></th>
+              <th>Упаковка<br><span style="font-size:10px;font-weight:400;color:var(--blue)">от 300 000 ₽</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Образовательные материалы о дистрибуции</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr><td>Чек-лист самооценки готовности</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr><td>Онбординг-встреча с Axoft (до 1 ч.)</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr><td>Детальный аудит продукта с отчётом</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr><td>Анализ конкурентов в партнёрском канале</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr><td>Дорожная карта устранения пробелов</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr><td>Рабочие сессии с экспертами Axoft</td><td><i class="ti ti-minus cmp-n"></i></td><td><span class="cmp-num">2-3</span></td><td><span class="cmp-num">5+</span></td></tr>
+            <tr><td>Разработка УТП и позиционирования</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr><td>Партнёрская программа и one-pager</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr><td>Маркетинговые и обучающие материалы</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+            <tr style="background:var(--sur2)"><td style="font-weight:700;color:var(--navy)">Стоимость (ориентировочная)</td><td><span class="cmp-pr" style="color:var(--green)">Бесплатно</span></td><td><span class="cmp-pr">от 100 тыс. ₽</span></td><td><span class="cmp-pr">от 300 тыс. ₽</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div id="page-orders" class="page">
+  <div class="ph"><div><div class="ph-t">Заказы и ваучеры</div><div class="ph-s">История заказов и баланс ваучеров</div></div><button class="btn btn-p" onclick="goPage('services')"><i class="ti ti-plus" style="font-size:14px"></i>Новый заказ</button></div>
+  <div id="ord-base">
+    <div class="card" style="margin-bottom:18px"><div class="ch"><div class="ct"><i class="ti ti-list-details"></i>Мои заказы</div></div><div class="cb" style="text-align:center;padding:40px 20px"><div style="font-size:40px;margin-bottom:12px">📋</div><div style="font-size:15px;font-weight:600;color:var(--navy);margin-bottom:6px">Заказов пока нет</div><div style="font-size:13px;color:var(--txt2);margin-bottom:18px">Начните с бесплатных сервисов в каталоге. Платные сервисы станут доступны после этапа 2.</div><button class="btn btn-p" onclick="goPage('services')"><i class="ti ti-apps" style="font-size:14px"></i>Перейти в каталог</button></div></div>
+    <div class="card"><div class="ch"><div class="ct"><i class="ti ti-ticket"></i>Ваучеры</div></div><div class="cb" style="text-align:center;padding:30px 20px"><div style="font-size:13px;color:var(--txt2)">Ваучеры выдаются стратегическим вендорам по решению Axoft после этапа оценки</div></div></div>
+  </div>
+  <div id="ord-strat" style="display:none">
+    <div class="card" style="margin-bottom:18px"><div class="ch"><div class="ct"><i class="ti ti-list-details"></i>Мои заказы</div><span class="pill pg">3 активных</span></div><div style="overflow-x:auto"><table class="ot"><thead><tr><th>Сервис</th><th>Блок</th><th>Стоимость</th><th>Оплата</th><th>Статус</th><th></th></tr></thead><tbody><tr><td><strong>Пакет 2: Аудит</strong></td><td><span class="pill pt">Аудит</span></td><td>100 000 ₽</td><td>Ваучер</td><td><span class="stag sa2">В работе</span></td><td><button class="btn btn-o" style="font-size:11px;padding:5px 10px">Детали</button></td></tr><tr><td><strong>Пакет 3: Упаковка</strong></td><td><span class="pill pb">Упаковка</span></td><td>300 000 ₽</td><td>Ваучер</td><td><span class="stag sr2">Согласование</span></td><td><button class="btn btn-o" style="font-size:11px;padding:5px 10px">Детали</button></td></tr><tr><td><strong>Пакет 1: Диагностика</strong></td><td><span class="pill pg">Диагностика</span></td><td>Бесплатно</td><td>—</td><td><span class="stag sd">Завершён</span></td><td><button class="btn btn-o" style="font-size:11px;padding:5px 10px">Повторить</button></td></tr></tbody></table></div></div>
+    <div class="card"><div class="ch"><div class="ct"><i class="ti ti-ticket"></i>Ваучеры Axoft</div><span class="pill pg">3 активных</span></div><div class="cb"><div class="vou"><div><div class="vou-b" style="background:var(--teal)">120 000 ₽</div></div><div><div style="font-size:13px;font-weight:500;color:var(--navy)">Ваучер Axoft — Пакет Аудит</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">До 31.12.2026 · Использовано: 0 ₽</div></div><div style="margin-left:auto"><button class="btn btn-p" style="font-size:12px" onclick="goPage('services')">Применить</button></div></div><div class="vou"><div><div class="vou-b" style="background:var(--green)">100 000 ₽</div></div><div><div style="font-size:13px;font-weight:500;color:var(--navy)">Ваучер Axoft — Пакет Упаковка (часть)</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">До 31.12.2026 · Использовано: 60 000 ₽</div></div><div style="margin-left:auto"><button class="btn btn-p" style="font-size:12px" onclick="goPage('services')">Применить</button></div></div><div class="vou"><div><div class="vou-b" style="background:var(--blue)">60 000 ₽</div></div><div><div style="font-size:13px;font-weight:500;color:var(--navy)">Ваучер Axoft — Пакет Упаковка (доп.)</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">До 31.12.2026 · Использовано: 0 ₽</div></div><div style="margin-left:auto"><button class="btn btn-p" style="font-size:12px" onclick="goPage('services')">Применить</button></div></div></div></div>
+  </div>
+</div>
+
+<!-- MATERIALS -->
+<div id="page-materials" class="page">
+  <div class="ph"><div><div class="ph-t">Материалы</div><div class="ph-s">Видеокурсы, кейсы и база знаний</div></div></div>
+  <div style="margin-bottom:22px"><div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Пакет 1 — Диагностика (бесплатно)</div><div class="mg"><div class="mc"><div class="mth mv">▶</div><div class="mb"><div class="m-tag" style="color:var(--teal)">ВИДЕО · 20 МИН</div><div class="m-nm">Что такое дистрибьюция</div><div class="m-mt">Не начато</div></div></div><div class="mc"><div class="mth mv">▶</div><div class="mb"><div class="m-tag" style="color:var(--teal)">КУРС · 45 МИН</div><div class="m-nm">Двухуровневая дистрибьюция</div><div class="m-mt">Не начато</div></div></div><div class="mc"><div class="mth mc2">📊</div><div class="mb"><div class="m-tag" style="color:var(--green)">КЕЙС · 30 МИН</div><div class="m-nm">Путь стартапа к дистрибьюции</div><div class="m-mt">Не начато</div></div></div></div></div>
+  <div><div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">База знаний</div><div class="mg"><div class="mc"><div class="mth md">📄</div><div class="mb"><div class="m-tag" style="color:var(--blue)">СТАТЬЯ</div><div class="m-nm">Готовность продукта к дистрибьюции</div><div class="m-mt">10 мин чтения</div></div></div><div class="mc"><div class="mth md">📄</div><div class="mb"><div class="m-tag" style="color:var(--blue)">МЕТОДОЛОГИЯ</div><div class="m-nm">Партнёрская программа: тиры и мотивация</div><div class="m-mt">15 мин чтения</div></div></div><div class="mc"><div class="mth md">📄</div><div class="mb"><div class="m-tag" style="color:var(--blue)">ГАЙД</div><div class="m-nm">Льготы и гранты Сколково — навигация</div><div class="m-mt">8 мин чтения</div></div></div></div></div>
+</div>
+
+<!-- SUPPORT -->
+<div id="page-support" class="page">
+  <div class="ph"><div><div class="ph-t">Поддержка</div><div class="ph-s">Горячая линия и чат программы</div></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
+    <div class="cc"><div style="font-size:26px;margin-bottom:10px"><i class="ti ti-phone-call"></i></div><h3>Горячая линия Axoft</h3><p>Ответим на вопросы по программе. Пн–Пт, 9:00–18:00 МСК</p><div class="cc-v">+7 (495) 232-00-66</div></div>
+    <div class="cc"><div style="font-size:26px;margin-bottom:10px"><i class="ti ti-mail"></i></div><h3>Email программы</h3><p>Письменные запросы и официальные обращения. Ответ в течение 24 ч.</p><div class="cc-v">program@axoft.ru</div></div>
+  </div>
+  <div class="mgr" id="sup-mgr" style="display:none;margin-bottom:18px"><div class="mgr-av">АС</div><div><div class="mgr-n">Анна Смирнова</div><div class="mgr-r">Ваш персональный менеджер · UP STRATEGIC</div></div><div class="mgr-act"><button class="btn btn-o" style="font-size:12px;padding:6px 14px"><i class="ti ti-message-2" style="font-size:13px"></i>Написать</button><button class="btn btn-g" style="font-size:12px;padding:6px 14px"><i class="ti ti-phone" style="font-size:13px"></i>Позвонить</button></div></div>
+  <div class="card" style="margin-bottom:18px"><div class="ch"><div class="ct"><i class="ti ti-message-2"></i>Написать в чат</div></div><div class="cb"><textarea style="width:100%;border:1px solid var(--bdr);border-radius:var(--rs);padding:12px;font-family:inherit;font-size:13px;resize:vertical;min-height:80px;color:var(--txt);background:var(--sur2)" placeholder="Опишите ваш вопрос..."></textarea><button class="btn btn-p" style="margin-top:10px">Отправить</button></div></div>
+  <div style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:12px">Частые вопросы</div>
+  <div class="faq-item"><div class="faq-q" onclick="tfaq(this)">Как перейти на UP STRATEGIC? <i class="ti ti-chevron-down" style="color:var(--txt2)"></i></div><div class="faq-a">Переход только по решению Axoft после завершения этапов 3–4. Axoft проводит заочный и очный отбор. Следите за уведомлениями.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="tfaq(this)">Как заполнить анкету компании? <i class="ti ti-chevron-down" style="color:var(--txt2)"></i></div><div class="faq-a">Перейдите в «Мой путь» → Этап 2. Анкета интегрирована с опросником Сколково. Займёт ~15 минут.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="tfaq(this)">Какие гранты Сколково доступны? <i class="ti ti-chevron-down" style="color:var(--txt2)"></i></div><div class="faq-a">Микрогранты до 1,5 млн ₽ (R&D), минигранты до 10 млн ₽, гранты на ИИ от 20 до 300 млн ₽. Налоговые льготы резидента: 0% НДС, налог на прибыль, имущество.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="tfaq(this)">Что такое Demo Day? <i class="ti ti-chevron-down" style="color:var(--txt2)"></i></div><div class="faq-a">Финальное мероприятие — до 20 компаний презентуют продукты Axoft и партнёрам. Отбор в два тура. Доступно через UP STRATEGIC.</div></div>
+</div>
+
+<!-- DIAGNOSTICS -->
+<div id="page-diag" class="page">
+  <div class="ph">
+    <div>
+      <div class="ph-t">Диагностика вендора</div>
+      <div class="ph-s">Самооценка готовности к партнёрскому каналу — 10-12 минут, 13 критериев</div>
+    </div>
+  </div>
+  <div class="diag-wrap">
+    <!-- Прогресс-бар -->
+    <div class="dg-prog">
+      <div class="dg-prog-track">
+        <div class="dg-prog-line"></div>
+        <div class="dg-prog-fill" id="dg-pf" style="width:0%"></div>
+        <div class="dg-prog-step active" id="dg-ps0"><div class="dg-prog-dot">1</div><div class="dg-prog-lbl">Старт</div></div>
+        <div class="dg-prog-step" id="dg-ps1"><div class="dg-prog-dot">2</div><div class="dg-prog-lbl">Фильтр</div></div>
+        <div class="dg-prog-step" id="dg-ps2"><div class="dg-prog-dot">3</div><div class="dg-prog-lbl">Оценка</div></div>
+        <div class="dg-prog-step" id="dg-ps3"><div class="dg-prog-dot">4</div><div class="dg-prog-lbl">Результат</div></div>
+      </div>
+    </div>
+
+    <!-- Экран 0: Приветствие -->
+    <div class="dg-scr on" id="dg-s0">
+    <div class="dg-card">
+      <div class="dg-wc-hero">
+        <h1>Готов ли ваш продукт к продажам через партнёрский канал?</h1>
+        <p>Пройдите самодиагностику и узнайте, насколько ваш продукт готов к работе с реселлерами. Результат — конкретный балл и рекомендации по каждой категории.</p>
+        <div class="dg-wc-tags">
+          <span class="dg-tag dg-tag-bl">10-12 минут</span>
+          <span class="dg-tag dg-tag-bl">13 критериев</span>
+          <span class="dg-tag dg-tag-gn">Бесплатно</span>
+          <span class="dg-tag dg-tag-gn">Результат сразу</span>
+        </div>
+      </div>
+      <div class="dg-wc-steps">
+        <div class="dg-ws"><div class="dg-ws-ic"><i class="ti ti-filter" style="color:var(--teal);font-size:26px"></i></div><div class="dg-ws-tt">Базовый фильтр</div><div class="dg-ws-tx">5 вопросов о продукте и компании</div></div>
+        <div class="dg-ws"><div class="dg-ws-ic"><i class="ti ti-chart-bar" style="color:var(--teal);font-size:26px"></i></div><div class="dg-ws-tt">Оценка</div><div class="dg-ws-tx">13 критериев по 5 ключевым категориям</div></div>
+        <div class="dg-ws"><div class="dg-ws-ic"><i class="ti ti-target" style="color:var(--green);font-size:26px"></i></div><div class="dg-ws-tt">Результат</div><div class="dg-ws-tx">Балл, разбивка и рекомендации</div></div>
+      </div>
+      <div class="dg-btns" style="justify-content:center">
+        <button class="dg-btn dg-btn-p" onclick="dGo(1)">Начать диагностику <i class="ti ti-arrow-right" style="font-size:14px"></i></button>
+      </div>
+    </div>
+    </div>
+
+    <!-- Экран 1: Фильтр -->
+    <div class="dg-scr" id="dg-s1">
+    <div class="dg-card">
+      <div class="dg-cat-hdr">
+        <div class="dg-cat-pill" style="background:var(--teal)">Шаг 1 из 2</div>
+        <div><div class="dg-cat-ttl">Базовый фильтр</div><div class="dg-cat-sub">Проверяем соответствие минимальным требованиям для работы с дистрибьютором</div></div>
+      </div>
+      <div class="dg-g-q">
+        <div class="dg-g-q-lbl"><span class="n">1</span>Что представляет собой ваш продукт?</div>
+        <div class="dg-opts">
+          <label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">Программное обеспечение (SaaS, on-premise, ПО собственной разработки)</span></label>
+          <label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">IT-оборудование или программно-аппаратный комплекс</span></label>
+          <label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">IT-платформа или облачный сервис (IaaS, PaaS)</span></label>
+          <label class="dg-opt"><input type="radio" name="dg1" value="warn"><span class="dg-opt-txt">IT-услуги или консалтинг <span class="dg-badge dg-badge-w">как правило не дистрибутируется</span></span></label>
+          <label class="dg-opt stop"><input type="radio" name="dg1" value="fail"><span class="dg-opt-txt">Не IT-продукт <span class="dg-badge dg-badge-s">не входит в канал Axoft</span></span></label>
+        </div>
+      </div>
+      <div class="dg-g-q">
+        <div class="dg-g-q-lbl"><span class="n">2</span>Кто ваши конечные покупатели?</div>
+        <div class="dg-opts">
+          <label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Корпоративные клиенты (B2B)</span></label>
+          <label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Государственные заказчики (B2G)</span></label>
+          <label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Корпоративные и государственные (B2B + B2G)</span></label>
+          <label class="dg-opt stop"><input type="radio" name="dg2" value="fail"><span class="dg-opt-txt">Физические лица (B2C) <span class="dg-badge dg-badge-s">канал Axoft ориентирован на корпоративный рынок</span></span></label>
+        </div>
+      </div>
+      <div class="dg-g-q">
+        <div class="dg-g-q-lbl"><span class="n">3</span>Кому принадлежат права на ваш продукт?</div>
+        <div class="dg-opts">
+          <label class="dg-opt"><input type="radio" name="dg3" value="ok"><span class="dg-opt-txt">Нам — исключительные права оформлены на нашу компанию</span></label>
+          <label class="dg-opt"><input type="radio" name="dg3" value="warn"><span class="dg-opt-txt">Частично нам, частично третьим лицам <span class="dg-badge dg-badge-w">требует уточнения</span></span></label>
+          <label class="dg-opt stop"><input type="radio" name="dg3" value="fail"><span class="dg-opt-txt">Права не оформлены <span class="dg-badge dg-badge-s">блокирующий критерий</span></span></label>
+        </div>
+      </div>
+      <div class="dg-g-q">
+        <div class="dg-g-q-lbl"><span class="n">4</span>Зарегистрировано ли юридическое лицо в России?</div>
+        <div class="dg-opts">
+          <label class="dg-opt"><input type="radio" name="dg4" value="ok"><span class="dg-opt-txt">Да, зарегистрировано российское юрлицо (ООО, АО, ИП)</span></label>
+          <label class="dg-opt"><input type="radio" name="dg4" value="warn"><span class="dg-opt-txt">В процессе регистрации <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label>
+          <label class="dg-opt"><input type="radio" name="dg4" value="warn"><span class="dg-opt-txt">Нет <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label>
+        </div>
+      </div>
+      <div class="dg-g-q">
+        <div class="dg-g-q-lbl"><span class="n">5</span>На какой стадии готовности ваш продукт?</div>
+        <div class="dg-opts">
+          <label class="dg-opt"><input type="radio" name="dg5" value="ok"><span class="dg-opt-txt">Готовый продукт с платящими клиентами</span></label>
+          <label class="dg-opt"><input type="radio" name="dg5" value="ok"><span class="dg-opt-txt">MVP готов и проходит тестирование с реальными пользователями</span></label>
+          <label class="dg-opt"><input type="radio" name="dg5" value="warn"><span class="dg-opt-txt">MVP в разработке <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label>
+          <label class="dg-opt stop"><input type="radio" name="dg5" value="fail_soft"><span class="dg-opt-txt">Только концепция / идея без прототипа <span class="dg-badge dg-badge-w">пока рано</span></span></label>
+        </div>
+      </div>
+      <div class="dg-fail-box" id="dg-fail-box" style="background:var(--dg-red-lt);border:1.5px solid #E08080">
+        <div class="dg-fail-title" style="color:var(--dg-red)">Есть блокирующий критерий</div>
+        <div class="dg-fail-txt" id="dg-fail-msg" style="color:#802020"></div>
+      </div>
+      <div class="dg-btns">
+        <button class="dg-btn dg-btn-s" onclick="dGo(0)">Назад</button>
+        <button class="dg-btn dg-btn-p" id="dg-gate-btn" onclick="dGateNext()" disabled>Перейти к оценке</button>
+      </div>
+    </div>
+    </div>
+
+    <!-- Экран 2: Оценка -->
+    <div class="dg-scr" id="dg-s2">
+    <div class="dg-card">
+      <div class="dg-cat-nav">
+        <div class="dg-cn act" id="dg-cn0">1. Рынок</div>
+        <div class="dg-cn" id="dg-cn1">2. Продукт</div>
+        <div class="dg-cn" id="dg-cn2">3. Команда</div>
+        <div class="dg-cn" id="dg-cn3">4. Канальный потенциал</div>
+        <div class="dg-cn" id="dg-cn4">5. Готовность к каналу</div>
+      </div>
+
+      <!-- Категория 1: Рынок -->
+      <div id="dg-c0">
+        <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:#1B5E8B">Категория 1</div><div><div class="dg-cat-ttl">Рынок и бизнес-трекшн</div><div class="dg-cat-sub">Макс. 20 баллов</div></div></div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Насколько чётко сформулировано ценностное предложение (CVP) вашего продукта? <span class="dg-wt">вес x2</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq1a" value="1"><span class="dg-sn">1</span><span class="dg-st">Затрудняемся чётко сформулировать — нет конкретики</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1a" value="2"><span class="dg-sn">2</span><span class="dg-st">Проблема понятна, но CVP расплывчато — неясно, чем мы лучше аналогов</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1a" value="3"><span class="dg-sn">3</span><span class="dg-st">Чёткое CVP с дифференциацией, но аргументация не всегда убедительна</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1a" value="4"><span class="dg-sn">4</span><span class="dg-st">Сильное CVP, ценность очевидна, подтверждено пилотами или LOI от клиентов</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1a" value="5"><span class="dg-sn">5</span><span class="dg-st">Исключительно чёткое CVP, подтверждено платящими клиентами, преимущество измеримо</span></label>
+          </div>
+        </div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Как вы оцениваете объём целевого рынка? <span class="dg-wt">вес x1</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq1b" value="1"><span class="dg-sn">1</span><span class="dg-st">Рынок не определён или оценка нереалистична</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1b" value="2"><span class="dg-sn">2</span><span class="dg-st">До 500 млн руб. — узкая ниша с ограниченным потенциалом</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1b" value="3"><span class="dg-sn">3</span><span class="dg-st">500 млн - 2 млрд руб. — умеренный потенциал с базовой оценкой</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1b" value="4"><span class="dg-sn">4</span><span class="dg-st">Более 2 млрд руб. — значительный рынок с данными и драйверами роста</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1b" value="5"><span class="dg-sn">5</span><span class="dg-st">Более 5 млрд руб., рост более 20%/год — детальная, обоснованная оценка</span></label>
+          </div>
+        </div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Какова текущая годовая выручка от продаж продукта (ARR)? <span class="dg-wt">вес x1</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq1c" value="1"><span class="dg-sn">1</span><span class="dg-st">Выручки нет — только гранты, инвестиции или внутреннее финансирование</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1c" value="2"><span class="dg-sn">2</span><span class="dg-st">До 5 млн руб. — единичные пилоты, монетизация в стадии проверки</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1c" value="3"><span class="dg-sn">3</span><span class="dg-st">5-20 млн руб. — несколько платящих клиентов, регулярные продажи</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1c" value="4"><span class="dg-sn">4</span><span class="dg-st">20-50 млн руб. — устойчивый рост, product-market fit достигнут</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq1c" value="5"><span class="dg-sn">5</span><span class="dg-st">Более 50 млн руб. — значимая клиентская база, предсказуемый рост</span></label>
+          </div>
+        </div>
+        <div class="dg-btns"><button class="dg-btn dg-btn-p" onclick="dCatNext(0)">Следующая категория</button></div>
+      </div>
+
+      <!-- Категория 2: Продукт -->
+      <div id="dg-c1" style="display:none">
+        <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:var(--teal)">Категория 2</div><div><div class="dg-cat-ttl">Продукт и технологическая зрелость</div><div class="dg-cat-sub">Макс. 30 баллов</div></div></div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">На какой стадии зрелости находится ваш продукт? <span class="dg-wt">вес x3 — ключевой</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq2a" value="1"><span class="dg-sn">1</span><span class="dg-st">Только концепция или описание — MVP ещё не готов</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2a" value="2"><span class="dg-sn">2</span><span class="dg-st">MVP в разработке или только что готов, ещё не тестировался с клиентами</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2a" value="3"><span class="dg-sn">3</span><span class="dg-st">MVP протестирован с реальными пользователями, есть хотя бы один пилот</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2a" value="4"><span class="dg-sn">4</span><span class="dg-st">Коммерческий продукт с платящими клиентами и активной поддержкой</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2a" value="5"><span class="dg-sn">5</span><span class="dg-st">Зрелый продукт с постоянной базой, референсами, SLA и документацией</span></label>
+          </div>
+        </div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Насколько уникален продукт относительно конкурентов? <span class="dg-wt">вес x2</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq2b" value="1"><span class="dg-sn">1</span><span class="dg-st">На рынке есть прямые аналоги без значимых отличий</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2b" value="2"><span class="dg-sn">2</span><span class="dg-st">Есть отличия, но незначительные и легко копируемые</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2b" value="3"><span class="dg-sn">3</span><span class="dg-st">Чёткие технические отличия с умеренным барьером входа</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2b" value="4"><span class="dg-sn">4</span><span class="dg-st">Технологическое или патентное преимущество — конкурентам нужно 12+ мес. для паритета</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2b" value="5"><span class="dg-sn">5</span><span class="dg-st">Уникальное решение с IP-защитой, сетевыми эффектами или глубокой технологической экспертизой</span></label>
+          </div>
+        </div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Совместимость с российской ИТ-инфраструктурой? <span class="dg-wt">вес x1</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq2c" value="1"><span class="dg-sn">1</span><span class="dg-st">Разработан под западную инфраструктуру — не работает на отечественных ОС и СУБД</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2c" value="2"><span class="dg-sn">2</span><span class="dg-st">Совместимость с российскими решениями не проверялась</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2c" value="3"><span class="dg-sn">3</span><span class="dg-st">Частичная совместимость: работает с 1-2 российскими компонентами</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2c" value="4"><span class="dg-sn">4</span><span class="dg-st">Подтверждена совместимость с Astra Linux / Alt и PostgresPro / Tantor</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq2c" value="5"><span class="dg-sn">5</span><span class="dg-st">Полная совместимость + сертификаты ФСТЭК/ФСБ или включение в реестр Минцифры</span></label>
+          </div>
+        </div>
+        <div class="dg-btns"><button class="dg-btn dg-btn-s" onclick="dCatBack(1)">Назад</button><button class="dg-btn dg-btn-p" onclick="dCatNext(1)">Следующая категория</button></div>
+      </div>
+
+      <!-- Категория 3: Команда -->
+      <div id="dg-c2" style="display:none">
+        <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:#4A7A30">Категория 3</div><div><div class="dg-cat-ttl">Команда</div><div class="dg-cat-sub">Макс. 10 баллов</div></div></div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Как укомплектована ваша команда? <span class="dg-wt">вес x2</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq3" value="1"><span class="dg-sn">1</span><span class="dg-st">Один фаундер, ключевые роли (разработка, продажи, продукт) не закрыты</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq3" value="2"><span class="dg-sn">2</span><span class="dg-st">Команда частично сформирована — есть значимые пробелы</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq3" value="3"><span class="dg-sn">3</span><span class="dg-st">Основные роли закрыты (CEO + CTO или аналог), есть техническая и коммерческая экспертиза</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq3" value="4"><span class="dg-sn">4</span><span class="dg-st">Сильная команда с релевантным B2B-опытом и подтверждёнными результатами</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq3" value="5"><span class="dg-sn">5</span><span class="dg-st">Полностью укомплектованная команда с опытом запуска и масштабирования в корпоративном IT</span></label>
+          </div>
+        </div>
+        <div class="dg-btns"><button class="dg-btn dg-btn-s" onclick="dCatBack(2)">Назад</button><button class="dg-btn dg-btn-p" onclick="dCatNext(2)">Следующая категория</button></div>
+      </div>
+
+      <!-- Категория 4: Канальный потенциал -->
+      <div id="dg-c3" style="display:none">
+        <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:#B06000">Категория 4</div><div><div class="dg-cat-ttl">Потенциал в партнёрском канале</div><div class="dg-cat-sub">Макс. 25 баллов</div></div></div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Насколько ваш продукт дополняет другие корпоративные IT-решения в сделке клиента? <span class="dg-wt">вес x3 — ключевой</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq4a" value="1"><span class="dg-sn">1</span><span class="dg-st">Продукт изолирован — реселлер не может продать его вместе с чем-то ещё</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq4a" value="2"><span class="dg-sn">2</span><span class="dg-st">Теоретическая связь с другими решениями есть, но конкретных сценариев нет</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq4a" value="3"><span class="dg-sn">3</span><span class="dg-st">Есть 1-2 чёткие точки интеграции с другими продуктами — совместная продажа возможна</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq4a" value="4"><span class="dg-sn">4</span><span class="dg-st">Чёткий up-sell / cross-sell сценарий — продукт увеличивает корзину сделки на 20%+</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq4a" value="5"><span class="dg-sn">5</span><span class="dg-st">Стратегически дополняет несколько категорий решений и существенно расширяет корзину</span></label>
+          </div>
+        </div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Закрывает ли ваш продукт реальный пробел, которого нет у конкурентов? <span class="dg-wt">вес x2</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq4b" value="1"><span class="dg-sn">1</span><span class="dg-st">Продукт дублирует существующие решения — нет уникального заполнения рыночного пробела</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq4b" value="2"><span class="dg-sn">2</span><span class="dg-st">Есть пересечение с существующими решениями, дополнительная ценность незначительна</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq4b" value="3"><span class="dg-sn">3</span><span class="dg-st">Закрывает реальную нишу, но не стратегическую — полезен для отдельных сценариев</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq4b" value="4"><span class="dg-sn">4</span><span class="dg-st">Закрывает подтверждённый рыночный пробел — спрос подтверждён клиентами или партнёрами</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq4b" value="5"><span class="dg-sn">5</span><span class="dg-st">Стратегически расширяет предложение для целевой отрасли — позволяет выигрывать сделки</span></label>
+          </div>
+        </div>
+        <div class="dg-btns"><button class="dg-btn dg-btn-s" onclick="dCatBack(3)">Назад</button><button class="dg-btn dg-btn-p" onclick="dCatNext(3)">Следующая категория</button></div>
+      </div>
+
+      <!-- Категория 5: Готовность к каналу -->
+      <div id="dg-c4" style="display:none">
+        <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:var(--navy)">Категория 5</div><div><div class="dg-cat-ttl">Готовность к партнёрскому каналу</div><div class="dg-cat-sub">Макс. 15 баллов</div></div></div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Есть ли у вас материалы, с которыми реселлер может работать самостоятельно? <span class="dg-wt">вес x1</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq5a" value="1"><span class="dg-sn">1</span><span class="dg-st">Нет партнёрских материалов — реселлер не может самостоятельно ознакомиться с продуктом</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5a" value="2"><span class="dg-sn">2</span><span class="dg-st">Базовые материалы есть, но не адаптированы под канальные продажи</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5a" value="3"><span class="dg-sn">3</span><span class="dg-st">Есть питч-дек и прайс для партнёра — без техдеталей и клиентских кейсов</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5a" value="4"><span class="dg-sn">4</span><span class="dg-st">Полный комплект: питч, прайс, техлист, FAQ, кейсы — реселлер может провести демо сам</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5a" value="5"><span class="dg-sn">5</span><span class="dg-st">Всё вышеперечисленное + онлайн-демо и обучающие материалы для партнёра</span></label>
+          </div>
+        </div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Есть ли просчитанная финансовая модель для реселлера (маржа, ROI)? <span class="dg-wt">вес x1</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq5b" value="1"><span class="dg-sn">1</span><span class="dg-st">Нет — маржа, скидки и условия для реселлера не определены</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5b" value="2"><span class="dg-sn">2</span><span class="dg-st">Маржа обозначена, но финансовая модель для партнёра не просчитана</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5b" value="3"><span class="dg-sn">3</span><span class="dg-st">Рабочая модель: маржа партнёра более 15%, базовая P&amp;L прозрачна</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5b" value="4"><span class="dg-sn">4</span><span class="dg-st">Финмодель на 12 месяцев с реалистичными допущениями и ROI для партнёра</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5b" value="5"><span class="dg-sn">5</span><span class="dg-st">Детальная финмодель со сценарным анализом (base / optimistic / pessimistic) — готова к передаче</span></label>
+          </div>
+        </div>
+        <div class="dg-sq">
+          <div class="dg-sq-lbl">Каков средний чек одной сделки по вашему продукту? <span class="dg-wt">вес x1</span></div>
+          <div class="dg-sopts">
+            <label class="dg-sopt"><input type="radio" name="dq5c" value="1"><span class="dg-sn">1</span><span class="dg-st">Менее 50 тыс. руб. — сделка нерентабельна для двухуровневой дистрибуции</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5c" value="2"><span class="dg-sn">2</span><span class="dg-st">50-150 тыс. руб. — на нижней границе рентабельности для реселлера</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5c" value="3"><span class="dg-sn">3</span><span class="dg-st">150-500 тыс. руб. — приемлемый диапазон для канального продукта</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5c" value="4"><span class="dg-sn">4</span><span class="dg-st">500 тыс. - 2 млн руб. — хороший чек, мотивирует реселлеров активно продавать</span></label>
+            <label class="dg-sopt"><input type="radio" name="dq5c" value="5"><span class="dg-sn">5</span><span class="dg-st">Более 2 млн руб. — высокий ACV, создаёт устойчивую мотивацию для специализации на продукте</span></label>
+          </div>
+        </div>
+        <div class="dg-btns">
+          <button class="dg-btn dg-btn-s" onclick="dCatBack(4)">Назад</button>
+          <button class="dg-btn dg-btn-p" onclick="dShowResult()">Получить результат <i class="ti ti-arrow-right" style="font-size:13px"></i></button>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- Экран 3: Результат -->
+    <div class="dg-scr" id="dg-s3">
+    <div class="dg-card">
+      <div class="dg-cat-hdr">
+        <div class="dg-cat-pill" style="background:var(--navy)">Результат</div>
+        <div><div class="dg-cat-ttl">Ваша готовность к дистрибуции</div><div class="dg-cat-sub">13 критериев · 5 категорий · макс. 100 баллов</div></div>
+      </div>
+      <div class="dg-ring-wrap">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="62" fill="none" stroke="#EDF4FC" stroke-width="13"/>
+          <circle cx="75" cy="75" r="62" fill="none" stroke="var(--teal)" stroke-width="13"
+                  stroke-dasharray="389.56" stroke-dashoffset="389.56" stroke-linecap="round" id="dg-arc"/>
+        </svg>
+        <div class="dg-ring-inner">
+          <div class="dg-ring-num" id="dg-rnum">0</div>
+          <div class="dg-ring-max">из 100</div>
+        </div>
+      </div>
+      <div class="dg-res-lvl" id="dg-rlvl"></div>
+      <div class="dg-res-desc" id="dg-rdesc"></div>
+      <div class="dg-bar-section" id="dg-bars"></div>
+      <div class="dg-recs-wrap" id="dg-recs"></div>
+      <div class="dg-pkg-block" id="dg-pkg"></div>
+      <div class="dg-note">Диагностика носит ориентировочный характер и основана на методологии оценки вендоров Axoft.</div>
+      <div class="dg-btns" style="margin-top:20px;justify-content:space-between">
+        <button class="dg-btn dg-btn-s" onclick="dRestart()">Пройти заново</button>
+        <button class="btn btn-p" onclick="goPage('support')"><i class="ti ti-send" style="font-size:13px"></i>Связаться с Axoft</button>
+      </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="page-settings" class="page">
+  <div class="ph"><div><div class="ph-t">Настройки</div><div class="ph-s">Профиль компании и параметры аккаунта</div></div><button class="btn btn-p"><i class="ti ti-device-floppy" style="font-size:14px"></i>Сохранить</button></div>
+  <div class="set-s"><div class="set-h"><i class="ti ti-building"></i>Профиль компании</div><div class="set-r"><div class="set-l">Название</div><div class="set-v">АИСофт ООО</div><div class="set-e"><i class="ti ti-pencil" style="font-size:13px"></i>Изменить</div></div><div class="set-r"><div class="set-l">ИНН</div><div class="set-v">7712345678</div><div class="set-e"><i class="ti ti-pencil" style="font-size:13px"></i>Изменить</div></div><div class="set-r"><div class="set-l">Направление</div><div class="set-v"><span class="pill pt">ИИ — ML/AI для B2B</span></div><div class="set-e">Связаться с менеджером</div></div><div class="set-r"><div class="set-l">Стадия</div><div class="set-v">Стартап (до 3 лет), есть MVP</div><div class="set-e"><i class="ti ti-pencil" style="font-size:13px"></i>Изменить</div></div><div class="set-r"><div class="set-l">Резидент Сколково</div><div class="set-v"><span class="pill pg">Да</span></div><div class="set-e"><i class="ti ti-pencil" style="font-size:13px"></i>Изменить</div></div></div>
+  <div class="set-s"><div class="set-h"><i class="ti ti-user"></i>Контактное лицо</div><div class="set-r"><div class="set-l">Имя</div><div class="set-v">Александр Иванов</div><div class="set-e"><i class="ti ti-pencil" style="font-size:13px"></i>Изменить</div></div><div class="set-r"><div class="set-l">Email</div><div class="set-v">a.ivanov@aisoft.ru</div><div class="set-e"><i class="ti ti-pencil" style="font-size:13px"></i>Изменить</div></div><div class="set-r"><div class="set-l">Телефон</div><div class="set-v">+7 (999) 123-45-67</div><div class="set-e"><i class="ti ti-pencil" style="font-size:13px"></i>Изменить</div></div></div>
+  <div class="set-s"><div class="set-h"><i class="ti ti-tag"></i>Тариф</div><div class="set-r"><div class="set-l">Текущий тариф</div><div class="set-v" id="set-tier"><span class="pill pt">UP BASE</span></div><div class="set-e">Автоматически</div></div><div class="set-r"><div class="set-l">Дата регистрации</div><div class="set-v">11.05.2026</div><div></div></div><div class="set-r"><div class="set-l">Срок программы</div><div class="set-v">До 11.11.2026 (6 месяцев)</div><div></div></div></div>
+</div>
+
+</main>
+
+<script>
+let tier='base';
+function setTier(t){
+  tier=t;const s=t==='strat';
+  document.getElementById('ts-base').className='ts'+(s?'':' ab');
+  document.getElementById('ts-strat').className='ts'+(s?' as':'');
+  document.getElementById('sb-base').style.display=s?'none':'block';
+  document.getElementById('sb-strat').style.display=s?'block':'none';
+  document.getElementById('wc-base').style.display=s?'none':'flex';
+  document.getElementById('wc-strat').style.display=s?'flex':'none';
+  document.getElementById('ob-base').style.display=s?'none':'flex';
+  document.getElementById('ob-strat').style.display=s?'flex':'none';
+  document.getElementById('stats-base').style.display=s?'none':'grid';
+  document.getElementById('stats-strat').style.display=s?'grid':'none';
+  document.getElementById('qa-base').style.display=s?'none':'block';
+  document.getElementById('qa-strat').style.display=s?'block':'none';
+  document.getElementById('notif-base').style.display=s?'none':'block';
+  document.getElementById('notif-strat').style.display=s?'block':'none';
+  document.getElementById('notif-cnt').textContent=s?'3 новых':'1 новое';
+  document.getElementById('dash-sub').textContent=s?'Персональный трек · Этап 6 из 7 · UP STRATEGIC · Направление: ИИ':'Программа запущена · Этап 1 из 7 · UP BASE · Направление: ИИ';
+  document.getElementById('dash-cta').innerHTML=s?'<i class="ti ti-route" style="font-size:14px"></i>Мой путь':'<i class="ti ti-route" style="font-size:14px"></i>Начать путь';
+  document.getElementById('path-badge').textContent=s?'6/7':'1/7';
+  document.getElementById('orders-badge').textContent=s?'3':'0';
+  document.getElementById('path-sub').textContent=s?'7 этапов · Текущий: Этап 6 — UP STRATEGIC':'7 этапов · Текущий: Этап 1 — Регистрация';
+  document.getElementById('pd-base').style.display=s?'none':'block';
+  document.getElementById('pd-strat').style.display=s?'block':'none';
+  document.getElementById('svc-sub').textContent=s?'3 пакета · Ваучеры: 280 000 ₽':'3 пакета консалтинга · Диагностика, Аудит, Упаковка';
+  document.querySelectorAll('.vouch-btn').forEach(e=>e.style.display=s?'inline-block':'none');
+  document.getElementById('ord-base').style.display=s?'none':'block';
+  document.getElementById('ord-strat').style.display=s?'block':'none';
+  document.getElementById('sup-mgr').style.display=s?'flex':'none';
+  document.getElementById('set-tier').innerHTML=s?'<span class="pill pg">UP STRATEGIC</span>':'<span class="pill pt">UP BASE</span>';
+  if(s){
+    setSN('sn1','d');setSP('sp1','pg','Завершён');
+    setSN('sn2','d');setSP('sp2','pg','Завершён');
+    setSN('sn3','d');setSP('sp3','pg','Завершён');
+    setSN('sn4','d');setSP('sp4','pg','Завершён');
+    setSN('sn5','d');setSP('sp5','pg','Завершён');
+    setSN('sn6','a6');setSP('sp6','','В процессе','background:rgba(0,179,125,.15);color:var(--green)');
+    document.getElementById('ps1').className='ps';document.getElementById('ps6').className='ps psa';document.getElementById('ps6').style.borderColor='var(--green)';
+    document.getElementById('ps7').className='ps';
+    document.getElementById('s6-lock').style.display='none';
+    ['s6t1','s6t2','s6t3','s6t4'].forEach(id=>{const e=document.getElementById(id);e.className='st std';e.querySelector('i').className='ti ti-circle-check'});
+  } else {
+    setSN('sn1','a');setSP('sp1','pt','Активен');
+    setSN('sn2','p');setSP('sp2','pn','Следующий');
+    setSN('sn3','p');setSP('sp3','pn','Ожидание');
+    setSN('sn4','p');setSP('sp4','pn','Ожидание');
+    setSN('sn5','p');setSP('sp5','pn','Ожидание');
+    setSN('sn6','l');setSP('sp6','','По решению Axoft','background:rgba(0,179,125,.1);color:var(--green)');
+    document.getElementById('ps1').className='ps psa';document.getElementById('ps6').className='ps pss';document.getElementById('ps6').style.borderColor='';
+    document.getElementById('ps7').className='ps psl';
+    document.getElementById('s6-lock').style.display='flex';
+    ['s6t1','s6t2','s6t3','s6t4'].forEach(id=>{const e=document.getElementById(id);e.className='st stt';e.querySelector('i').className='ti ti-circle'});
+  }
+}
+function setSN(id,t){
+  const e=document.getElementById(id);
+  e.className='sn';
+  if(t==='d'){e.classList.add('sn-d');e.innerHTML='<i class="ti ti-check" style="font-size:13px"></i>';}
+  else if(t==='a'){e.classList.add('sn-a');e.textContent='1';}
+  else if(t==='a6'){e.classList.add('sn-a');e.textContent='6';}
+  else if(t==='p'){e.classList.add('sn-p');e.textContent=id.replace('sn','');}
+  else if(t==='l'){e.classList.add('sn-l');e.innerHTML='<i class="ti ti-lock" style="font-size:12px"></i>';}
+}
+function setSP(id,cls,txt,style){
+  const e=document.getElementById(id);
+  e.className='pill'+(cls?' '+cls:'');
+  e.textContent=txt;
+  if(style)e.style.cssText=style;else e.style.cssText='';
+}
+function goPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'));
+  document.querySelectorAll('.ni').forEach(ni=>ni.classList.remove('act'));
+  document.getElementById('page-'+n).classList.add('act');
+  const m={dash:'дашборд',path:'путь',diag:'диагн',services:'серв',orders:'заказ',materials:'матери',support:'поддерж',settings:'настрой'};
+  document.querySelectorAll('.ni').forEach(ni=>{if(ni.textContent.toLowerCase().includes(m[n]||''))ni.classList.add('act');});
+  window.scrollTo(0,0);
+}
+function ts(h){const b=h.nextElementSibling,a=h.querySelector('.sa'),o=b.classList.contains('op');b.classList.toggle('op',!o);a.classList.toggle('op',!o);}
+function tfaq(q){q.nextElementSibling.classList.toggle('op');}
+// ── ДИАГНОСТИКА ──────────────────────────────────────
+const DW={dq1a:2,dq1b:1,dq1c:1,dq2a:3,dq2b:2,dq2c:1,dq3:2,dq4a:3,dq4b:2,dq5a:1,dq5b:1,dq5c:1};
+const DCATQ=[['dq1a','dq1b','dq1c'],['dq2a','dq2b','dq2c'],['dq3'],['dq4a','dq4b'],['dq5a','dq5b','dq5c']];
+const DCATMAX=[20,30,10,25,15];
+const DCATNAME=['Рынок и трекшн','Продукт','Команда','Канальный потенциал','Готовность к каналу'];
+let dScr=0,dCur=0;
+function dGo(n){
+  document.getElementById('dg-s'+dScr).classList.remove('on');
+  dScr=n;
+  document.getElementById('dg-s'+n).classList.add('on');
+  const pcts=[0,33,66,100];
+  document.getElementById('dg-pf').style.width=pcts[n]+'%';
+  for(let i=0;i<4;i++){
+    const el=document.getElementById('dg-ps'+i);
+    el.classList.remove('active','done');
+    if(i<n)el.classList.add('done');else if(i===n)el.classList.add('active');
+  }
+  document.getElementById('page-diag').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function dRefreshGate(){
+  const fb=document.getElementById('dg-fail-box'),fm=document.getElementById('dg-fail-msg'),btn=document.getElementById('dg-gate-btn');
+  const g1=document.querySelector('input[name=dg1]:checked'),g2=document.querySelector('input[name=dg2]:checked');
+  const g3=document.querySelector('input[name=dg3]:checked'),g5=document.querySelector('input[name=dg5]:checked');
+  let fail=false,msg='';
+  if(g1?.value==='fail'){fail=true;msg='Продукты не из сферы IT не входят в партнёрский канал Axoft. Если считаете, что ваше решение имеет IT-составляющую — опишите это менеджеру Axoft.';}
+  else if(g2?.value==='fail'){fail=true;msg='Канал Axoft ориентирован на корпоративный и государственный рынок. B2C-продукты не дистрибутируются через партнёрскую сеть Axoft.';}
+  else if(g3?.value==='fail'){fail=true;msg='Отсутствие оформленных прав на интеллектуальную собственность — блокирующее условие. Необходимо оформить исключительные права перед подачей заявки.';}
+  else if(g5?.value==='fail_soft'){fail=true;msg='На стадии концепции без прототипа диагностика преждевременна. Вернитесь, когда будет готов минимальный работающий прототип.';}
+  if(fail){fb.classList.add('on');fm.textContent=msg;btn.disabled=true;}
+  else{fb.classList.remove('on');btn.disabled=!['dg1','dg2','dg3','dg4','dg5'].every(n=>document.querySelector('input[name='+n+']:checked'));}
+}
+document.querySelectorAll('input[name^=dg]').forEach(r=>r.addEventListener('change',function(){
+  this.closest('.dg-opts').querySelectorAll('.dg-opt').forEach(o=>o.classList.remove('sel'));
+  this.closest('.dg-opt').classList.add('sel');
+  dRefreshGate();
+}));
+function dGateNext(){dGo(2);}
+function dShowCat(i){
+  for(let j=0;j<5;j++){
+    document.getElementById('dg-c'+j).style.display=j===i?'':'none';
+    const cn=document.getElementById('dg-cn'+j);
+    cn.classList.remove('act','done');
+    if(j<i)cn.classList.add('done');else if(j===i)cn.classList.add('act');
+  }
+  dCur=i;
+}
+function dCatNext(i){
+  if(!DCATQ[i].every(q=>document.querySelector('input[name='+q+']:checked'))){alert('Пожалуйста, ответьте на все вопросы в этой категории.');return;}
+  if(i<4)dShowCat(i+1);
+}
+function dCatBack(i){i>0?dShowCat(i-1):dGo(1);}
+document.querySelectorAll('input[name^=dq]').forEach(r=>r.addEventListener('change',function(){
+  this.closest('.dg-sopts').querySelectorAll('.dg-sopt').forEach(o=>o.classList.remove('sel'));
+  this.closest('.dg-sopt').classList.add('sel');
+}));
+function dGetV(q){const r=document.querySelector('input[name='+q+']:checked');return r?+r.value:0;}
+function dShowResult(){
+  if(!DCATQ[4].every(q=>document.querySelector('input[name='+q+']:checked'))){alert('Пожалуйста, ответьте на все вопросы.');return;}
+  const sc={};Object.keys(DW).forEach(q=>sc[q]=dGetV(q)*DW[q]);
+  const catSc=DCATQ.map(qs=>qs.reduce((s,q)=>s+sc[q],0));
+  const total=catSc.reduce((s,v)=>s+v,0);
+  const arc=document.getElementById('dg-arc');
+  const C=2*Math.PI*62;
+  setTimeout(()=>{arc.style.strokeDashoffset=C*(1-total/100);arc.style.transition='stroke-dashoffset 1.2s ease';},80);
+  let col,lvl,desc;
+  if(total>=70){col='var(--green)';lvl='Высокая готовность';desc='Продукт демонстрирует сильные показатели по ключевым категориям — есть хорошая база для разговора о дистрибуции.';}
+  else if(total>=45){col='var(--teal)';lvl='Средняя готовность';desc='Есть задел, но ряд категорий требует доработки. Правильная упаковка и структурирование откроют путь к партнёрскому каналу.';}
+  else{col='#B06000';lvl='Начальная стадия';desc='Продукт или бизнес-модель нуждаются в серьёзной проработке перед выходом в партнёрский канал.';}
+  arc.style.stroke=col;
+  document.getElementById('dg-rnum').textContent=total;document.getElementById('dg-rnum').style.color=col;
+  document.getElementById('dg-rlvl').textContent=lvl;document.getElementById('dg-rlvl').style.color=col;
+  document.getElementById('dg-rdesc').textContent=desc;
+  const bel=document.getElementById('dg-bars');
+  bel.innerHTML='<div class="dg-bar-title">Результат по категориям</div>';
+  catSc.forEach((sc2,i)=>{
+    const pct=Math.round(sc2/DCATMAX[i]*100);
+    const bc=pct>=70?'var(--green)':pct>=45?'var(--teal)':'#B06000';
+    bel.innerHTML+=`<div class="dg-bar-row"><div class="dg-bar-lbl">${DCATNAME[i]}</div><div class="dg-bar-track"><div class="dg-bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="dg-bar-val" style="color:${bc}">${sc2}/${DCATMAX[i]}</div></div>`;
+  });
+  const rl=document.getElementById('dg-recs');
+  rl.innerHTML='<div class="dg-recs-title">Рекомендации по категориям</div>';
+  const RD=[
+    {good:'Сильная рыночная позиция и трекшн — убедительный аргумент для реселлеров.',warn:'Укрепите CVP с конкретными цифрами и подтверждёнными кейсами. Подготовьте данные по объёму рынка.',bad:'Зафиксируйте ценностное предложение и проведите первые продажи — без этого канальные продажи невозможны.'},
+    {good:'Зрелый и уникальный продукт с хорошей совместимостью — ключевое условие для дистрибуции.',warn:'Доработайте продукт до коммерческой версии. Проверьте совместимость с отечественными ОС и СУБД.',bad:'Требуется существенная доработка: минимум — работающий MVP с тестированием у реальных клиентов.'},
+    {good:'Команда укомплектована — партнёры видят надёжного вендора для долгосрочных отношений.',warn:'Усильте команду в области B2B-продаж или разработки, чтобы снизить риски для партнёров.',bad:'Необходимо сформировать полноценную команду с коммерческой и технической экспертизой.'},
+    {good:'Продукт хорошо встраивается в экосистему IT-решений — реселлеры смогут зарабатывать больше на совместных продажах.',warn:'Проработайте конкретные сценарии up-sell и cross-sell. Подготовьте аргументы для реселлеров.',bad:'Без чёткого канального потенциала реселлерам сложно мотивировать себя продавать ваш продукт.'},
+    {good:'Канальная упаковка готова — реселлер может начать продажи без дополнительных усилий с вашей стороны.',warn:'Подготовьте полный партнёрский пакет: FAQ, кейсы, финмодель для реселлера и условия партнёрской программы.',bad:'Необходима разработка канальной упаковки: условия, коммерческие материалы, экономика сделки для партнёра.'},
+  ];
+  catSc.forEach((sc2,i)=>{
+    const pct=sc2/DCATMAX[i];
+    let cls,ico,txt;
+    if(pct>=.7){cls='dg-rec-ok';ico='✓';txt=RD[i].good;}
+    else if(pct>=.45){cls='dg-rec-wn';ico='!';txt=RD[i].warn;}
+    else{cls='dg-rec-bd';ico='×';txt=RD[i].bad;}
+    rl.innerHTML+=`<div class="dg-rec ${cls}"><div class="dg-rec-ico">${ico}</div><div><div class="dg-rec-cat">${DCATNAME[i]}</div><div class="dg-rec-txt">${txt}</div></div></div>`;
+  });
+  const pel=document.getElementById('dg-pkg');
+  let eyebrow,ptitle,desc2;
+  if(total>=70){
+    pel.style.borderColor='var(--green)';pel.style.background='var(--gdim)';
+    eyebrow='<span style="color:var(--green)">Следующий шаг</span>';ptitle='Ваши показатели говорят о хорошей готовности к каналу';
+    desc2='Рекомендуем обратиться к менеджеру Axoft для обсуждения возможностей сотрудничества.';
+  }else if(total>=45){
+    pel.style.borderColor='var(--teal)';pel.style.background='var(--tdim)';
+    eyebrow='<span style="color:var(--teal)">Рекомендованный шаг</span>';ptitle='Пакет «Упаковка»';
+    desc2='Есть хорошая база, но для выхода в канал нужна коммерческая упаковка и партнёрская программа. Эксперты Axoft помогут подготовить всё необходимое: от УТП до финансовой модели для реселлеров.';
+  }else{
+    pel.style.borderColor='#B06000';pel.style.background='#FFF3DC';
+    eyebrow='<span style="color:#B06000">Рекомендованный шаг</span>';ptitle='Пакет «Аудит»';
+    desc2='Прежде чем выходить в канал, важно точно понять пробелы и получить дорожную карту. Эксперты Axoft проведут детальный аудит и дадут конкретный план действий.';
+  }
+  pel.innerHTML=`<div class="dg-pkg-eyebrow">${eyebrow}</div><div class="dg-pkg-title">${ptitle}</div><div class="dg-pkg-desc">${desc2}</div>`;
+  dGo(3);
+}
+function dRestart(){
+  document.querySelectorAll('input[name^=dg],input[name^=dq]').forEach(r=>r.checked=false);
+  document.querySelectorAll('.dg-opt,.dg-sopt').forEach(o=>o.classList.remove('sel'));
+  document.getElementById('dg-gate-btn').disabled=true;
+  document.getElementById('dg-fail-box').classList.remove('on');
+  dShowCat(0);dGo(0);
+}
+
+function flt(btn,bl){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('fa'));btn.classList.add('fa');
+  document.querySelectorAll('.pkg').forEach(c=>{c.style.display=(bl==='all'||c.dataset.pkg===bl)?'flex':'none';});
+}
+</script>
+</body>
+</html>

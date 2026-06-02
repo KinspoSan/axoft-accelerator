@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Диагностика готовности к дистрибуции — Axoft</title>
+<style>
+  :root {
+    --navy:      #1B3A6B;
+    --blue:      #2E6EB5;
+    --blue-lt:   #EDF4FC;
+    --blue-mid:  #D6E4F7;
+    --green:     #1A7A4A;
+    --green-lt:  #E2F4EB;
+    --teal:      #1A6B6B;
+    --teal-lt:   #E0F2F2;
+    --amber:     #B06000;
+    --amber-lt:  #FFF3DC;
+    --red:       #A02020;
+    --red-lt:    #FDE8E8;
+    --grey:      #3A3A3A;
+    --lgrey:     #F5F7FA;
+    --border:    #D0D9EA;
+    --white:     #FFFFFF;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--lgrey); color: var(--grey); font-size: 15px; line-height: 1.65; }
+
+  /* HEADER */
+  .hdr { background: var(--navy); padding: 0 40px; height: 56px; display: flex; align-items: center; gap: 14px; }
+  .hdr-logo { font-weight: 800; font-size: 17px; color: #fff; letter-spacing: .3px; }
+  .hdr-div  { width: 1px; height: 22px; background: rgba(255,255,255,.25); }
+  .hdr-tag  { font-size: 13px; color: rgba(255,255,255,.65); }
+
+  /* PROGRESS BAR */
+  .prog { background: var(--navy); padding: 0 40px 18px; }
+  .prog-track { display: flex; position: relative; }
+  .prog-line  { position: absolute; top: 13px; left: 0; right: 0; height: 2px; background: rgba(255,255,255,.15); }
+  .prog-fill  { position: absolute; top: 13px; left: 0; height: 2px; background: var(--blue); transition: width .4s; }
+  .prog-step  { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; z-index: 1; }
+  .prog-dot   { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255,255,255,.3); background: transparent;
+                display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.5); transition: all .3s; }
+  .prog-step.active .prog-dot  { background: var(--blue); border-color: #6DB3FF; color: #fff; }
+  .prog-step.done .prog-dot    { background: var(--green); border-color: #52C68A; color: #fff; }
+  .prog-lbl   { font-size: 11px; color: rgba(255,255,255,.5); }
+  .prog-step.active .prog-lbl, .prog-step.done .prog-lbl { color: rgba(255,255,255,.85); }
+
+  /* LAYOUT */
+  .wrap  { max-width: 800px; margin: 28px auto 60px; padding: 0 16px; }
+  .card  { background: var(--white); border-radius: 12px; box-shadow: 0 2px 14px rgba(0,0,0,.07); padding: 36px 40px; margin-bottom: 16px; }
+
+  /* SCREEN SWITCHING */
+  .scr { display: none; }
+  .scr.on { display: block; }
+
+  /* CATEGORY HEADER */
+  .cat-hdr { display: flex; align-items: flex-start; gap: 14px; padding-bottom: 16px; border-bottom: 2px solid var(--border); margin-bottom: 26px; }
+  .cat-pill { padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; margin-top: 2px; }
+  .cat-ttl  { font-size: 19px; font-weight: 700; color: var(--navy); }
+  .cat-sub  { font-size: 13px; color: #888; margin-top: 3px; }
+
+  /* GATE */
+  .g-q { margin-bottom: 26px; }
+  .g-q-lbl { font-weight: 600; color: var(--navy); margin-bottom: 10px; font-size: 15px; display: flex; align-items: flex-start; gap: 9px; }
+  .g-q-lbl .n { background: var(--blue); color: #fff; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .opts { display: flex; flex-direction: column; gap: 7px; }
+  .opt  { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; transition: border-color .15s, background .15s; }
+  .opt:hover   { border-color: var(--blue); background: var(--blue-lt); }
+  .opt.sel     { border-color: var(--blue); background: var(--blue-lt); }
+  .opt.warn    { border-color: #E8B060; background: var(--amber-lt); }
+  .opt.stop    { border-color: #E08080; background: var(--red-lt); }
+  .opt input[type=radio] { margin-top: 3px; accent-color: var(--blue); flex-shrink: 0; }
+  .opt-txt     { font-size: 14px; line-height: 1.5; color: var(--grey); }
+  .badge       { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 10px; margin-left: 6px; }
+  .badge-w     { background: #FFE8B0; color: #8A5000; }
+  .badge-s     { background: #FFD0D0; color: #900; }
+
+  .fail-box { border-radius: 8px; padding: 16px 20px; margin-top: 16px; display: none; }
+  .fail-box.on { display: block; }
+  .fail-title  { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .fail-txt    { font-size: 14px; }
+
+  /* SCORE QUESTIONS */
+  .cat-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+  .cn { padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; background: var(--lgrey); color: #888; border: 1.5px solid var(--border); }
+  .cn.act  { color: #fff; border-color: transparent; }
+  .cn.done { background: var(--green-lt); color: var(--green); border-color: #9EDDB9; }
+
+  .sq { margin-bottom: 28px; }
+  .sq-lbl { font-weight: 600; color: var(--navy); margin-bottom: 11px; font-size: 15px; display: flex; align-items: flex-start; gap: 8px; }
+  .wt { font-size: 11px; background: var(--lgrey); color: #777; padding: 2px 8px; border-radius: 10px; white-space: nowrap; margin-top: 2px; }
+  .sopts { display: flex; flex-direction: column; gap: 6px; }
+  .sopt  { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; transition: border-color .15s, background .15s; }
+  .sopt:hover { border-color: var(--blue); background: var(--blue-lt); }
+  .sopt.sel   { border-color: var(--blue); background: var(--blue-lt); }
+  .sopt input[type=radio] { margin-top: 3px; accent-color: var(--blue); flex-shrink: 0; }
+  .sn  { font-weight: 700; color: var(--blue); min-width: 18px; font-size: 14px; }
+  .st  { font-size: 14px; line-height: 1.5; color: var(--grey); }
+
+  /* BUTTONS */
+  .btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 26px; }
+  .btn  { padding: 11px 26px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all .15s; }
+  .btn-p { background: var(--blue); color: #fff; }
+  .btn-p:hover { background: var(--navy); }
+  .btn-p:disabled { background: #bbb; cursor: not-allowed; }
+  .btn-s { background: var(--white); color: var(--navy); border: 1.5px solid var(--border); }
+  .btn-s:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* WELCOME */
+  .wc-hero { text-align: center; padding: 8px 0 28px; }
+  .wc-hero h1 { font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+  .wc-hero p  { font-size: 14px; color: #666; max-width: 520px; margin: 0 auto 22px; }
+  .wc-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 26px; }
+  .tag     { padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+  .tag-bl  { background: var(--blue-lt); color: var(--blue); }
+  .tag-gn  { background: var(--green-lt); color: var(--green); }
+  .wc-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 28px; }
+  .ws  { background: var(--lgrey); border-radius: 10px; padding: 18px 14px; text-align: center; }
+  .ws-ic { font-size: 26px; margin-bottom: 7px; }
+  .ws-tt { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .ws-tx { font-size: 12px; color: #777; }
+
+  /* RESULT */
+  .ring-wrap { width: 150px; height: 150px; margin: 0 auto 20px; position: relative; }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+  .ring-num { font-size: 38px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .ring-max { font-size: 13px; color: #999; }
+  .res-lvl  { text-align: center; font-size: 19px; font-weight: 700; margin-bottom: 5px; }
+  .res-desc { text-align: center; color: #666; font-size: 14px; margin-bottom: 28px; max-width: 540px; margin-left: auto; margin-right: auto; }
+
+  .bar-section { margin: 20px 0 24px; }
+  .bar-title   { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+  .bar-row     { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .bar-lbl     { width: 185px; font-size: 13px; color: var(--navy); font-weight: 600; flex-shrink: 0; }
+  .bar-track   { flex: 1; height: 9px; background: var(--lgrey); border-radius: 5px; overflow: hidden; }
+  .bar-fill    { height: 100%; border-radius: 5px; transition: width .7s; }
+  .bar-val     { width: 44px; text-align: right; font-size: 13px; font-weight: 700; }
+
+  .recs-wrap  { margin-top: 24px; }
+  .recs-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+  .rec { display: flex; gap: 11px; padding: 13px 15px; border-radius: 8px; margin-bottom: 9px; border: 1.5px solid var(--border); }
+  .rec-ico { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .rec-cat { font-size: 11px; color: #999; margin-bottom: 2px; text-transform: uppercase; letter-spacing: .5px; }
+  .rec-txt { font-size: 14px; color: var(--grey); }
+  .rec-ok  { border-color: #9EDDB9; background: var(--green-lt); }
+  .rec-wn  { border-color: #F0C868; background: #FFFBEE; }
+  .rec-bd  { border-color: #F0A0A0; background: var(--red-lt); }
+
+  .pkg-block { margin-top: 26px; padding: 22px 24px; border-radius: 10px; border: 2px solid var(--border); background: var(--lgrey); }
+  .pkg-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .pkg-title   { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+  .pkg-desc    { font-size: 14px; color: #555; line-height: 1.6; }
+
+  .note { font-size: 12px; color: #aaa; text-align: center; margin-top: 14px; }
+
+  @media(max-width:580px){
+    .hdr { padding: 0 14px; }
+    .prog { padding: 0 14px 16px; }
+    .card { padding: 20px 14px; }
+    .wc-steps { grid-template-columns: 1fr; }
+    .bar-lbl { width: 120px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">Axoft</div>
+  <div class="hdr-div"></div>
+  <div class="hdr-tag">Диагностика готовности к дистрибуции</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog">
+  <div class="prog-track" id="pt">
+    <div class="prog-line"></div>
+    <div class="prog-fill" id="pf" style="width:0%"></div>
+    <div class="prog-step active" id="ps0"><div class="prog-dot">1</div><div class="prog-lbl">Старт</div></div>
+    <div class="prog-step" id="ps1"><div class="prog-dot">2</div><div class="prog-lbl">Фильтр</div></div>
+    <div class="prog-step" id="ps2"><div class="prog-dot">3</div><div class="prog-lbl">Оценка</div></div>
+    <div class="prog-step" id="ps3"><div class="prog-dot">4</div><div class="prog-lbl">Результат</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══ SCREEN 0: WELCOME ═══════════════════════════ -->
+<div class="scr on" id="s0">
+<div class="card">
+  <div class="wc-hero">
+    <h1>Готов ли ваш продукт к продажам через партнёрский канал?</h1>
+    <p>Пройдите самодиагностику и узнайте, насколько ваш продукт готов к работе с реселлерами. Результат — конкретный балл и рекомендации по каждой категории.</p>
+    <div class="wc-tags">
+      <span class="tag tag-bl">10–12 минут</span>
+      <span class="tag tag-bl">13 критериев</span>
+      <span class="tag tag-gn">Бесплатно</span>
+      <span class="tag tag-gn">Результат сразу</span>
+    </div>
+  </div>
+  <div class="wc-steps">
+    <div class="ws"><div class="ws-ic">🔍</div><div class="ws-tt">Базовый фильтр</div><div class="ws-tx">5 вопросов о продукте и компании</div></div>
+    <div class="ws"><div class="ws-ic">📊</div><div class="ws-tt">Оценка</div><div class="ws-tx">13 критериев по 5 ключевым категориям</div></div>
+    <div class="ws"><div class="ws-ic">🎯</div><div class="ws-tt">Результат</div><div class="ws-tx">Балл, разбивка и рекомендации</div></div>
+  </div>
+  <div class="btns" style="justify-content:center">
+    <button class="btn btn-p" onclick="go(1)">Начать диагностику →</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ SCREEN 1: GATE ════════════════════════════════ -->
+<div class="scr" id="s1">
+<div class="card">
+  <div class="cat-hdr">
+    <div class="cat-pill" style="background:var(--teal)">Шаг 1 из 2</div>
+    <div><div class="cat-ttl">Базовый фильтр</div><div class="cat-sub">Проверяем соответствие минимальным требованиям для работы с дистрибьютором</div></div>
+  </div>
+
+  <!-- G1 -->
+  <div class="g-q">
+    <div class="g-q-lbl"><span class="n">1</span>Что представляет собой ваш продукт?</div>
+    <div class="opts" id="g1">
+      <label class="opt"><input type="radio" name="g1" value="ok"><span class="opt-txt">Программное обеспечение (SaaS, on-premise, ПО собственной разработки)</span></label>
+      <label class="opt"><input type="radio" name="g1" value="ok"><span class="opt-txt">IT-оборудование или программно-аппаратный комплекс</span></label>
+      <label class="opt"><input type="radio" name="g1" value="ok"><span class="opt-txt">IT-платформа или облачный сервис (IaaS, PaaS)</span></label>
+      <label class="opt"><input type="radio" name="g1" value="warn"><span class="opt-txt">IT-услуги или консалтинг <span class="badge badge-w">как правило не дистрибутируется</span></span></label>
+      <label class="opt stop"><input type="radio" name="g1" value="fail"><span class="opt-txt">Не IT-продукт <span class="badge badge-s">не входит в канал Axoft</span></span></label>
+    </div>
+  </div>
+
+  <!-- G2 -->
+  <div class="g-q">
+    <div class="g-q-lbl"><span class="n">2</span>Кто ваши конечные покупатели?</div>
+    <div class="opts" id="g2">
+      <label class="opt"><input type="radio" name="g2" value="ok"><span class="opt-txt">Корпоративные клиенты (B2B)</span></label>
+      <label class="opt"><input type="radio" name="g2" value="ok"><span class="opt-txt">Государственные заказчики (B2G)</span></label>
+      <label class="opt"><input type="radio" name="g2" value="ok"><span class="opt-txt">Корпоративные и государственные (B2B + B2G)</span></label>
+      <label class="opt stop"><input type="radio" name="g2" value="fail"><span class="opt-txt">Физические лица (B2C) <span class="badge badge-s">канал Axoft ориентирован на корпоративный рынок</span></span></label>
+    </div>
+  </div>
+
+  <!-- G3 -->
+  <div class="g-q">
+    <div class="g-q-lbl"><span class="n">3</span>Кому принадлежат права на ваш продукт?</div>
+    <div class="opts" id="g3">
+      <label class="opt"><input type="radio" name="g3" value="ok"><span class="opt-txt">Нам — исключительные права оформлены на нашу компанию</span></label>
+      <label class="opt"><input type="radio" name="g3" value="warn"><span class="opt-txt">Частично нам, частично третьим лицам <span class="badge badge-w">требует уточнения</span></span></label>
+      <label class="opt stop"><input type="radio" name="g3" value="fail"><span class="opt-txt">Права не оформлены <span class="badge badge-s">блокирующий критерий</span></span></label>
+    </div>
+  </div>
+
+  <!-- G4 -->
+  <div class="g-q">
+    <div class="g-q-lbl"><span class="n">4</span>Зарегистрировано ли юридическое лицо в России?</div>
+    <div class="opts" id="g4">
+      <label class="opt"><input type="radio" name="g4" value="ok"><span class="opt-txt">Да, зарегистрировано российское юрлицо (ООО, АО, ИП)</span></label>
+      <label class="opt"><input type="radio" name="g4" value="warn"><span class="opt-txt">В процессе регистрации <span class="badge badge-w">снижает приоритет</span></span></label>
+      <label class="opt"><input type="radio" name="g4" value="warn"><span class="opt-txt">Нет <span class="badge badge-w">снижает приоритет</span></span></label>
+    </div>
+  </div>
+
+  <!-- G5 -->
+  <div class="g-q">
+    <div class="g-q-lbl"><span class="n">5</span>На какой стадии готовности ваш продукт?</div>
+    <div class="opts" id="g5">
+      <label class="opt"><input type="radio" name="g5" value="ok"><span class="opt-txt">Готовый продукт с платящими клиентами</span></label>
+      <label class="opt"><input type="radio" name="g5" value="ok"><span class="opt-txt">MVP готов и проходит тестирование с реальными пользователями</span></label>
+      <label class="opt"><input type="radio" name="g5" value="warn"><span class="opt-txt">MVP в разработке <span class="badge badge-w">снижает приоритет</span></span></label>
+      <label class="opt stop"><input type="radio" name="g5" value="fail_soft"><span class="opt-txt">Только концепция / идея без прототипа <span class="badge badge-w">пока рано</span></span></label>
+    </div>
+  </div>
+
+  <div class="fail-box" id="fail-box" style="background:var(--red-lt);border:1.5px solid #E08080">
+    <div class="fail-title" style="color:var(--red)">⛔ Есть блокирующий критерий</div>
+    <div class="fail-txt" id="fail-msg" style="color:#802020"></div>
+  </div>
+
+  <div class="btns">
+    <button class="btn btn-s" onclick="go(0)">← Назад</button>
+    <button class="btn btn-p" id="gate-btn" onclick="gateNext()" disabled>Перейти к оценке →</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ SCREEN 2: SCORING ═════════════════════════════ -->
+<div class="scr" id="s2">
+<div class="card">
+  <div class="cat-nav" id="cnav">
+    <div class="cn act" id="cn0">1. Рынок</div>
+    <div class="cn" id="cn1">2. Продукт</div>
+    <div class="cn" id="cn2">3. Команда</div>
+    <div class="cn" id="cn3">4. Канальный потенциал</div>
+    <div class="cn" id="cn4">5. Готовность к каналу</div>
+  </div>
+
+  <!-- CAT 0: Market -->
+  <div id="c0">
+    <div class="cat-hdr">
+      <div class="cat-pill" style="background:#1B5E8B">Категория 1</div>
+      <div><div class="cat-ttl">Рынок и бизнес-трекшн</div><div class="cat-sub">Макс. 20 баллов</div></div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Насколько чётко сформулировано ценностное предложение (CVP) вашего продукта? <span class="wt">вес ×2</span></div>
+      <div class="sopts" id="q_1a">
+        <label class="sopt"><input type="radio" name="q1a" value="1"><span class="sn">1</span><span class="st">Затрудняемся чётко сформулировать — нет конкретики</span></label>
+        <label class="sopt"><input type="radio" name="q1a" value="2"><span class="sn">2</span><span class="st">Проблема понятна, но CVP расплывчато — неясно, чем мы лучше аналогов</span></label>
+        <label class="sopt"><input type="radio" name="q1a" value="3"><span class="sn">3</span><span class="st">Чёткое CVP с дифференциацией, но аргументация не всегда убедительна</span></label>
+        <label class="sopt"><input type="radio" name="q1a" value="4"><span class="sn">4</span><span class="st">Сильное CVP, ценность очевидна, подтверждено пилотами или LOI от клиентов</span></label>
+        <label class="sopt"><input type="radio" name="q1a" value="5"><span class="sn">5</span><span class="st">Исключительно чёткое CVP, подтверждено платящими клиентами, преимущество измеримо</span></label>
+      </div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Как вы оцениваете объём целевого рынка? <span class="wt">вес ×1</span></div>
+      <div class="sopts" id="q_1b">
+        <label class="sopt"><input type="radio" name="q1b" value="1"><span class="sn">1</span><span class="st">Рынок не определён или оценка нереалистична</span></label>
+        <label class="sopt"><input type="radio" name="q1b" value="2"><span class="sn">2</span><span class="st">До 500 млн руб. — узкая ниша с ограниченным потенциалом</span></label>
+        <label class="sopt"><input type="radio" name="q1b" value="3"><span class="sn">3</span><span class="st">500 млн – 2 млрд руб. — умеренный потенциал с базовой оценкой</span></label>
+        <label class="sopt"><input type="radio" name="q1b" value="4"><span class="sn">4</span><span class="st">Более 2 млрд руб. — значительный рынок с данными и драйверами роста</span></label>
+        <label class="sopt"><input type="radio" name="q1b" value="5"><span class="sn">5</span><span class="st">Более 5 млрд руб., рост более 20%/год — детальная, обоснованная оценка</span></label>
+      </div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Какова текущая годовая выручка от продаж продукта (ARR)? <span class="wt">вес ×1</span></div>
+      <div class="sopts" id="q_1c">
+        <label class="sopt"><input type="radio" name="q1c" value="1"><span class="sn">1</span><span class="st">Выручки нет — только гранты, инвестиции или внутреннее финансирование</span></label>
+        <label class="sopt"><input type="radio" name="q1c" value="2"><span class="sn">2</span><span class="st">До 5 млн руб. — единичные пилоты, монетизация в стадии проверки</span></label>
+        <label class="sopt"><input type="radio" name="q1c" value="3"><span class="sn">3</span><span class="st">5–20 млн руб. — несколько платящих клиентов, регулярные продажи</span></label>
+        <label class="sopt"><input type="radio" name="q1c" value="4"><span class="sn">4</span><span class="st">20–50 млн руб. — устойчивый рост, product-market fit достигнут</span></label>
+        <label class="sopt"><input type="radio" name="q1c" value="5"><span class="sn">5</span><span class="st">Более 50 млн руб. — значимая клиентская база, предсказуемый рост</span></label>
+      </div>
+    </div>
+    <div class="btns"><button class="btn btn-p" onclick="catNext(0)">Следующая категория →</button></div>
+  </div>
+
+  <!-- CAT 1: Product -->
+  <div id="c1" style="display:none">
+    <div class="cat-hdr">
+      <div class="cat-pill" style="background:var(--teal)">Категория 2</div>
+      <div><div class="cat-ttl">Продукт и технологическая зрелость</div><div class="cat-sub">Макс. 30 баллов</div></div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">На какой стадии зрелости находится ваш продукт? <span class="wt">вес ×3 — ключевой</span></div>
+      <div class="sopts" id="q_2a">
+        <label class="sopt"><input type="radio" name="q2a" value="1"><span class="sn">1</span><span class="st">Только концепция или описание — MVP ещё не готов</span></label>
+        <label class="sopt"><input type="radio" name="q2a" value="2"><span class="sn">2</span><span class="st">MVP в разработке или только что готов, ещё не тестировался с клиентами</span></label>
+        <label class="sopt"><input type="radio" name="q2a" value="3"><span class="sn">3</span><span class="st">MVP протестирован с реальными пользователями, есть хотя бы один пилот</span></label>
+        <label class="sopt"><input type="radio" name="q2a" value="4"><span class="sn">4</span><span class="st">Коммерческий продукт с платящими клиентами и активной поддержкой</span></label>
+        <label class="sopt"><input type="radio" name="q2a" value="5"><span class="sn">5</span><span class="st">Зрелый продукт с постоянной базой, референсами, SLA и документацией</span></label>
+      </div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Насколько уникален продукт относительно конкурентов? <span class="wt">вес ×2</span></div>
+      <div class="sopts" id="q_2b">
+        <label class="sopt"><input type="radio" name="q2b" value="1"><span class="sn">1</span><span class="st">На рынке есть прямые аналоги без значимых отличий</span></label>
+        <label class="sopt"><input type="radio" name="q2b" value="2"><span class="sn">2</span><span class="st">Есть отличия, но незначительные и легко копируемые</span></label>
+        <label class="sopt"><input type="radio" name="q2b" value="3"><span class="sn">3</span><span class="st">Чёткие технические отличия с умеренным барьером входа</span></label>
+        <label class="sopt"><input type="radio" name="q2b" value="4"><span class="sn">4</span><span class="st">Технологическое или патентное преимущество — конкурентам нужно 12+ мес. для паритета</span></label>
+        <label class="sopt"><input type="radio" name="q2b" value="5"><span class="sn">5</span><span class="st">Уникальное решение с IP-защитой, сетевыми эффектами или глубокой технологической экспертизой</span></label>
+      </div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Совместимость с российской ИТ-инфраструктурой? <span class="wt">вес ×1</span></div>
+      <div class="sopts" id="q_2c">
+        <label class="sopt"><input type="radio" name="q2c" value="1"><span class="sn">1</span><span class="st">Разработан под западную инфраструктуру — не работает на отечественных ОС и СУБД</span></label>
+        <label class="sopt"><input type="radio" name="q2c" value="2"><span class="sn">2</span><span class="st">Совместимость с российскими решениями не проверялась</span></label>
+        <label class="sopt"><input type="radio" name="q2c" value="3"><span class="sn">3</span><span class="st">Частичная совместимость: работает с 1–2 российскими компонентами</span></label>
+        <label class="sopt"><input type="radio" name="q2c" value="4"><span class="sn">4</span><span class="st">Подтверждена совместимость с Astra Linux / Alt и PostgresPro / Tantor</span></label>
+        <label class="sopt"><input type="radio" name="q2c" value="5"><span class="sn">5</span><span class="st">Полная совместимость + сертификаты ФСТЭК/ФСБ или включение в реестр Минцифры</span></label>
+      </div>
+    </div>
+    <div class="btns"><button class="btn btn-s" onclick="catBack(1)">← Назад</button><button class="btn btn-p" onclick="catNext(1)">Следующая категория →</button></div>
+  </div>
+
+  <!-- CAT 2: Team -->
+  <div id="c2" style="display:none">
+    <div class="cat-hdr">
+      <div class="cat-pill" style="background:#4A7A30">Категория 3</div>
+      <div><div class="cat-ttl">Команда</div><div class="cat-sub">Макс. 10 баллов</div></div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Как укомплектована ваша команда? <span class="wt">вес ×2</span></div>
+      <div class="sopts" id="q_3">
+        <label class="sopt"><input type="radio" name="q3" value="1"><span class="sn">1</span><span class="st">Один фаундер, ключевые роли (разработка, продажи, продукт) не закрыты</span></label>
+        <label class="sopt"><input type="radio" name="q3" value="2"><span class="sn">2</span><span class="st">Команда частично сформирована — есть значимые пробелы</span></label>
+        <label class="sopt"><input type="radio" name="q3" value="3"><span class="sn">3</span><span class="st">Основные роли закрыты (CEO + CTO или аналог), есть техническая и коммерческая экспертиза</span></label>
+        <label class="sopt"><input type="radio" name="q3" value="4"><span class="sn">4</span><span class="st">Сильная команда с релевантным B2B-опытом и подтверждёнными результатами</span></label>
+        <label class="sopt"><input type="radio" name="q3" value="5"><span class="sn">5</span><span class="st">Полностью укомплектованная команда с опытом запуска и масштабирования в корпоративном IT</span></label>
+      </div>
+    </div>
+    <div class="btns"><button class="btn btn-s" onclick="catBack(2)">← Назад</button><button class="btn btn-p" onclick="catNext(2)">Следующая категория →</button></div>
+  </div>
+
+  <!-- CAT 3: Channel Potential -->
+  <div id="c3" style="display:none">
+    <div class="cat-hdr">
+      <div class="cat-pill" style="background:var(--amber)">Категория 4</div>
+      <div><div class="cat-ttl">Потенциал в партнёрском канале</div><div class="cat-sub">Макс. 25 баллов</div></div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Насколько ваш продукт дополняет другие корпоративные IT-решения в сделке клиента? <span class="wt">вес ×3 — ключевой</span></div>
+      <div class="sopts" id="q_4a">
+        <label class="sopt"><input type="radio" name="q4a" value="1"><span class="sn">1</span><span class="st">Продукт изолирован — реселлер не может продать его вместе с чем-то ещё</span></label>
+        <label class="sopt"><input type="radio" name="q4a" value="2"><span class="sn">2</span><span class="st">Теоретическая связь с другими решениями есть, но конкретных сценариев нет</span></label>
+        <label class="sopt"><input type="radio" name="q4a" value="3"><span class="sn">3</span><span class="st">Есть 1–2 чёткие точки интеграции с другими продуктами — совместная продажа возможна</span></label>
+        <label class="sopt"><input type="radio" name="q4a" value="4"><span class="sn">4</span><span class="st">Чёткий up-sell / cross-sell сценарий — продукт увеличивает корзину сделки на 20%+</span></label>
+        <label class="sopt"><input type="radio" name="q4a" value="5"><span class="sn">5</span><span class="st">Стратегически дополняет несколько категорий решений и существенно расширяет корзину</span></label>
+      </div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Закрывает ли ваш продукт реальный пробел, которого нет у конкурентов? <span class="wt">вес ×2</span></div>
+      <div class="sopts" id="q_4b">
+        <label class="sopt"><input type="radio" name="q4b" value="1"><span class="sn">1</span><span class="st">Продукт дублирует существующие решения — нет уникального заполнения рыночного пробела</span></label>
+        <label class="sopt"><input type="radio" name="q4b" value="2"><span class="sn">2</span><span class="st">Есть пересечение с существующими решениями, дополнительная ценность незначительна</span></label>
+        <label class="sopt"><input type="radio" name="q4b" value="3"><span class="sn">3</span><span class="st">Закрывает реальную нишу, но не стратегическую — полезен для отдельных сценариев</span></label>
+        <label class="sopt"><input type="radio" name="q4b" value="4"><span class="sn">4</span><span class="st">Закрывает подтверждённый рыночный пробел — спрос подтверждён клиентами или партнёрами</span></label>
+        <label class="sopt"><input type="radio" name="q4b" value="5"><span class="sn">5</span><span class="st">Стратегически расширяет предложение для целевой отрасли — позволяет выигрывать сделки</span></label>
+      </div>
+    </div>
+    <div class="btns"><button class="btn btn-s" onclick="catBack(3)">← Назад</button><button class="btn btn-p" onclick="catNext(3)">Следующая категория →</button></div>
+  </div>
+
+  <!-- CAT 4: Channel Readiness -->
+  <div id="c4" style="display:none">
+    <div class="cat-hdr">
+      <div class="cat-pill" style="background:var(--navy)">Категория 5</div>
+      <div><div class="cat-ttl">Готовность к партнёрскому каналу</div><div class="cat-sub">Макс. 15 баллов</div></div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Есть ли у вас материалы, с которыми реселлер может работать самостоятельно? <span class="wt">вес ×1</span></div>
+      <div class="sopts" id="q_5a">
+        <label class="sopt"><input type="radio" name="q5a" value="1"><span class="sn">1</span><span class="st">Нет партнёрских материалов — реселлер не может самостоятельно ознакомиться с продуктом</span></label>
+        <label class="sopt"><input type="radio" name="q5a" value="2"><span class="sn">2</span><span class="st">Базовые материалы есть, но не адаптированы под канальные продажи</span></label>
+        <label class="sopt"><input type="radio" name="q5a" value="3"><span class="sn">3</span><span class="st">Есть питч-дек и прайс для партнёра — без техдеталей и клиентских кейсов</span></label>
+        <label class="sopt"><input type="radio" name="q5a" value="4"><span class="sn">4</span><span class="st">Полный комплект: питч, прайс, техлист, FAQ, кейсы — реселлер может провести демо сам</span></label>
+        <label class="sopt"><input type="radio" name="q5a" value="5"><span class="sn">5</span><span class="st">Всё вышеперечисленное + онлайн-демо и обучающие материалы для партнёра</span></label>
+      </div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Есть ли просчитанная финансовая модель для реселлера (маржа, ROI)? <span class="wt">вес ×1</span></div>
+      <div class="sopts" id="q_5b">
+        <label class="sopt"><input type="radio" name="q5b" value="1"><span class="sn">1</span><span class="st">Нет — маржа, скидки и условия для реселлера не определены</span></label>
+        <label class="sopt"><input type="radio" name="q5b" value="2"><span class="sn">2</span><span class="st">Маржа обозначена, но финансовая модель для партнёра не просчитана</span></label>
+        <label class="sopt"><input type="radio" name="q5b" value="3"><span class="sn">3</span><span class="st">Рабочая модель: маржа партнёра >15%, базовая P&L прозрачна</span></label>
+        <label class="sopt"><input type="radio" name="q5b" value="4"><span class="sn">4</span><span class="st">Финмодель на 12 месяцев с реалистичными допущениями и ROI для партнёра</span></label>
+        <label class="sopt"><input type="radio" name="q5b" value="5"><span class="sn">5</span><span class="st">Детальная финмодель со сценарным анализом (base / optimistic / pessimistic) — готова к передаче</span></label>
+      </div>
+    </div>
+    <div class="sq">
+      <div class="sq-lbl">Каков средний чек одной сделки по вашему продукту? <span class="wt">вес ×1</span></div>
+      <div class="sopts" id="q_5c">
+        <label class="sopt"><input type="radio" name="q5c" value="1"><span class="sn">1</span><span class="st">Менее 50 тыс. руб. — сделка нерентабельна для двухуровневой дистрибуции</span></label>
+        <label class="sopt"><input type="radio" name="q5c" value="2"><span class="sn">2</span><span class="st">50–150 тыс. руб. — на нижней границе рентабельности для реселлера</span></label>
+        <label class="sopt"><input type="radio" name="q5c" value="3"><span class="sn">3</span><span class="st">150–500 тыс. руб. — приемлемый диапазон для канального продукта</span></label>
+        <label class="sopt"><input type="radio" name="q5c" value="4"><span class="sn">4</span><span class="st">500 тыс. – 2 млн руб. — хороший чек, мотивирует реселлеров активно продавать</span></label>
+        <label class="sopt"><input type="radio" name="q5c" value="5"><span class="sn">5</span><span class="st">Более 2 млн руб. — высокий ACV, создаёт устойчивую мотивацию для специализации на продукте</span></label>
+      </div>
+    </div>
+    <div class="btns">
+      <button class="btn btn-s" onclick="catBack(4)">← Назад</button>
+      <button class="btn btn-p" onclick="showResult()">Получить результат →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ SCREEN 3: RESULT ══════════════════════════════ -->
+<div class="scr" id="s3">
+<div class="card">
+  <div class="cat-hdr">
+    <div class="cat-pill" style="background:var(--navy)">Результат</div>
+    <div><div class="cat-ttl">Ваша готовность к дистрибуции</div><div class="cat-sub">13 критериев · 5 категорий · макс. 100 баллов</div></div>
+  </div>
+
+  <div class="ring-wrap">
+    <svg width="150" height="150" viewBox="0 0 150 150">
+      <circle cx="75" cy="75" r="62" fill="none" stroke="#EDF4FC" stroke-width="13"/>
+      <circle cx="75" cy="75" r="62" fill="none" stroke="#2E6EB5" stroke-width="13"
+              stroke-dasharray="389.56" stroke-dashoffset="389.56"
+              stroke-linecap="round" id="arc"/>
+    </svg>
+    <div class="ring-inner">
+      <div class="ring-num" id="rnum">0</div>
+      <div class="ring-max">из 100</div>
+    </div>
+  </div>
+
+  <div class="res-lvl" id="rlvl">–</div>
+  <div class="res-desc" id="rdesc">–</div>
+  <div class="bar-section" id="bars"></div>
+  <div class="recs-wrap" id="recs"></div>
+  <div class="pkg-block" id="pkg"></div>
+  <div class="note">Диагностика носит ориентировочный характер и основана на методологии оценки вендоров Axoft.</div>
+
+  <div class="btns" style="margin-top:20px">
+    <button class="btn btn-s" onclick="restart()">← Пройти заново</button>
+  </div>
+</div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── DATA ─────────────────────────────────────────────
+const W = {q1a:2,q1b:1,q1c:1,q2a:3,q2b:2,q2c:1,q3:2,q4a:3,q4b:2,q5a:1,q5b:1,q5c:1};
+const CATQ = [['q1a','q1b','q1c'],['q2a','q2b','q2c'],['q3'],['q4a','q4b'],['q5a','q5b','q5c']];
+const CATMAX  = [20,30,10,25,15];
+const CATNAME = ['Рынок и трекшн','Продукт','Команда','Канальный потенциал','Готовность к каналу'];
+const CATCOL  = ['#1B5E8B','#1A6B6B','#4A7A30','#B06000','#1B3A6B'];
+
+// ── NAV ──────────────────────────────────────────────
+let scr = 0;
+function go(n) {
+  document.getElementById('s'+scr).classList.remove('on');
+  scr = n;
+  document.getElementById('s'+n).classList.add('on');
+  const pcts = [0, 33, 66, 100];
+  document.getElementById('pf').style.width = pcts[n] + '%';
+  for (let i=0;i<4;i++) {
+    const el = document.getElementById('ps'+i);
+    el.classList.remove('active','done');
+    if(i<n) el.classList.add('done');
+    else if(i===n) el.classList.add('active');
+  }
+  window.scrollTo(0,0);
+}
+
+// ── GATE ─────────────────────────────────────────────
+function refreshGate() {
+  const fb = document.getElementById('fail-box');
+  const fm = document.getElementById('fail-msg');
+  const btn = document.getElementById('gate-btn');
+  const g1 = document.querySelector('input[name=g1]:checked');
+  const g2 = document.querySelector('input[name=g2]:checked');
+  const g3 = document.querySelector('input[name=g3]:checked');
+  const g5 = document.querySelector('input[name=g5]:checked');
+  let fail = false, msg = '';
+  if(g1?.value==='fail') { fail=true; msg='Продукты не из сферы IT не входят в партнёрский канал Axoft. Если вы считаете, что ваше решение имеет IT-составляющую для корпоративного рынка — опишите это менеджеру Axoft.'; }
+  else if(g2?.value==='fail') { fail=true; msg='Канал Axoft ориентирован на корпоративный и государственный рынок. B2C-продукты не дистрибутируются через партнёрскую сеть Axoft.'; }
+  else if(g3?.value==='fail') { fail=true; msg='Отсутствие оформленных прав на интеллектуальную собственность является блокирующим условием. Необходимо оформить исключительные права перед подачей заявки.'; }
+  else if(g5?.value==='fail_soft') { fail=true; msg='На стадии концепции без прототипа диагностика преждевременна. Вернитесь, когда будет готов минимальный работающий прототип.'; }
+  if(fail) { fb.classList.add('on'); fm.textContent=msg; btn.disabled=true; }
+  else {
+    fb.classList.remove('on');
+    const all = ['g1','g2','g3','g4','g5'].every(n=>document.querySelector('input[name='+n+']:checked'));
+    btn.disabled = !all;
+  }
+}
+document.querySelectorAll('input[name^=g]').forEach(r=>r.addEventListener('change',function(){
+  this.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  this.closest('.opt').classList.add('sel');
+  refreshGate();
+}));
+function gateNext(){ go(2); }
+
+// ── CAT NAV ──────────────────────────────────────────
+let cur=0;
+function showCat(i){
+  for(let j=0;j<5;j++){
+    document.getElementById('c'+j).style.display=j===i?'':'none';
+    const cn=document.getElementById('cn'+j);
+    cn.classList.remove('act','done');
+    if(j<i) cn.classList.add('done');
+    else if(j===i) cn.classList.add('act');
+  }
+  cur=i; window.scrollTo(0,0);
+}
+function catNext(i){
+  if(!CATQ[i].every(q=>document.querySelector('input[name='+q+']:checked'))){
+    alert('Пожалуйста, ответьте на все вопросы в этой категории.'); return;
+  }
+  if(i<4) showCat(i+1);
+}
+function catBack(i){ i>0?showCat(i-1):go(1); }
+document.querySelectorAll('input[name^=q]').forEach(r=>r.addEventListener('change',function(){
+  this.closest('.sopts').querySelectorAll('.sopt').forEach(o=>o.classList.remove('sel'));
+  this.closest('.sopt').classList.add('sel');
+}));
+
+// ── RESULT ───────────────────────────────────────────
+function getV(q){ const r=document.querySelector('input[name='+q+']:checked'); return r?+r.value:0; }
+function showResult(){
+  if(!CATQ[4].every(q=>document.querySelector('input[name='+q+']:checked'))){ alert('Пожалуйста, ответьте на все вопросы.'); return; }
+  const sc={};
+  Object.keys(W).forEach(q=>sc[q]=getV(q)*W[q]);
+  const catSc=CATQ.map(qs=>qs.reduce((s,q)=>s+sc[q],0));
+  const total=catSc.reduce((s,v)=>s+v,0);
+
+  // ring
+  const arc=document.getElementById('arc');
+  const C=2*Math.PI*62;
+  setTimeout(()=>{ arc.style.strokeDashoffset=C*(1-total/100); arc.style.transition='stroke-dashoffset 1.2s ease'; },80);
+
+  let col,lvl,desc;
+  if(total>=70){ col='var(--green)'; lvl='Высокая готовность'; desc='Продукт демонстрирует сильные показатели по ключевым категориям — есть хорошая база для разговора о дистрибуции.'; }
+  else if(total>=45){ col='var(--teal)'; lvl='Средняя готовность'; desc='Есть задел, но ряд категорий требует доработки. Правильная упаковка и структурирование откроют путь к партнёрскому каналу.'; }
+  else { col='var(--amber)'; lvl='Начальная стадия'; desc='Продукт или бизнес-модель нуждаются в серьёзной проработке перед выходом в партнёрский канал.'; }
+
+  arc.style.stroke=col;
+  document.getElementById('rnum').textContent=total;
+  document.getElementById('rnum').style.color=col;
+  document.getElementById('rlvl').textContent=lvl;
+  document.getElementById('rlvl').style.color=col;
+  document.getElementById('rdesc').textContent=desc;
+
+  // bars
+  const bel=document.getElementById('bars');
+  bel.innerHTML='<div class="bar-title">Результат по категориям</div>';
+  catSc.forEach((sc2,i)=>{
+    const pct=Math.round(sc2/CATMAX[i]*100);
+    const bc=pct>=70?'#1A7A4A':pct>=45?'#1A6B6B':'#B06000';
+    bel.innerHTML+=`<div class="bar-row">
+      <div class="bar-lbl">${CATNAME[i]}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${bc}"></div></div>
+      <div class="bar-val" style="color:${bc}">${sc2}/${CATMAX[i]}</div>
+    </div>`;
+  });
+
+  // recs
+  const rl=document.getElementById('recs');
+  rl.innerHTML='<div class="recs-title">Рекомендации по категориям</div>';
+  const RD=[
+    {good:'Сильная рыночная позиция и трекшн — убедительный аргумент для реселлеров.',
+     warn:'Укрепите CVP с конкретными цифрами и подтверждёнными кейсами. Подготовьте данные по объёму рынка.',
+     bad:'Зафиксируйте ценностное предложение и проведите первые продажи — без этого канальные продажи невозможны.'},
+    {good:'Зрелый и уникальный продукт с хорошей совместимостью — ключевое условие для дистрибуции.',
+     warn:'Доработайте продукт до коммерческой версии. Проверьте совместимость с отечественными ОС и СУБД.',
+     bad:'Требуется существенная доработка: минимум — работающий MVP с тестированием у реальных клиентов.'},
+    {good:'Команда укомплектована — партнёры видят надёжного вендора с которым можно строить долгосрочные отношения.',
+     warn:'Усильте команду в области B2B-продаж или разработки, чтобы снизить риски для партнёров.',
+     bad:'Необходимо сформировать полноценную команду с коммерческой и технической экспертизой.'},
+    {good:'Продукт хорошо встраивается в экосистему других IT-решений — реселлеры смогут зарабатывать больше на совместных продажах.',
+     warn:'Проработайте конкретные сценарии up-sell и cross-sell. Подготовьте аргументы для реселлеров.',
+     bad:'Без чёткого канального потенциала реселлерам сложно мотивировать себя продавать ваш продукт.'},
+    {good:'Канальная упаковка готова — реселлер может начать продажи без дополнительных усилий с вашей стороны.',
+     warn:'Подготовьте полный партнёрский пакет: FAQ, кейсы, финмодель для реселлера и условия партнёрской программы.',
+     bad:'Необходима разработка канальной упаковки: условия, коммерческие материалы, экономика сделки для партнёра.'},
+  ];
+  catSc.forEach((sc2,i)=>{
+    const pct=sc2/CATMAX[i];
+    let cls,ico,txt;
+    if(pct>=.7){cls='rec-ok';ico='✅';txt=RD[i].good;}
+    else if(pct>=.45){cls='rec-wn';ico='⚠️';txt=RD[i].warn;}
+    else{cls='rec-bd';ico='🔴';txt=RD[i].bad;}
+    rl.innerHTML+=`<div class="rec ${cls}"><div class="rec-ico">${ico}</div><div><div class="rec-cat">${CATNAME[i]}</div><div class="rec-txt">${txt}</div></div></div>`;
+  });
+
+  // package block
+  const pel=document.getElementById('pkg');
+  let eyebrow,title,desc2;
+  if(total>=70){
+    pel.style.borderColor='var(--green)'; pel.style.background='var(--green-lt)';
+    eyebrow='<span style="color:var(--green)">Следующий шаг</span>';
+    title='Ваши показатели говорят о хорошей готовности к каналу';
+    desc2='Рекомендуем обратиться к менеджеру Axoft для обсуждения возможностей сотрудничества.';
+  } else if(total>=45){
+    pel.style.borderColor='var(--teal)'; pel.style.background='var(--teal-lt)';
+    eyebrow='<span style="color:var(--teal)">Рекомендованный шаг</span>';
+    title='Пакет «Упаковка»';
+    desc2='Есть хорошая база, но для выхода в канал нужна коммерческая упаковка и партнёрская программа. Эксперты Axoft помогут подготовить всё необходимое: от УТП до финансовой модели для реселлеров.';
+  } else {
+    pel.style.borderColor='var(--amber)'; pel.style.background='var(--amber-lt)';
+    eyebrow='<span style="color:var(--amber)">Рекомендованный шаг</span>';
+    title='Пакет «Аудит»';
+    desc2='Прежде чем выходить в канал, важно точно понять пробелы и получить дорожную карту. Эксперты Axoft проведут детальный аудит и дадут конкретный план действий.';
+  }
+  pel.innerHTML=`<div class="pkg-eyebrow">${eyebrow}</div><div class="pkg-title">${title}</div><div class="pkg-desc">${desc2}</div>`;
+  go(3);
+}
+
+function restart(){
+  document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);
+  document.querySelectorAll('.opt,.sopt').forEach(o=>o.classList.remove('sel'));
+  document.getElementById('gate-btn').disabled=true;
+  document.getElementById('fail-box').classList.remove('on');
+  showCat(0);
+  go(0);
+}
+</script>
+</body>
+</html>
