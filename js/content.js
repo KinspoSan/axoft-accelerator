@@ -6,7 +6,8 @@ import Bitrix from './bitrix.js';
 const LIST_IDS = {
   packages:  123,  // «Пакеты консалтинга — Axoft × Сколково»
   materials: 125,  // «Материалы — Axoft × Сколково»
-  services:  127   // «Услуги — Axoft × Сколково»
+  services:  127,  // «Услуги — Axoft × Сколково»
+  settings:  129   // «Настройки ЛК — Axoft × Сколково»
 };
 
 const FIELD_MAP = {
@@ -29,6 +30,10 @@ const FIELD_MAP = {
     duration:    'PROPERTY_301',
     description: 'PROPERTY_303',
     fileId:      'PROPERTY_305'
+  },
+  settings: {
+    value: 'PROPERTY_321',
+    hint:  'PROPERTY_323'
   },
   services: {
     icon:        'PROPERTY_307',
@@ -291,6 +296,21 @@ const Content = {
     );
   },
 
+  // Настройки: читаются каждый раз (TTL 10 мин), ключ → значение
+  async getSettings() {
+    return this._withCache('content_settings', async () => {
+      const elements = await Bitrix.getListElements(LIST_IDS.settings);
+      const fm = FIELD_MAP.settings;
+      const map = {};
+      for (const el of elements) {
+        const key = el.CODE || el.NAME;
+        const val = this._pv(el, fm.value);
+        if (key && val) map[key] = val;
+      }
+      return map;
+    }, 10 * 60 * 1000); // 10 минут
+  },
+
   // Принудительно сбросить кэш (полезно при отладке)
   clearCache() {
     localStorage.removeItem('content_packages');
@@ -376,12 +396,12 @@ const Content = {
 
   // ── Cache ────────────────────────────────────────────────────────────────
 
-  async _withCache(key, fetcher) {
+  async _withCache(key, fetcher, ttl = CACHE_TTL) {
     try {
       const raw = localStorage.getItem(key);
       if (raw) {
         const { data, ts } = JSON.parse(raw);
-        if (Date.now() - ts < CACHE_TTL) return data;
+        if (Date.now() - ts < ttl) return data;
       }
     } catch (_) {}
 

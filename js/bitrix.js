@@ -2,6 +2,13 @@
 const CRM_WEBHOOK   = 'https://axoft.bitrix24.ru/rest/1/itnzkkug13yjhs7v';
 const LISTS_WEBHOOK = 'https://axoft.bitrix24.ru/rest/1/eismn5zly34zgq99';
 
+// Импортируем Content для чтения настроек (lazy — чтобы не было циклической зависимости)
+let _Content = null;
+async function getContent() {
+  if (!_Content) _Content = (await import('./content.js')).default;
+  return _Content;
+}
+
 const Bitrix = {
   async call(method, params = {}, webhook = CRM_WEBHOOK) {
     const res = await fetch(`${webhook}/${method}.json`, {
@@ -81,14 +88,25 @@ const Bitrix = {
 
   async createServiceRequest(serviceData, vendorProfile) {
     const now = new Date().toLocaleString('ru');
+
+    // Читаем настройки из Bitrix24 — email и ID ответственного
+    let notifyEmail    = 'konstantin.simakov@axoftglobal.ru';
+    let responsibleId  = 1;
+    try {
+      const Content  = await getContent();
+      const settings = await Content.getSettings();
+      if (settings.notify_email)          notifyEmail   = settings.notify_email;
+      if (settings.notify_responsible_id) responsibleId = parseInt(settings.notify_responsible_id);
+    } catch (_) { /* fallback к значениям по умолчанию */ }
+
     const leadId = await this.call('crm.lead.add', {
       fields: {
-        TITLE:         `[Запрос услуги] ${serviceData.name} — ${vendorProfile.company}`,
-        COMPANY_TITLE: vendorProfile.company,
-        EMAIL:         [{ VALUE: vendorProfile.email, VALUE_TYPE: 'WORK' }],
-        SOURCE_ID:     'WEB',
-        STATUS_ID:     'NEW',
-        ASSIGNED_BY_ID: 1,
+        TITLE:          `[Запрос услуги] ${serviceData.name} — ${vendorProfile.company}`,
+        COMPANY_TITLE:  vendorProfile.company,
+        EMAIL:          [{ VALUE: vendorProfile.email, VALUE_TYPE: 'WORK' }],
+        SOURCE_ID:      'WEB',
+        STATUS_ID:      'NEW',
+        ASSIGNED_BY_ID: responsibleId,
         COMMENTS: [
           `═══ ЗАПРОС НА УСЛУГУ ═══`,
           `Услуга:   ${serviceData.name}`,
@@ -108,12 +126,12 @@ const Bitrix = {
     });
 
     // Email-activity — дублирует уведомление в почту (если настроен коннектор)
-    await this._sendEmailActivity(leadId, serviceData, vendorProfile, now);
+    await this._sendEmailActivity(leadId, serviceData, vendorProfile, now, notifyEmail);
 
     return leadId;
   },
 
-  async _sendEmailActivity(leadId, serviceData, vendorProfile, now) {
+  async _sendEmailActivity(leadId, serviceData, vendorProfile, now, notifyEmail) {
     const subject = `[Запрос услуги] ${serviceData.name} — ${vendorProfile.company}`;
     const body = `
 <h3>Новый запрос на услугу</h3>
@@ -145,7 +163,7 @@ const Bitrix = {
           DESCRIPTION_TYPE: 3,         // HTML
           COMPLETED:        'N',       // N = Bitrix попытается отправить
           COMMUNICATIONS: [{
-            VALUE:       'konstantin.simakov@axoftglobal.ru',
+            VALUE:       notifyEmail,
             ENTITY_TYPE: 'CRM_LEAD'
           }]
         }
