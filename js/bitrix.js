@@ -145,7 +145,7 @@ const Bitrix = {
           DESCRIPTION_TYPE: 3,         // HTML
           COMPLETED:        'N',       // N = Bitrix попытается отправить
           COMMUNICATIONS: [{
-            VALUE:       'program@axoft.ru',
+            VALUE:       'konstantin.simakov@axoftglobal.ru',
             ENTITY_TYPE: 'CRM_LEAD'
           }]
         }
