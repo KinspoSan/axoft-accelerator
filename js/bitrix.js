@@ -174,6 +174,49 @@ const Bitrix = {
     }
   },
 
+  // ── Вендоры: аутентификация ──────────────────────────────────────────────
+
+  async saveVendorCredentials(email, hash, profile) {
+    // CODE = email (ключ поиска), NAME = название компании
+    const fields = {
+      NAME:   profile.company,
+      SORT:   '100',
+      ACTIVE: 'Y',
+      'PROPERTY_325': hash,
+      'PROPERTY_327': JSON.stringify(profile)
+    };
+    return await this.call('lists.element.add', {
+      IBLOCK_TYPE_ID: 'lists',
+      IBLOCK_ID:      131,
+      ELEMENT_CODE:   encodeURIComponent(email),
+      FIELDS:         fields
+    }, LISTS_WEBHOOK);
+  },
+
+  async findVendorByEmail(email) {
+    const result = await this.call('lists.element.get', {
+      IBLOCK_TYPE_ID: 'lists',
+      IBLOCK_ID:      131,
+      FILTER:         { CODE: encodeURIComponent(email), ACTIVE: 'Y' }
+    }, LISTS_WEBHOOK);
+    return result?.length > 0 ? result[0] : null;
+  },
+
+  async updateVendorCredentials(email, hash, profile) {
+    // Находим элемент и обновляем
+    const existing = await this.findVendorByEmail(email);
+    if (!existing) return this.saveVendorCredentials(email, hash, profile);
+    return await this.call('lists.element.update', {
+      IBLOCK_TYPE_ID: 'lists',
+      IBLOCK_ID:      131,
+      ELEMENT_ID:     existing.ID,
+      FIELDS: {
+        'PROPERTY_325': hash,
+        'PROPERTY_327': JSON.stringify(profile)
+      }
+    }, LISTS_WEBHOOK);
+  },
+
   // ── Universal Lists ──────────────────────────────────────────────────────
 
   async getListElements(listId) {

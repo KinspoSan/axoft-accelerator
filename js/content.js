@@ -7,7 +7,8 @@ const LIST_IDS = {
   packages:  123,  // «Пакеты консалтинга — Axoft × Сколково»
   materials: 125,  // «Материалы — Axoft × Сколково»
   services:  127,  // «Услуги — Axoft × Сколково»
-  settings:  129   // «Настройки ЛК — Axoft × Сколково»
+  settings:  129,  // «Настройки ЛК — Axoft × Сколково»
+  vendors:   131   // «Вендоры — Аутентификация»
 };
 
 const FIELD_MAP = {
@@ -34,6 +35,10 @@ const FIELD_MAP = {
   settings: {
     value: 'PROPERTY_321',
     hint:  'PROPERTY_323'
+  },
+  vendors: {
+    hash:    'PROPERTY_325',
+    profile: 'PROPERTY_327'
   },
   services: {
     icon:        'PROPERTY_307',
