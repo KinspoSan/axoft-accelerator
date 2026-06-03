@@ -341,6 +341,20 @@
     .dg-pkg-desc{font-size:14px;color:#555;line-height:1.6;}
     .dg-note{font-size:12px;color:#aaa;text-align:center;margin-top:14px;}
 
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── Materials ── */
+    .mat-card{display:flex;align-items:flex-start;gap:16px;padding:16px 20px;
+      border-bottom:1px solid var(--bdr);}
+    .mat-card:last-child{border-bottom:none;}
+    .mat-icon{width:40px;height:40px;border-radius:10px;background:var(--sur2);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+    .mat-body{flex:1;min-width:0;}
+    .mat-name{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;line-height:1.35;}
+    .mat-desc{font-size:12px;color:var(--txt2);margin-bottom:8px;line-height:1.5;}
+    .mat-meta{display:flex;flex-wrap:wrap;gap:6px;}
+    .mat-action{flex-shrink:0;padding-top:2px;}
+
     /* ── Responsive ── */
     @media(max-width:768px){
       .sb{width:60px;}
@@ -367,6 +381,9 @@
     </button>
     <button class="nb" onclick="goPage('diag')">
       <i class="ti ti-stethoscope"></i><span>Диагностика</span>
+    </button>
+    <button class="nb" onclick="goPage('materials')">
+      <i class="ti ti-books"></i><span>Материалы</span>
     </button>
     <button class="nb" onclick="goPage('services')">
       <i class="ti ti-apps"></i><span>Сервисы</span>
@@ -485,122 +502,16 @@
       </div>
 
       <div class="sf">
-        <button class="fb fa" onclick="fltPkg(this,'all')">Все пакеты</button>
-        <button class="fb" onclick="fltPkg(this,'p1')">Диагностика</button>
-        <button class="fb" onclick="fltPkg(this,'p2')">Аудит</button>
-        <button class="fb" onclick="fltPkg(this,'p3')">Упаковка</button>
+        <button class="fb pkg-filters fa" onclick="fltPkg(this,'all')">Все</button>
+        <button class="fb pkg-filters" onclick="fltPkg(this,'p1')">Диагностика</button>
+        <button class="fb pkg-filters" onclick="fltPkg(this,'p2')">Аудит</button>
+        <button class="fb pkg-filters" onclick="fltPkg(this,'p3')">Упаковка</button>
       </div>
 
-      <div class="pkg-g">
-
-        <!-- Пакет 1: Диагностика -->
-        <div class="pkg" data-pkg="p1"
-          data-service-id="pkg-diag"
-          data-service-name="Пакет Диагностика"
-          data-service-block="Диагностика"
-          data-service-price="0"
-          data-service-price-display="Бесплатно">
-          <div class="pkg-h">
-            <span class="pkg-badge" style="background:var(--gdim);color:var(--green)">Пакет 1</span>
-            <div class="pkg-tt">Диагностика</div>
-            <div class="pkg-goal">Понять стартовую позицию и логику партнёрского канала</div>
-            <div class="pkg-price fr">Бесплатно</div>
-          </div>
-          <div class="pkg-eng">
-            <div class="pkg-eng-dots">
-              <div class="pkg-eng-dot on g"></div>
-              <div class="pkg-eng-dot off"></div>
-              <div class="pkg-eng-dot off"></div>
-            </div>
-            <span>Вовлечённость Axoft: минимальная (1 встреча)</span>
-          </div>
-          <div class="pkg-b">
-            <div class="pkg-sec-lbl">Что входит</div>
-            <div class="pkg-li"><i class="ti ti-video" style="color:var(--green)"></i>Видеокурс: как устроена двухуровневая дистрибуция</div>
-            <div class="pkg-li"><i class="ti ti-list-check" style="color:var(--green)"></i>Чек-лист самооценки готовности продукта к каналу</div>
-            <div class="pkg-li"><i class="ti ti-user-check" style="color:var(--green)"></i>Онбординг-встреча с менеджером Axoft (до 1 ч.)</div>
-            <div class="pkg-li"><i class="ti ti-book-2" style="color:var(--green)"></i>Кейсы: как вендоры переходили на дистрибуцию</div>
-            <div class="pkg-res"><strong>Результат:</strong> Понимаете логику канала и видите собственные пробелы через чек-лист</div>
-          </div>
-          <div class="pkg-ft">
-            <button class="btn btn-p" style="flex:1;background:var(--green);border:none;" onclick="goPage('diag')"><i class="ti ti-stethoscope" style="font-size:13px"></i>Пройти диагностику</button>
-          </div>
+      <div id="packages-grid" class="pkg-g">
+        <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">
+          <i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i>
         </div>
-
-        <!-- Пакет 2: Аудит -->
-        <div class="pkg" data-pkg="p2"
-          data-service-id="pkg-audit"
-          data-service-name="Пакет Аудит"
-          data-service-block="Аудит"
-          data-service-price="100000"
-          data-service-price-display="от 100 000 ₽">
-          <div class="pkg-h">
-            <span class="pkg-badge" style="background:var(--tdim);color:var(--teal)">Пакет 2</span>
-            <div class="pkg-tt">Аудит</div>
-            <div class="pkg-goal">Получить экспертную оценку и дорожную карту готовности</div>
-            <div class="pkg-price" style="color:var(--navy)">от 100 000 ₽</div>
-          </div>
-          <div class="pkg-eng">
-            <div class="pkg-eng-dots">
-              <div class="pkg-eng-dot on"></div>
-              <div class="pkg-eng-dot on"></div>
-              <div class="pkg-eng-dot off"></div>
-            </div>
-            <span>Вовлечённость Axoft: средняя (2-3 рабочих сессии)</span>
-          </div>
-          <div class="pkg-b">
-            <div class="pkg-sec-lbl">Что входит</div>
-            <div class="pkg-li"><i class="ti ti-search" style="color:var(--teal)"></i>Детальный аудит продукта на готовность к дистрибуции</div>
-            <div class="pkg-li"><i class="ti ti-chart-bar" style="color:var(--teal)"></i>Анализ конкурентов: кто в канале и на каких условиях</div>
-            <div class="pkg-li"><i class="ti ti-eye" style="color:var(--teal)"></i>Оценка продукта глазами реселлера</div>
-            <div class="pkg-li"><i class="ti ti-alert-triangle" style="color:var(--teal)"></i>Выявление пробелов: продукт, упаковка, ценообразование</div>
-            <div class="pkg-li"><i class="ti ti-users" style="color:var(--teal)"></i>2-3 рабочих сессии с экспертами Axoft</div>
-            <div class="pkg-li"><i class="ti ti-file-text" style="color:var(--teal)"></i>Итоговый отчёт: разрыв-анализ и дорожная карта</div>
-            <div class="pkg-res"><strong>Результат:</strong> Знаете, что мешает войти в канал, и имеете документированный план</div>
-          </div>
-          <div class="pkg-ft">
-            <button class="btn btn-p" style="flex:1;" onclick="handleOrder(this.closest('.pkg'))"><i class="ti ti-send" style="font-size:13px"></i>Заказать аудит</button>
-          </div>
-        </div>
-
-        <!-- Пакет 3: Упаковка -->
-        <div class="pkg" data-pkg="p3"
-          data-service-id="pkg-pack"
-          data-service-name="Пакет Упаковка"
-          data-service-block="Упаковка"
-          data-service-price="300000"
-          data-service-price-display="от 300 000 ₽">
-          <div class="pkg-h">
-            <span class="pkg-badge" style="background:var(--bdim);color:var(--blue)">Пакет 3</span>
-            <div class="pkg-tt">Упаковка</div>
-            <div class="pkg-goal">Подготовить всё необходимое для работы с партнёрским каналом</div>
-            <div class="pkg-price" style="color:var(--navy)">от 300 000 ₽</div>
-          </div>
-          <div class="pkg-eng">
-            <div class="pkg-eng-dots">
-              <div class="pkg-eng-dot on b"></div>
-              <div class="pkg-eng-dot on b"></div>
-              <div class="pkg-eng-dot on b"></div>
-            </div>
-            <span>Вовлечённость Axoft: высокая (5+ сессий, выделенный ресурс)</span>
-          </div>
-          <div class="pkg-b">
-            <div class="pkg-sec-lbl">Что входит</div>
-            <div class="pkg-li"><i class="ti ti-target" style="color:var(--blue)"></i>Разработка УТП для B2B и партнёрского канала</div>
-            <div class="pkg-li"><i class="ti ti-briefcase" style="color:var(--blue)"></i>Позиционирование продукта в портфеле реселлера</div>
-            <div class="pkg-li"><i class="ti ti-file-invoice" style="color:var(--blue)"></i>One-pager для партнёра + коммерческое предложение</div>
-            <div class="pkg-li"><i class="ti ti-speakerphone" style="color:var(--blue)"></i>Маркетинговые материалы для реселлеров</div>
-            <div class="pkg-li"><i class="ti ti-git-branch" style="color:var(--blue)"></i>Разработка партнёрской программы</div>
-            <div class="pkg-li"><i class="ti ti-school" style="color:var(--blue)"></i>Обучающие материалы для реселлеров</div>
-            <div class="pkg-li"><i class="ti ti-users" style="color:var(--blue)"></i>5+ рабочих сессий с выделенной командой Axoft</div>
-            <div class="pkg-li"><i class="ti ti-check-all" style="color:var(--blue)"></i>Финальная сессия: оценка готовности к дистрибуции</div>
-            <div class="pkg-res"><strong>Результат:</strong> Готовы к двухуровневой дистрибуции: упаковка, партнёрская программа, материалы</div>
-          </div>
-          <div class="pkg-ft">
-            <button class="btn btn-p" style="flex:1;" onclick="handleOrder(this.closest('.pkg'))"><i class="ti ti-send" style="font-size:13px"></i>Заказать</button>
-          </div>
-        </div>
-
       </div>
 
       <!-- Сравнение пакетов -->
@@ -645,6 +556,27 @@
       <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden;">
         <div id="orders-table-container" style="padding:20px;text-align:center;color:var(--txt2)">
           Загрузка заказов...
+        </div>
+      </div>
+    </div>
+
+    <!-- МАТЕРИАЛЫ -->
+    <div class="page" id="page-materials">
+      <div class="page-hd">
+        <h2>Учебные материалы</h2>
+        <p>Видео, чек-листы, шаблоны и кейсы по программе Axoft × Сколково</p>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" class="mat-filters-wrap">
+        <button class="fb mat-filters fa" onclick="fltMat(this,'all')">Все</button>
+        <button class="fb mat-filters" onclick="fltMat(this,'diag')">Диагностика</button>
+        <button class="fb mat-filters" onclick="fltMat(this,'audit')">Аудит</button>
+        <button class="fb mat-filters" onclick="fltMat(this,'pack')">Упаковка</button>
+      </div>
+
+      <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden">
+        <div id="materials-grid">
+          <div style="padding:40px;text-align:center;color:var(--txt2)">Загрузка...</div>
         </div>
       </div>
     </div>
@@ -849,8 +781,8 @@
 <script>
 // Page navigation
 const pageTitles = {
-  dash: 'Дашборд', diag: 'Диагностика вендора', services: 'Каталог сервисов',
-  orders: 'Мои заказы', tariffs: 'Тарифы', settings: 'Настройки'
+  dash: 'Дашборд', diag: 'Диагностика вендора', materials: 'Учебные материалы',
+  services: 'Каталог сервисов', orders: 'Мои заказы', tariffs: 'Тарифы', settings: 'Настройки'
 };
 
 window.goPage = function(id) {
@@ -865,15 +797,6 @@ window.goPage = function(id) {
 
 window.requestTierUpgrade = function() {
   showToast('Запрос отправлен! Менеджер свяжется с вами для согласования тарифа UP STRAT.');
-};
-
-// Package filter
-window.fltPkg = function(btn, bl) {
-  document.querySelectorAll('.fb').forEach(b => b.classList.remove('fa'));
-  btn.classList.add('fa');
-  document.querySelectorAll('.pkg').forEach(c => {
-    c.style.display = (bl === 'all' || c.dataset.pkg === bl) ? 'flex' : 'none';
-  });
 };
 
 // Diagnostics

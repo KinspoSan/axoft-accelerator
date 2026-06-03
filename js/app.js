@@ -1,5 +1,6 @@
 import Auth from './auth.js';
 import Orders from './orders.js';
+import Content from './content.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!Auth.isLoggedIn()) {
@@ -45,6 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   await loadOrders();
+  await renderPackages();
+  await renderMaterials();
 
   // Update dashboard orders count
   const localOrders = Orders.getLocalOrders();
@@ -146,3 +149,149 @@ window.showToast = function(message, type = 'success') {
 };
 
 window.AuthLogout = () => Auth.logout();
+
+// ── Packages ─────────────────────────────────────────────────────────────────
+
+async function renderPackages() {
+  const grid = document.getElementById('packages-grid');
+  if (!grid) return;
+
+  try {
+    const packages = await Content.getPackages();
+    grid.innerHTML = packages.map(buildPackageCard).join('');
+  } catch (e) {
+    grid.innerHTML = `<div style="padding:20px;color:#c00">Ошибка загрузки пакетов: ${e.message}</div>`;
+  }
+}
+
+function buildPackageCard(pkg) {
+  const colors = {
+    green: { dim: 'var(--gdim)', accent: 'var(--green)', dot: 'g' },
+    teal:  { dim: 'var(--tdim)', accent: 'var(--teal)',  dot: '' },
+    blue:  { dim: 'var(--bdim)', accent: 'var(--blue)',  dot: 'b' }
+  };
+  const c = colors[pkg.color] || colors.teal;
+
+  const dots = [1, 2, 3].map(i => {
+    const on = i <= pkg.engagementLevel;
+    return `<div class="pkg-eng-dot ${on ? 'on' + (c.dot ? ' ' + c.dot : '') : 'off'}"></div>`;
+  }).join('');
+
+  const items = pkg.items.map(it =>
+    `<div class="pkg-li"><i class="ti ${it.icon}" style="color:${c.accent}"></i>${it.text}</div>`
+  ).join('');
+
+  const btn = pkg.buttonType === 'diag'
+    ? `<button class="btn btn-p" style="flex:1;background:var(--green);border:none;" onclick="goPage('diag')">
+         <i class="ti ti-stethoscope" style="font-size:13px"></i>Пройти диагностику
+       </button>`
+    : `<button class="btn btn-p btn-order" style="flex:1;" onclick="handleOrder(this.closest('.pkg'))">
+         <i class="ti ti-send" style="font-size:13px"></i>Заказать${pkg.name === 'Аудит' ? ' аудит' : ''}
+       </button>`;
+
+  return `
+    <div class="pkg" data-pkg="p${pkg.number}"
+      data-service-id="${pkg.id}"
+      data-service-name="Пакет ${pkg.name}"
+      data-service-block="${pkg.name}"
+      data-service-price="${pkg.price}"
+      data-service-price-display="${pkg.priceDisplay}">
+      <div class="pkg-h">
+        <span class="pkg-badge" style="background:${c.dim};color:${c.accent}">Пакет ${pkg.number}</span>
+        <div class="pkg-tt">${pkg.name}</div>
+        <div class="pkg-goal">${pkg.goal}</div>
+        <div class="pkg-price${pkg.price === 0 ? ' fr' : ''}" ${pkg.price > 0 ? 'style="color:var(--navy)"' : ''}>${pkg.priceDisplay}</div>
+      </div>
+      <div class="pkg-eng">
+        <div class="pkg-eng-dots">${dots}</div>
+        <span>Вовлечённость Axoft: ${pkg.engagement}</span>
+      </div>
+      <div class="pkg-b">
+        <div class="pkg-sec-lbl">Что входит</div>
+        ${items}
+        <div class="pkg-res"><strong>Результат:</strong> ${pkg.result}</div>
+      </div>
+      <div class="pkg-ft">${btn}</div>
+    </div>`;
+}
+
+// Фильтр пакетов (вызывается из HTML)
+window.fltPkg = function(btn, pkg) {
+  document.querySelectorAll('#packages-grid .pkg').forEach(c => {
+    c.style.display = (pkg === 'all' || c.dataset.pkg === pkg) ? '' : 'none';
+  });
+  document.querySelectorAll('.fb.pkg-filters').forEach(b => b.classList.remove('fa'));
+  btn.classList.add('fa');
+};
+
+// ── Materials ─────────────────────────────────────────────────────────────────
+
+async function renderMaterials() {
+  const grid = document.getElementById('materials-grid');
+  if (!grid) return;
+
+  try {
+    const materials = await Content.getMaterials();
+    grid.innerHTML = materials.length
+      ? materials.map(buildMaterialCard).join('')
+      : '<div style="padding:40px 20px;text-align:center;color:var(--txt2)">Материалы скоро появятся</div>';
+
+    // Обновить счётчик в навигации
+    const badge = document.getElementById('materials-badge');
+    if (badge) badge.textContent = materials.filter(m => m.fileUrl).length || '';
+  } catch (e) {
+    grid.innerHTML = `<div style="padding:20px;color:#c00">Ошибка загрузки материалов: ${e.message}</div>`;
+  }
+}
+
+function buildMaterialCard(mat) {
+  const typeIcons = {
+    video:     'ti-video',
+    doc:       'ti-file-text',
+    case:      'ti-news',
+    checklist: 'ti-list-check'
+  };
+  const pkgColors = {
+    diag:  'var(--green)',
+    audit: 'var(--teal)',
+    pack:  'var(--blue)',
+    all:   'var(--navy)'
+  };
+
+  const icon  = typeIcons[mat.type] || 'ti-file';
+  const color = pkgColors[mat.pkg]  || 'var(--teal)';
+
+  const actionBtn = mat.fileUrl
+    ? `<a href="${mat.fileUrl}" target="_blank" class="btn btn-o" style="font-size:12px;white-space:nowrap">
+         <i class="ti ti-download" style="font-size:12px"></i>Скачать
+       </a>`
+    : `<span style="font-size:11px;color:var(--txt3);padding:4px 8px">Скоро</span>`;
+
+  const duration = mat.duration
+    ? `<span class="pill" style="background:var(--sur2);color:var(--txt2)">${mat.duration}</span>`
+    : '';
+
+  return `
+    <div class="mat-card" data-pkg="${mat.pkg}">
+      <div class="mat-icon"><i class="ti ${icon}" style="color:${color};font-size:22px"></i></div>
+      <div class="mat-body">
+        <div class="mat-name">${mat.name}</div>
+        ${mat.description ? `<div class="mat-desc">${mat.description}</div>` : ''}
+        <div class="mat-meta">
+          <span class="pill pt">${mat.pkgLabel}</span>
+          <span class="pill" style="background:var(--sur2);color:var(--txt2)">${mat.typeLabel}</span>
+          ${duration}
+        </div>
+      </div>
+      <div class="mat-action">${actionBtn}</div>
+    </div>`;
+}
+
+// Фильтр материалов (вызывается из HTML)
+window.fltMat = function(btn, pkg) {
+  document.querySelectorAll('#materials-grid .mat-card').forEach(c => {
+    c.style.display = (pkg === 'all' || c.dataset.pkg === pkg) ? '' : 'none';
+  });
+  document.querySelectorAll('.fb.mat-filters').forEach(b => b.classList.remove('fa'));
+  btn.classList.add('fa');
+};

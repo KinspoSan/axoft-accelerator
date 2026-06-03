@@ -66,6 +66,26 @@ Email: ${vendorProfile.email}
     return result || [];
   },
 
+  // ── Universal Lists ──────────────────────────────────────────────────────
+
+  async getListElements(listId) {
+    const result = await this.call('lists.element.get', {
+      IBLOCK_TYPE_ID: 'lists',
+      IBLOCK_ID:      listId,
+      FILTER:         { ACTIVE: 'Y' }
+    });
+    return result || [];
+  },
+
+  // ── Bitrix24 Disk ────────────────────────────────────────────────────────
+
+  async getDiskFileLink(fileId) {
+    const result = await this.call('disk.file.getExternalLink', { id: fileId });
+    return result || null;
+  },
+
+  // ── Activities ───────────────────────────────────────────────────────────
+
   async addActivity(leadId, message) {
     try {
       await this.call('crm.activity.add', {
