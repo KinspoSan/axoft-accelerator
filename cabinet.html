@@ -343,6 +343,33 @@
 
     @keyframes spin{to{transform:rotate(360deg)}}
 
+    /* ── Service tabs ── */
+    .svc-tabs{display:inline-flex;gap:4px;background:var(--sur2);padding:4px;
+      border-radius:var(--rs);margin-bottom:20px;}
+    .svc-tab{padding:8px 22px;border-radius:6px;border:none;background:transparent;
+      font-family:'Golos Text',sans-serif;font-size:13px;font-weight:600;
+      color:var(--txt2);cursor:pointer;transition:all .2s;}
+    .svc-tab.active{background:var(--sur);color:var(--navy);
+      box-shadow:0 1px 4px rgba(30,40,73,.1);}
+
+    /* ── Services à la carte ── */
+    .svc-g{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+    @media(max-width:1000px){.svc-g{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:600px){.svc-g{grid-template-columns:1fr;}}
+    .svc-card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);
+      padding:20px;display:flex;flex-direction:column;transition:box-shadow .2s;
+      data-pkg:attr(data-pkg);}
+    .svc-card:hover{box-shadow:0 4px 16px rgba(30,40,73,.08);}
+    .svc-card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;}
+    .svc-card-ic{width:38px;height:38px;border-radius:10px;background:var(--sur2);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .svc-card-name{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35;padding-top:2px;}
+    .svc-card-desc{font-size:12px;color:var(--txt2);line-height:1.5;flex:1;margin-bottom:14px;}
+    .svc-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;}
+    .svc-price{font-size:14px;font-weight:700;color:var(--navy);}
+    .svc-price.free{color:var(--green);}
+    .svc-price.on-req{font-size:12px;font-weight:500;color:var(--txt2);}
+
     /* ── Materials ── */
     .mat-card{display:flex;align-items:flex-start;gap:16px;padding:16px 20px;
       border-bottom:1px solid var(--bdr);}
@@ -498,53 +525,78 @@
     <div class="page" id="page-services">
       <div class="page-hd">
         <h2>Каталог сервисов</h2>
-        <p>3 пакета консалтинга — от бесплатной диагностики до полной подготовки к каналу</p>
+        <p>Консалтинговые пакеты и отдельные услуги от экспертов Axoft</p>
       </div>
 
-      <div class="sf">
-        <button class="fb pkg-filters fa" onclick="fltPkg(this,'all')">Все</button>
-        <button class="fb pkg-filters" onclick="fltPkg(this,'p1')">Диагностика</button>
-        <button class="fb pkg-filters" onclick="fltPkg(this,'p2')">Аудит</button>
-        <button class="fb pkg-filters" onclick="fltPkg(this,'p3')">Упаковка</button>
+      <!-- Вкладки -->
+      <div class="svc-tabs">
+        <button class="svc-tab active" id="tab-pkgs" onclick="switchSvcTab('pkgs')">Пакеты</button>
+        <button class="svc-tab" id="tab-svcs" onclick="switchSvcTab('svcs')">Услуги à la carte</button>
       </div>
 
-      <div id="packages-grid" class="pkg-g">
-        <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">
-          <i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i>
+      <!-- ── Вкладка: Пакеты ──────────────────────────────────────────────── -->
+      <div id="svc-pkgs-section">
+        <div class="sf">
+          <button class="fb pkg-filters fa" onclick="fltPkg(this,'all')">Все</button>
+          <button class="fb pkg-filters" onclick="fltPkg(this,'p1')">Диагностика</button>
+          <button class="fb pkg-filters" onclick="fltPkg(this,'p2')">Аудит</button>
+          <button class="fb pkg-filters" onclick="fltPkg(this,'p3')">Упаковка</button>
         </div>
-      </div>
 
-      <!-- Сравнение пакетов -->
-      <div class="cmp-wrap">
-        <div class="cmp-lbl">Сравнение пакетов</div>
-        <div class="cmp-card">
-          <div style="overflow-x:auto">
-            <table class="cmp">
-              <thead>
-                <tr>
-                  <th style="width:42%">Что входит</th>
-                  <th>Диагностика<br><span style="font-size:10px;font-weight:400;color:var(--green)">Бесплатно</span></th>
-                  <th>Аудит<br><span style="font-size:10px;font-weight:400;color:var(--teal)">от 100 000 ₽</span></th>
-                  <th>Упаковка<br><span style="font-size:10px;font-weight:400;color:var(--blue)">от 300 000 ₽</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Образовательные материалы о дистрибуции</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr><td>Чек-лист самооценки готовности</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr><td>Онбординг-встреча с Axoft (до 1 ч.)</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr><td>Детальный аудит продукта с отчётом</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr><td>Анализ конкурентов в партнёрском канале</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr><td>Дорожная карта устранения пробелов</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr><td>Рабочие сессии с экспертами Axoft</td><td><i class="ti ti-minus cmp-n"></i></td><td><span class="cmp-num">2-3</span></td><td><span class="cmp-num">5+</span></td></tr>
-                <tr><td>Разработка УТП и позиционирования</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr><td>Партнёрская программа и one-pager</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr><td>Маркетинговые и обучающие материалы</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                <tr style="background:var(--sur2)"><td style="font-weight:700;color:var(--navy)">Стоимость (ориентировочная)</td><td><span class="cmp-pr" style="color:var(--green)">Бесплатно</span></td><td><span class="cmp-pr">от 100 тыс. ₽</span></td><td><span class="cmp-pr">от 300 тыс. ₽</span></td></tr>
-              </tbody>
-            </table>
+        <div id="packages-grid" class="pkg-g">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">
+            <i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i>
+          </div>
+        </div>
+
+        <!-- Сравнение пакетов -->
+        <div class="cmp-wrap">
+          <div class="cmp-lbl">Сравнение пакетов</div>
+          <div class="cmp-card">
+            <div style="overflow-x:auto">
+              <table class="cmp">
+                <thead>
+                  <tr>
+                    <th style="width:42%">Что входит</th>
+                    <th>Диагностика<br><span style="font-size:10px;font-weight:400;color:var(--green)">Бесплатно</span></th>
+                    <th>Аудит<br><span style="font-size:10px;font-weight:400;color:var(--teal)">от 100 000 ₽</span></th>
+                    <th>Упаковка<br><span style="font-size:10px;font-weight:400;color:var(--blue)">от 300 000 ₽</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Образовательные материалы о дистрибуции</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Чек-лист самооценки готовности</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Онбординг-встреча с Axoft (до 1 ч.)</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Детальный аудит продукта с отчётом</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Анализ конкурентов в партнёрском канале</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Дорожная карта устранения пробелов</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Рабочие сессии с экспертами Axoft</td><td><i class="ti ti-minus cmp-n"></i></td><td><span class="cmp-num">2-3</span></td><td><span class="cmp-num">5+</span></td></tr>
+                  <tr><td>Разработка УТП и позиционирования</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Партнёрская программа и one-pager</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Маркетинговые и обучающие материалы</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr style="background:var(--sur2)"><td style="font-weight:700;color:var(--navy)">Стоимость (ориентировочная)</td><td><span class="cmp-pr" style="color:var(--green)">Бесплатно</span></td><td><span class="cmp-pr">от 100 тыс. ₽</span></td><td><span class="cmp-pr">от 300 тыс. ₽</span></td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- ── Вкладка: Услуги à la carte ────────────────────────────────────── -->
+      <div id="svc-svcs-section" style="display:none">
+        <div class="sf">
+          <button class="fb svc-filters fa" onclick="fltSvc(this,'all')">Все</button>
+          <button class="fb svc-filters" onclick="fltSvc(this,'diag')">Диагностика</button>
+          <button class="fb svc-filters" onclick="fltSvc(this,'audit')">Аудит</button>
+          <button class="fb svc-filters" onclick="fltSvc(this,'pack')">Упаковка</button>
+        </div>
+        <div id="services-grid" class="svc-g">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">
+            <i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ЗАКАЗЫ -->

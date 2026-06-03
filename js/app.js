@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadOrders();
   await renderPackages();
   await renderMaterials();
+  await renderServices();
 
   // Update dashboard orders count
   const localOrders = Orders.getLocalOrders();
@@ -293,5 +294,75 @@ window.fltMat = function(btn, pkg) {
     c.style.display = (pkg === 'all' || c.dataset.pkg === pkg) ? '' : 'none';
   });
   document.querySelectorAll('.fb.mat-filters').forEach(b => b.classList.remove('fa'));
+  btn.classList.add('fa');
+};
+
+// ── Services à la carte ───────────────────────────────────────────────────────
+
+// Переключение вкладок Пакеты / Услуги
+window.switchSvcTab = function(tab) {
+  document.getElementById('svc-pkgs-section').style.display = tab === 'pkgs' ? '' : 'none';
+  document.getElementById('svc-svcs-section').style.display = tab === 'svcs' ? '' : 'none';
+  document.getElementById('tab-pkgs').classList.toggle('active', tab === 'pkgs');
+  document.getElementById('tab-svcs').classList.toggle('active', tab === 'svcs');
+};
+
+async function renderServices() {
+  const grid = document.getElementById('services-grid');
+  if (!grid) return;
+
+  try {
+    const services = await Content.getServices();
+    const standalone = services.filter(s => s.standalone);
+    grid.innerHTML = standalone.length
+      ? standalone.map(buildServiceCard).join('')
+      : '<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">Услуги скоро появятся</div>';
+  } catch (e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:20px;color:#c00">Ошибка загрузки: ${e.message}</div>`;
+  }
+}
+
+function buildServiceCard(svc) {
+  const pkgColors = {
+    diag:  'var(--green)',
+    audit: 'var(--teal)',
+    pack:  'var(--blue)'
+  };
+  const color = pkgColors[svc.pkg] || 'var(--teal)';
+
+  const priceClass = svc.price === 0 && svc.priceText === 'Бесплатно' ? 'free'
+    : svc.priceText === 'По запросу' ? 'on-req' : '';
+
+  return `
+    <div class="svc-card" data-pkg="${svc.pkg}"
+      data-service-id="${svc.id}"
+      data-service-name="${svc.name}"
+      data-service-block="${svc.pkgLabel}"
+      data-service-price="${svc.price}"
+      data-service-price-display="${svc.priceText}">
+      <div class="svc-card-head">
+        <div class="svc-card-ic">
+          <i class="ti ${svc.icon}" style="color:${color};font-size:18px"></i>
+        </div>
+        <div class="svc-card-name">${svc.name}</div>
+      </div>
+      ${svc.pkgLabel ? `<div class="svc-card-pkg"><span class="pill pt">${svc.pkgLabel}</span></div>` : ''}
+      <div class="svc-card-desc">${svc.description}</div>
+      <div class="svc-card-foot">
+        <span class="svc-price ${priceClass}">${svc.priceText}</span>
+        <button class="btn btn-o btn-order" style="font-size:12px;padding:6px 14px"
+          onclick="handleOrder(this.closest('.svc-card'))">
+          <i class="ti ti-send" style="font-size:12px"></i>Запросить
+        </button>
+      </div>
+    </div>`;
+}
+
+// Фильтр услуг (вызывается из HTML)
+window.fltSvc = function(btn, pkg) {
+  document.querySelectorAll('#services-grid .svc-card').forEach(c => {
+    c.style.display = (pkg === 'all' || c.dataset.pkg === pkg) ? '' : 'none';
+  });
+  document.querySelectorAll('.fb.svc-filters').forEach(b => b.classList.remove('fa'));
   btn.classList.add('fa');
 };

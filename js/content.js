@@ -5,7 +5,8 @@ import Bitrix from './bitrix.js';
 
 const LIST_IDS = {
   packages:  123,  // «Пакеты консалтинга — Axoft × Сколково»
-  materials: 125   // «Материалы — Axoft × Сколково»
+  materials: 125,  // «Материалы — Axoft × Сколково»
+  services:  127   // «Услуги — Axoft × Сколково»
 };
 
 const FIELD_MAP = {
@@ -28,6 +29,15 @@ const FIELD_MAP = {
     duration:    'PROPERTY_301',
     description: 'PROPERTY_303',
     fileId:      'PROPERTY_305'
+  },
+  services: {
+    icon:        'PROPERTY_307',
+    description: 'PROPERTY_309',
+    price:       'PROPERTY_311',
+    priceText:   'PROPERTY_313',
+    pkg:         'PROPERTY_315',
+    pkgLabel:    'PROPERTY_317',
+    standalone:  'PROPERTY_319'
   }
 };
 
@@ -176,6 +186,84 @@ const MOCK_MATERIALS = [
   }
 ];
 
+const MOCK_SERVICES = [
+  // ── Диагностика ──────────────────────────────────────────────────────────
+  { id:'svc-1',  name:'Видеокурс: двухуровневая дистрибуция',
+    icon:'ti-video',          pkg:'diag', pkgLabel:'Диагностика',
+    price:0, priceText:'Бесплатно', standalone:true,
+    description:'Структура партнёрского канала, роли и экономика дистрибуции' },
+  { id:'svc-2',  name:'Чек-лист самооценки готовности',
+    icon:'ti-list-check',     pkg:'diag', pkgLabel:'Диагностика',
+    price:0, priceText:'Бесплатно', standalone:true,
+    description:'42 критерия для самостоятельной оценки готовности продукта к каналу' },
+  { id:'svc-3',  name:'Онбординг-встреча с Axoft (до 1 ч.)',
+    icon:'ti-user-check',     pkg:'diag', pkgLabel:'Диагностика',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Персональная встреча с менеджером для обсуждения стратегии входа в канал' },
+  { id:'svc-4',  name:'Кейсы вендоров: переход на дистрибуцию',
+    icon:'ti-book-2',         pkg:'diag', pkgLabel:'Диагностика',
+    price:0, priceText:'Бесплатно', standalone:true,
+    description:'5 историй успеха вендоров, прошедших путь от прямых продаж к партнёрскому каналу' },
+  // ── Аудит ────────────────────────────────────────────────────────────────
+  { id:'svc-5',  name:'Детальный аудит продукта',
+    icon:'ti-search',         pkg:'audit', pkgLabel:'Аудит',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Экспертная оценка готовности продукта к дистрибуции по 5 ключевым категориям' },
+  { id:'svc-6',  name:'Анализ конкурентов в партнёрском канале',
+    icon:'ti-chart-bar',      pkg:'audit', pkgLabel:'Аудит',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Кто уже в канале Axoft, на каких условиях, и как ваш продукт дифференцируется' },
+  { id:'svc-7',  name:'Оценка продукта глазами реселлера',
+    icon:'ti-eye',            pkg:'audit', pkgLabel:'Аудит',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Аудит с позиции партнёра: насколько просто продавать, какие вопросы возникнут' },
+  { id:'svc-8',  name:'Выявление пробелов в упаковке и ценообразовании',
+    icon:'ti-alert-triangle', pkg:'audit', pkgLabel:'Аудит',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Диагностика слабых мест: продукт, упаковка, ценообразование для канала' },
+  { id:'svc-9',  name:'Рабочие сессии с экспертами Axoft (2–3)',
+    icon:'ti-users',          pkg:'audit', pkgLabel:'Аудит',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Структурированные рабочие сессии по результатам аудита с командой Axoft' },
+  { id:'svc-10', name:'Итоговый отчёт: разрыв-анализ + дорожная карта',
+    icon:'ti-file-text',      pkg:'audit', pkgLabel:'Аудит',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Документ с результатами аудита и пошаговым планом устранения пробелов' },
+  // ── Упаковка ─────────────────────────────────────────────────────────────
+  { id:'svc-11', name:'Разработка УТП для B2B и партнёрского канала',
+    icon:'ti-target',         pkg:'pack', pkgLabel:'Упаковка',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Формулировка уникального предложения под корпоративных заказчиков и реселлеров' },
+  { id:'svc-12', name:'Позиционирование в портфеле реселлера',
+    icon:'ti-briefcase',      pkg:'pack', pkgLabel:'Упаковка',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Как встроить продукт в корзину реселлера и продавать его в связке с другими решениями' },
+  { id:'svc-13', name:'One-pager + коммерческое предложение для партнёра',
+    icon:'ti-file-invoice',   pkg:'pack', pkgLabel:'Упаковка',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Одностраничник продукта для партнёра и шаблон КП под корпоративные сделки' },
+  { id:'svc-14', name:'Маркетинговые материалы для реселлеров',
+    icon:'ti-speakerphone',   pkg:'pack', pkgLabel:'Упаковка',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Презентации, pitch deck и FAQ для продажи продукта через партнёрскую сеть' },
+  { id:'svc-15', name:'Разработка партнёрской программы',
+    icon:'ti-git-branch',     pkg:'pack', pkgLabel:'Упаковка',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Условия для реселлеров: маржа, бонусы, обязательства сторон, тиры партнёрства' },
+  { id:'svc-16', name:'Обучающие материалы для реселлеров',
+    icon:'ti-school',         pkg:'pack', pkgLabel:'Упаковка',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Учебные материалы для онбординга партнёров без участия вендора' },
+  { id:'svc-17', name:'Рабочие сессии с командой Axoft (5+)',
+    icon:'ti-users',          pkg:'pack', pkgLabel:'Упаковка',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Интенсивная работа с выделенной командой экспертов — от стратегии до запуска' },
+  { id:'svc-18', name:'Финальная оценка готовности к дистрибуции',
+    icon:'ti-check-all',      pkg:'pack', pkgLabel:'Упаковка',
+    price:0, priceText:'По запросу', standalone:true,
+    description:'Итоговая верификация всей подготовительной работы и допуск к запуску канала' },
+];
+
 // ── Основной модуль ──────────────────────────────────────────────────────────
 
 const Content = {
@@ -195,10 +283,19 @@ const Content = {
     );
   },
 
+  async getServices() {
+    return this._withCache('content_services', () =>
+      LIST_IDS.services
+        ? this._fetchServices()
+        : Promise.resolve(MOCK_SERVICES)
+    );
+  },
+
   // Принудительно сбросить кэш (полезно при отладке)
   clearCache() {
     localStorage.removeItem('content_packages');
     localStorage.removeItem('content_materials');
+    localStorage.removeItem('content_services');
   },
 
   // ── Bitrix24 Universal Lists ─────────────────────────────────────────────
@@ -259,6 +356,22 @@ const Content = {
     );
 
     return mats;
+  },
+
+  async _fetchServices() {
+    const elements = await Bitrix.getListElements(LIST_IDS.services);
+    const fm = FIELD_MAP.services;
+    return elements.map(el => ({
+      id:          el.CODE || `svc-${el.ID}`,
+      name:        el.NAME,
+      icon:        this._pv(el, fm.icon) || 'ti-tool',
+      description: this._pv(el, fm.description) || '',
+      price:       parseInt(this._pv(el, fm.price)) || 0,
+      priceText:   this._pv(el, fm.priceText) || 'По запросу',
+      pkg:         this._pv(el, fm.pkg) || 'all',
+      pkgLabel:    this._pv(el, fm.pkgLabel) || '',
+      standalone:  this._pv(el, fm.standalone) === 'Y'
+    }));
   },
 
   // ── Cache ────────────────────────────────────────────────────────────────
