@@ -1,4 +1,4 @@
-const WEBHOOK = 'https://axoft.bitrix24.ru/rest/1/itnzkkug13yjhs7v';
+const WEBHOOK = 'https://axoft.bitrix24.ru/rest/1/eismn5zly34zgq99';
 
 const Bitrix = {
   async call(method, params = {}) {

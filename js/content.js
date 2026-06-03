@@ -4,31 +4,30 @@
 import Bitrix from './bitrix.js';
 
 const LIST_IDS = {
-  packages:  null,  // ID Universal List «Пакеты консалтинга» (напр. 47)
-  materials: null   // ID Universal List «Материалы»           (напр. 49)
+  packages:  123,  // «Пакеты консалтинга — Axoft × Сколково»
+  materials: 125   // «Материалы — Axoft × Сколково»
 };
 
-// Заполни FIELD_MAP после создания списков в Bitrix24 (Settings → Lists → свойства):
 const FIELD_MAP = {
   packages: {
-    number:          'PROPERTY_XXX',
-    goal:            'PROPERTY_XXX',
-    price:           'PROPERTY_XXX',
-    priceDisplay:    'PROPERTY_XXX',
-    engagement:      'PROPERTY_XXX',
-    engagementLevel: 'PROPERTY_XXX',
-    color:           'PROPERTY_XXX',
-    result:          'PROPERTY_XXX',
-    buttonType:      'PROPERTY_XXX'
+    number:          'PROPERTY_275',
+    goal:            'PROPERTY_277',
+    price:           'PROPERTY_279',
+    priceDisplay:    'PROPERTY_281',
+    engagement:      'PROPERTY_283',
+    engagementLevel: 'PROPERTY_285',
+    color:           'PROPERTY_287',
+    result:          'PROPERTY_289',
+    buttonType:      'PROPERTY_291'
   },
   materials: {
-    type:        'PROPERTY_XXX',
-    typeLabel:   'PROPERTY_XXX',
-    pkg:         'PROPERTY_XXX',
-    pkgLabel:    'PROPERTY_XXX',
-    duration:    'PROPERTY_XXX',
-    description: 'PROPERTY_XXX',
-    fileId:      'PROPERTY_XXX'
+    type:        'PROPERTY_293',
+    typeLabel:   'PROPERTY_295',
+    pkg:         'PROPERTY_297',
+    pkgLabel:    'PROPERTY_299',
+    duration:    'PROPERTY_301',
+    description: 'PROPERTY_303',
+    fileId:      'PROPERTY_305'
   }
 };
 
@@ -204,23 +203,31 @@ const Content = {
 
   // ── Bitrix24 Universal Lists ─────────────────────────────────────────────
 
+  // Значения свойств в Bitrix приходят как {"<internal_id>": "<value>"} — берём первое значение
+  _pv(el, fieldId) {
+    const v = el[fieldId];
+    if (!v || typeof v !== 'object') return v || '';
+    const vals = Object.values(v);
+    return vals.length ? String(vals[0]) : '';
+  },
+
   async _fetchPackages() {
     const elements = await Bitrix.getListElements(LIST_IDS.packages);
     const fm = FIELD_MAP.packages;
     return elements
       .map(el => ({
         id:              el.CODE || `pkg-${el.ID}`,
-        number:          parseInt(el[fm.number]) || 0,
+        number:          parseInt(this._pv(el, fm.number)) || 0,
         name:            el.NAME,
-        goal:            el[fm.goal] || '',
-        price:           parseInt(el[fm.price]) || 0,
-        priceDisplay:    el[fm.priceDisplay] || '',
-        engagement:      el[fm.engagement] || '',
-        engagementLevel: parseInt(el[fm.engagementLevel]) || 1,
-        color:           el[fm.color] || 'teal',
-        result:          el[fm.result] || '',
-        buttonType:      el[fm.buttonType] || 'order',
-        items:           []  // items из отдельного списка — добавь getPackageItems() при необходимости
+        goal:            this._pv(el, fm.goal) || '',
+        price:           parseInt(this._pv(el, fm.price)) || 0,
+        priceDisplay:    this._pv(el, fm.priceDisplay) || '',
+        engagement:      this._pv(el, fm.engagement) || '',
+        engagementLevel: parseInt(this._pv(el, fm.engagementLevel)) || 1,
+        color:           this._pv(el, fm.color) || 'teal',
+        result:          this._pv(el, fm.result) || '',
+        buttonType:      this._pv(el, fm.buttonType) || 'order',
+        items:           MOCK_PACKAGES.find(p => p.id === el.CODE)?.items || []
       }))
       .sort((a, b) => a.number - b.number);
   },
@@ -229,15 +236,15 @@ const Content = {
     const elements = await Bitrix.getListElements(LIST_IDS.materials);
     const fm = FIELD_MAP.materials;
     const mats = elements.map(el => ({
-      id:          `mat-${el.ID}`,
+      id:          el.CODE || `mat-${el.ID}`,
       name:        el.NAME,
-      type:        el[fm.type] || 'doc',
-      typeLabel:   el[fm.typeLabel] || 'Документ',
-      pkg:         el[fm.pkg] || 'all',
-      pkgLabel:    el[fm.pkgLabel] || 'Все',
-      duration:    el[fm.duration] || null,
-      description: el[fm.description] || '',
-      fileId:      el[fm.fileId] || null,
+      type:        this._pv(el, fm.type) || 'doc',
+      typeLabel:   this._pv(el, fm.typeLabel) || 'Документ',
+      pkg:         this._pv(el, fm.pkg) || 'all',
+      pkgLabel:    this._pv(el, fm.pkgLabel) || 'Все',
+      duration:    this._pv(el, fm.duration) || null,
+      description: this._pv(el, fm.description) || '',
+      fileId:      this._pv(el, fm.fileId) || null,
       fileUrl:     null
     }));
 
