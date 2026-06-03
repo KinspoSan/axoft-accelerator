@@ -57,29 +57,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 window.handleOrder = async function(card) {
+  const isServiceCard = card.classList.contains('svc-card');
+
   const serviceData = {
     id:           card.dataset.serviceId,
     name:         card.dataset.serviceName,
     block:        card.dataset.serviceBlock,
     price:        parseInt(card.dataset.servicePrice),
     priceDisplay: card.dataset.servicePriceDisplay,
-    paymentType:  'Счёт'
+    paymentType:  isServiceCard ? 'По запросу' : 'Счёт'
   };
 
   const btn = card.querySelector('.btn-order');
   if (!btn) return;
-  const origText = btn.textContent;
-  btn.textContent = 'Оформляем...';
+  const origHtml = btn.innerHTML;
+  btn.innerHTML = '<i class="ti ti-loader" style="font-size:12px;animation:spin .8s linear infinite"></i> Отправляем...';
   btn.disabled = true;
 
   try {
-    await Orders.placeOrder(serviceData);
-    btn.textContent = 'Заказано';
-    btn.style.background = 'var(--green)';
-    showToast(`Заказ «${serviceData.name}» оформлен! Менеджер свяжется с вами.`);
+    if (isServiceCard) {
+      await Orders.requestService(serviceData);
+      btn.innerHTML = '<i class="ti ti-check" style="font-size:12px"></i> Запрошено';
+      btn.style.background = 'var(--green)';
+      btn.style.color = '#fff';
+      btn.style.border = 'none';
+      showToast(`Запрос на «${serviceData.name}» отправлен. Менеджер свяжется по email.`);
+    } else {
+      await Orders.placeOrder(serviceData);
+      btn.innerHTML = '<i class="ti ti-check" style="font-size:13px"></i> Заказано';
+      btn.style.background = 'var(--green)';
+      showToast(`Заказ «${serviceData.name}» оформлен! Менеджер свяжется с вами.`);
+    }
     await loadOrders();
   } catch (e) {
-    btn.textContent = origText;
+    btn.innerHTML = origHtml;
     btn.disabled = false;
     showToast(`Ошибка: ${e.message}`, 'error');
   }
@@ -111,7 +122,13 @@ async function loadOrders() {
         <td>${o.priceDisplay || '—'}</td>
         <td>${o.paymentType || 'Счёт'}</td>
         <td><span class="stag ${Orders.getStatusClass(o.status)}">${o.statusLabel}</span></td>
-        <td>${o.bitrixDealId ? `<a href="https://vibecode.bitrix24.tech/crm/deal/details/${o.bitrixDealId}/" target="_blank" class="btn btn-o" style="font-size:11px;padding:5px 10px">Bitrix #${o.bitrixDealId}</a>` : ''}</td>
+        <td>
+          ${o.bitrixDealId
+            ? `<a href="https://axoft.bitrix24.ru/crm/deal/details/${o.bitrixDealId}/" target="_blank" class="btn btn-o" style="font-size:11px;padding:5px 10px">Сделка #${o.bitrixDealId}</a>`
+            : o.bitrixLeadId
+            ? `<a href="https://axoft.bitrix24.ru/crm/lead/details/${o.bitrixLeadId}/" target="_blank" class="btn btn-o" style="font-size:11px;padding:5px 10px">Лид #${o.bitrixLeadId}</a>`
+            : ''}
+        </td>
       </tr>`).join('');
 
     container.innerHTML = `

@@ -39,6 +39,37 @@ const Orders = {
     return order;
   },
 
+  async requestService(serviceData) {
+    const profile = Auth.getProfile();
+    if (!profile) throw new Error('Необходима авторизация');
+
+    const request = {
+      id:           Date.now(),
+      type:         'service',
+      serviceId:    serviceData.id,
+      serviceName:  serviceData.name,
+      block:        serviceData.block,
+      price:        serviceData.price,
+      priceDisplay: serviceData.priceDisplay,
+      paymentType:  'По запросу',
+      status:       'new',
+      statusLabel:  'Запрошено',
+      createdAt:    new Date().toISOString()
+    };
+
+    try {
+      const leadId = await Bitrix.createServiceRequest(serviceData, profile);
+      request.bitrixLeadId = leadId;
+    } catch (e) {
+      console.warn('Bitrix недоступен, запрос сохранён локально:', e.message);
+    }
+
+    const orders = this.getLocalOrders();
+    orders.unshift(request);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(orders));
+    return request;
+  },
+
   async getAllOrders() {
     const local = this.getLocalOrders();
     try {
