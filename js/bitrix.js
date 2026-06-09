@@ -1,6 +1,6 @@
 // Два webhook: CRM (лиды, сделки, активности) и Lists (универсальные списки)
-const CRM_WEBHOOK   = 'https://axoft.bitrix24.ru/rest/1/itnzkkug13yjhs7v';
-const LISTS_WEBHOOK = 'https://axoft.bitrix24.ru/rest/1/eismn5zly34zgq99';
+const CRM_WEBHOOK   = '__BITRIX_CRM_WEBHOOK__';
+const LISTS_WEBHOOK = '__BITRIX_LISTS_WEBHOOK__';
 
 // Импортируем Content для чтения настроек (lazy — чтобы не было циклической зависимости)
 let _Content = null;

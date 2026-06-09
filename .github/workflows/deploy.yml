@@ -22,6 +22,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Inject secrets
+        env:
+          BITRIX_CRM_WEBHOOK:   ${{ secrets.BITRIX_CRM_WEBHOOK }}
+          BITRIX_LISTS_WEBHOOK: ${{ secrets.BITRIX_LISTS_WEBHOOK }}
+          DADATA_TOKEN:         ${{ secrets.DADATA_TOKEN }}
+        run: |
+          sed -i "s|__BITRIX_CRM_WEBHOOK__|${BITRIX_CRM_WEBHOOK}|g"     js/bitrix.js
+          sed -i "s|__BITRIX_LISTS_WEBHOOK__|${BITRIX_LISTS_WEBHOOK}|g"  js/bitrix.js
+          sed -i "s|__DADATA_TOKEN__|${DADATA_TOKEN}|g"                  index.html
+
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
