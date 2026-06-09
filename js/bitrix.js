@@ -287,11 +287,24 @@ const Bitrix = {
     }, LISTS_WEBHOOK);
   },
 
+  // Поиск по хэшу пароля — единственный рабочий фильтр в lists.element.get
+  // (фильтр по CODE/ACTIVE не работает в Bitrix24 Universal Lists REST API)
+  async findVendorByHash(hash) {
+    const result = await this.call('lists.element.get', {
+      IBLOCK_TYPE_ID: 'lists',
+      IBLOCK_ID:      131,
+      FILTER:         { 'PROPERTY_325': hash }
+    }, LISTS_WEBHOOK);
+    return result?.length > 0 ? result[0] : null;
+  },
+
+  // Используется только при регистрации для проверки дубликатов
+  // (code-based поиск не работает, поэтому полагаемся на уникальность ELEMENT_CODE)
   async findVendorByEmail(email) {
     const result = await this.call('lists.element.get', {
       IBLOCK_TYPE_ID: 'lists',
       IBLOCK_ID:      131,
-      FILTER:         { CODE: encodeURIComponent(email), ACTIVE: 'Y' }
+      FILTER:         { CODE: encodeURIComponent(email) }
     }, LISTS_WEBHOOK);
     return result?.length > 0 ? result[0] : null;
   },

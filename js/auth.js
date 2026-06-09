@@ -15,12 +15,6 @@ async function hashPassword(password, email) {
 
 const Auth = {
   async register(formData) {
-    // Проверяем: нет ли уже такого email в Bitrix
-    const existing = await Bitrix.findVendorByEmail(formData.email).catch(() => null);
-    if (existing) {
-      throw new Error('Этот email уже зарегистрирован. Войдите в личный кабинет.');
-    }
-
     const hash = await hashPassword(formData.password, formData.email);
 
     const profile = {
@@ -48,6 +42,11 @@ const Auth = {
       localStorage.setItem(AUTH_KEY, JSON.stringify({ ...profile, _h: hash }));
       Bitrix.addActivity(leadId, `Вендор зарегистрировался в ЛК. Email: ${formData.email}`).catch(() => {});
     } catch (e) {
+      // Код ошибки Bitrix при дубликате CODE — компания уже зарегистрирована
+      if (e.message?.includes('CODE') || e.message?.includes('duplicate') || e.message?.includes('exist')) {
+        localStorage.removeItem(AUTH_KEY);
+        throw new Error('Этот email уже зарегистрирован. Войдите в личный кабинет.');
+      }
       console.warn('Bitrix недоступен при регистрации, сессия сохранена локально:', e.message);
     }
 
@@ -82,29 +81,18 @@ const Auth = {
       }
     }
 
-    // 2. Другое устройство — проверяем Bitrix
+    // 2. Другое устройство — ищем по хэшу в Bitrix
+    // (поиск по CODE не работает в Universal Lists REST API, поиск по PROPERTY_325 работает)
     let vendor = null;
     try {
-      vendor = await Bitrix.findVendorByEmail(email);
+      vendor = await Bitrix.findVendorByHash(hash);
     } catch (_) {}
 
     if (!vendor) {
-      // Нет в списке вендоров — может быть старая регистрация до этого обновления
-      const lead = await Bitrix.findLeadByEmail(email).catch(() => null);
-      if (!lead) throw new Error('Компания не найдена. Пройдите регистрацию.');
-      throw new Error('Для входа с нового устройства нужно сбросить пароль. Напишите на program@axoft.ru');
+      throw new Error('Неверный email или пароль.');
     }
 
-    // Сравниваем хэш
-    const storedHash = vendor['PROPERTY_325']
-      ? Object.values(vendor['PROPERTY_325'])[0]
-      : null;
-
-    if (!storedHash || storedHash !== hash) {
-      throw new Error('Неверный пароль.');
-    }
-
-    // Восстанавливаем профиль из Bitrix
+    // Хэш совпал (нашли по нему) — восстанавливаем профиль из PROPERTY_327
     let profile;
     try {
       const raw = vendor['PROPERTY_327'] ? Object.values(vendor['PROPERTY_327'])[0] : null;
