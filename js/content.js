@@ -4,11 +4,12 @@
 import Bitrix from './bitrix.js';
 
 const LIST_IDS = {
-  packages:  123,  // «Пакеты консалтинга — Axoft × Сколково»
-  materials: 125,  // «Материалы — Axoft × Сколково»
-  services:  127,  // «Услуги — Axoft × Сколково»
-  settings:  129,  // «Настройки ЛК — Axoft × Сколково»
-  vendors:   131   // «Вендоры — Аутентификация»
+  packages:        123,  // «Пакеты консалтинга — Axoft × Сколково»
+  materials:       125,  // «Материалы — Axoft × Сколково»
+  services:        127,  // «Услуги — Axoft × Сколково»
+  settings:        129,  // «Настройки ЛК — Axoft × Сколково»
+  vendors:         131,  // «Вендоры — Аутентификация»
+  partnerPackages: 143   // «Партнёрская программа — Axoft × Сколково»
 };
 
 const FIELD_MAP = {
@@ -48,6 +49,15 @@ const FIELD_MAP = {
     pkg:         'PROPERTY_315',
     pkgLabel:    'PROPERTY_317',
     standalone:  'PROPERTY_319'
+  },
+  partnerPackages: {
+    tier:        'PROPERTY_367',
+    badge:       'PROPERTY_369',
+    subtitle:    'PROPERTY_371',
+    priceDisplay:'PROPERTY_373',
+    timeline:    'PROPERTY_375',
+    recommended: 'PROPERTY_377',
+    result:      'PROPERTY_379'
   }
 };
 
@@ -334,31 +344,35 @@ const MOCK_PARTNER_PACKAGES = [
 
 const Content = {
   async getPackages() {
-    return this._withCache('content_packages', () =>
-      LIST_IDS.packages
-        ? this._fetchPackages()
-        : Promise.resolve(MOCK_PACKAGES)
-    );
+    return this._withCache('content_packages', async () => {
+      if (!LIST_IDS.packages) return MOCK_PACKAGES;
+      const result = await this._fetchPackages();
+      return result.length > 0 ? result : MOCK_PACKAGES;
+    });
   },
 
   async getMaterials() {
-    return this._withCache('content_materials', () =>
-      LIST_IDS.materials
-        ? this._fetchMaterials()
-        : Promise.resolve(MOCK_MATERIALS)
-    );
+    return this._withCache('content_materials', async () => {
+      if (!LIST_IDS.materials) return MOCK_MATERIALS;
+      const result = await this._fetchMaterials();
+      return result.length > 0 ? result : MOCK_MATERIALS;
+    });
   },
 
   async getServices() {
-    return this._withCache('content_services', () =>
-      LIST_IDS.services
-        ? this._fetchServices()
-        : Promise.resolve(MOCK_SERVICES)
-    );
+    return this._withCache('content_services', async () => {
+      if (!LIST_IDS.services) return MOCK_SERVICES;
+      const result = await this._fetchServices();
+      return result.length > 0 ? result : MOCK_SERVICES;
+    });
   },
 
   async getPartnerPackages() {
-    return Promise.resolve(MOCK_PARTNER_PACKAGES);
+    return this._withCache('content_partner', async () => {
+      if (!LIST_IDS.partnerPackages) return MOCK_PARTNER_PACKAGES;
+      const result = await this._fetchPartnerPackages();
+      return result.length > 0 ? result : MOCK_PARTNER_PACKAGES;
+    });
   },
 
   // Настройки: читаются каждый раз (TTL 10 мин), ключ → значение
@@ -378,9 +392,8 @@ const Content = {
 
   // Принудительно сбросить кэш (полезно при отладке)
   clearCache() {
-    localStorage.removeItem('content_packages');
-    localStorage.removeItem('content_materials');
-    localStorage.removeItem('content_services');
+    ['content_packages', 'content_materials', 'content_services',
+     'content_settings', 'content_partner'].forEach(k => localStorage.removeItem(k));
   },
 
   // ── Bitrix24 Universal Lists ─────────────────────────────────────────────
@@ -459,6 +472,23 @@ const Content = {
     }));
   },
 
+  async _fetchPartnerPackages() {
+    const elements = await Bitrix.getListElements(LIST_IDS.partnerPackages);
+    const fm = FIELD_MAP.partnerPackages;
+    return elements.map(el => ({
+      id:          el.CODE || `pp-${el.ID}`,
+      tier:        this._pvPlain(el, fm.tier) || 'pro',
+      badge:       this._pvPlain(el, fm.badge) || el.NAME,
+      name:        el.NAME,
+      subtitle:    this._pvPlain(el, fm.subtitle) || '',
+      priceDisplay:this._pvPlain(el, fm.priceDisplay) || 'По запросу',
+      timeline:    this._pvPlain(el, fm.timeline) || '',
+      recommended: this._pvPlain(el, fm.recommended) === 'Y',
+      result:      this._pvPlain(el, fm.result) || '',
+      items:       MOCK_PARTNER_PACKAGES.find(p => p.id === el.CODE)?.items || []
+    }));
+  },
+
   // ── Cache ────────────────────────────────────────────────────────────────
 
   async _withCache(key, fetcher, ttl = CACHE_TTL) {
@@ -466,15 +496,34 @@ const Content = {
       const raw = localStorage.getItem(key);
       if (raw) {
         const { data, ts } = JSON.parse(raw);
-        if (Date.now() - ts < ttl) return data;
+        // Не возвращать кэш если данные пустые — перезапросить
+        const isEmpty = Array.isArray(data) ? data.length === 0 : !data;
+        if (!isEmpty && Date.now() - ts < ttl) return data;
       }
     } catch (_) {}
 
     const data = await fetcher();
-    try {
-      localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
-    } catch (_) {}
+    // Не кэшировать пустые результаты
+    const isEmpty = Array.isArray(data) ? data.length === 0 : !data;
+    if (!isEmpty) {
+      try {
+        localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
+      } catch (_) {}
+    }
     return data;
+  },
+
+  // _pv — для полей формата {"internal_id": "value"} (старые списки 123-131)
+  // _pvPlain — для полей с простым строковым значением (новые списки 143+)
+  _pvPlain(el, fieldId) {
+    const v = el[fieldId];
+    if (v === null || v === undefined) return '';
+    if (typeof v === 'string') return v;
+    if (typeof v === 'object') {
+      const vals = Object.values(v);
+      return vals.length ? String(vals[0]) : '';
+    }
+    return String(v);
   }
 };
 

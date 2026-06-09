@@ -2,6 +2,14 @@ import Auth from './auth.js';
 import Orders from './orders.js';
 import Content from './content.js';
 
+// Версия кэша — при изменении сбрасывает устаревшие данные у всех пользователей
+const CACHE_VERSION = '2';
+const CACHE_VER_KEY = 'axoft_cache_ver';
+if (localStorage.getItem(CACHE_VER_KEY) !== CACHE_VERSION) {
+  Content.clearCache();
+  localStorage.setItem(CACHE_VER_KEY, CACHE_VERSION);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   if (!Auth.isLoggedIn()) {
     window.location.href = 'index.html';
