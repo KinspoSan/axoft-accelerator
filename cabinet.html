@@ -343,6 +343,7 @@
 
     @keyframes spin{to{transform:rotate(360deg)}}
 
+    /* ── Mobile ── */
     /* ── Service tabs ── */
     .svc-tabs{display:inline-flex;gap:4px;background:var(--sur2);padding:4px;
       border-radius:var(--rs);margin-bottom:20px;}
@@ -389,6 +390,77 @@
       .main{margin-left:60px;}
       .nb{padding:12px;justify-content:center;}
       .sb-user{padding:12px 8px;}
+    }
+
+    /* ── Mobile (≤600px) ── */
+    @media(max-width:600px){
+      /* Отступы */
+      .content{padding:14px;}
+      .topbar{padding:0 14px;}
+      .dash-hero{padding:18px 16px;}
+
+      /* Заголовки страниц */
+      .ph-t{font-size:16px;}
+      .page-hd h2{font-size:15px;}
+
+      /* Шаги прогресса — 2×2 */
+      .steps{flex-wrap:wrap;}
+      .step{flex:1 1 calc(50% - 1px);min-width:0;}
+      .step-title{font-size:11px;}
+      .step-sub{font-size:10px;}
+
+      /* Стат-карточки — 2 колонки */
+      .stat-grid{grid-template-columns:1fr 1fr;}
+      .sc-val{font-size:22px;}
+
+      /* Настройки — метка над значением */
+      .set-row{flex-direction:column;align-items:flex-start;gap:2px;padding:10px 14px;}
+      .set-k{width:auto;font-size:11px;}
+      .set-head{padding:12px 14px;}
+
+      /* Вкладки сервисов — горизонтальный скролл */
+      .svc-tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;
+        scrollbar-width:none;width:100%;}
+      .svc-tabs::-webkit-scrollbar{display:none;}
+      .svc-tab{flex-shrink:0;padding:7px 14px;font-size:12px;}
+
+      /* Таблица сравнения — скролл */
+      .cmp-card{overflow-x:auto !important;-webkit-overflow-scrolling:touch;}
+      .cmp{min-width:480px;}
+
+      /* Таблица заказов */
+      .ot th,.ot td{padding:8px 8px;font-size:12px;}
+      .ot th:nth-child(4),.ot td:nth-child(4){display:none;}
+
+      /* Фильтры */
+      .sf{gap:6px;}
+      .fb{font-size:11px;padding:5px 10px;}
+
+      /* Диагностика: шкалы */
+      .dg-bar-lbl{width:110px;font-size:12px;}
+      .dg-bar-val{width:36px;font-size:12px;}
+
+      /* Диагностика: шаги на старте — 1 колонка */
+      .dg-wc-steps{grid-template-columns:1fr;}
+
+      /* Диагностика: кнопки навигации */
+      .dg-btns{flex-direction:column-reverse;}
+      .dg-btn{width:100%;text-align:center;}
+
+      /* Диагностика: категории — скролл */
+      .dg-cat-nav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+        scrollbar-width:none;padding-bottom:4px;}
+      .dg-cat-nav::-webkit-scrollbar{display:none;}
+      .dg-cn{flex-shrink:0;}
+
+      /* Диагностика: карточка */
+      .dg-card{padding:18px 16px;}
+
+      /* Пакеты */
+      .pkg-h{padding:16px 16px 12px;}
+      .pkg-b{padding:14px 16px;}
+      .pkg-ft{padding:12px 16px;}
+      .pkg-eng{padding:8px 16px;}
     }
   </style>
 </head>
