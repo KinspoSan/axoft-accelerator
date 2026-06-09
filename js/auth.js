@@ -152,6 +152,73 @@ const Auth = {
     } catch (_) {}
   },
 
+  // ── Сброс пароля ─────────────────────────────────────────────────────────
+
+  async requestPasswordReset(email) {
+    const vendor = await Bitrix.findVendorByEmail(email).catch(() => null);
+    if (!vendor) {
+      const lead = await Bitrix.findLeadByEmail(email).catch(() => null);
+      if (!lead) throw new Error('Компания с таким email не зарегистрирована.');
+      throw new Error('Для сброса пароля обратитесь: program@axoft.ru');
+    }
+
+    const arr = new Uint8Array(20);
+    crypto.getRandomValues(arr);
+    const token = Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
+
+    localStorage.setItem('axoft_reset', JSON.stringify({
+      token, email, expires: Date.now() + 3_600_000
+    }));
+
+    const resetUrl = `${location.href.split('?')[0]}?reset=${token}`;
+
+    // Логируем в Bitrix (не критично)
+    try {
+      const raw = vendor['PROPERTY_327'] ? Object.values(vendor['PROPERTY_327'])[0] : null;
+      const profile = raw ? JSON.parse(raw) : {};
+      if (profile.leadId) {
+        await Bitrix.addActivity(profile.leadId,
+          `Запрошен сброс пароля. Ссылка действительна 1 час.`
+        );
+      }
+    } catch (_) {}
+
+    return { resetUrl, email };
+  },
+
+  async confirmPasswordReset(token, newPassword) {
+    const stored = (() => {
+      try { return JSON.parse(localStorage.getItem('axoft_reset')); }
+      catch (_) { return null; }
+    })();
+
+    if (!stored || stored.token !== token)
+      throw new Error('Ссылка недействительна или уже использована.');
+    if (Date.now() > stored.expires)
+      throw new Error('Ссылка истекла — запросите новую.');
+    if (newPassword.length < 8)
+      throw new Error('Пароль должен быть не менее 8 символов.');
+
+    const email = stored.email;
+    const hash  = await hashPassword(newPassword, email);
+
+    // Обновляем или создаём локальную сессию
+    let profile = {};
+    try {
+      const local = JSON.parse(localStorage.getItem(AUTH_KEY) || '{}');
+      if (local.email === email) profile = this._profileFromStored(local);
+    } catch (_) {}
+    profile.email = email;
+
+    localStorage.setItem(AUTH_KEY, JSON.stringify({ ...profile, _h: hash }));
+    localStorage.removeItem('axoft_reset');
+
+    // Обновляем хэш в Bitrix → вход с любого устройства теперь работает
+    Bitrix.updateVendorCredentials(email, hash, profile).catch(() => {});
+
+    return profile;
+  },
+
   // Миграция старых записей на новый хэш SHA-256
   async _migrateToNewHash(email, newHash, profile) {
     try {
