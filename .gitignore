@@ -1,0 +1,27 @@
+# Локальная конфигурация с реальными токенами (никогда не коммитить)
+js/config.local.js
+.env
+.env.local
+.env.*.local
+
+# Большие бинарники в репозитории не нужны
+landing/*.pdf
+landing/*.svg
+landing/*.docx
+*.docx
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (на случай если появится)
+node_modules/
+npm-debug.log*
