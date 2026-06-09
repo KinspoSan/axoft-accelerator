@@ -530,8 +530,9 @@
 
       <!-- Вкладки -->
       <div class="svc-tabs">
-        <button class="svc-tab active" id="tab-pkgs" onclick="switchSvcTab('pkgs')">Пакеты</button>
-        <button class="svc-tab" id="tab-svcs" onclick="switchSvcTab('svcs')">Услуги à la carte</button>
+        <button class="svc-tab active" id="tab-pkgs"    onclick="switchSvcTab('pkgs')">Пакеты</button>
+        <button class="svc-tab"        id="tab-partner" onclick="switchSvcTab('partner')">Партнёрская программа</button>
+        <button class="svc-tab"        id="tab-svcs"    onclick="switchSvcTab('svcs')">Услуги à la carte</button>
       </div>
 
       <!-- ── Вкладка: Пакеты ──────────────────────────────────────────────── -->
@@ -580,6 +581,78 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- ── Вкладка: Партнёрская программа ──────────────────────────────── -->
+      <div id="svc-partner-section" style="display:none">
+
+        <!-- Преамбула -->
+        <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+             padding:20px 24px;margin-bottom:20px;">
+          <div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;
+               color:var(--navy);margin-bottom:8px;">Разработка и аудит партнёрской программы</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:1.6;max-width:720px;">
+            Помогаем вендорам выстроить прозрачную и юридически безопасную систему работы
+            с партнёрским каналом: от матрицы скидок до защиты сделок без рисков ФАС.
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);">
+              <i class="ti ti-shield-check" style="color:var(--green);font-size:14px;"></i>
+              Система защиты сделок без рисков ФАС
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);">
+              <i class="ti ti-math-function" style="color:var(--teal);font-size:14px;"></i>
+              Индивидуальная матрица скидок
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);">
+              <i class="ti ti-file-certificate" style="color:var(--blue);font-size:14px;"></i>
+              Программа как публичная оферта
+            </div>
+          </div>
+        </div>
+
+        <!-- Карточки пакетов -->
+        <div class="pkg-g" id="partner-grid">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">
+            <i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i>
+          </div>
+        </div>
+
+        <!-- Сравнение -->
+        <div class="cmp-wrap">
+          <div class="cmp-lbl">Сравнение пакетов</div>
+          <div class="cmp-card">
+            <div style="overflow-x:auto">
+              <table class="cmp">
+                <thead>
+                  <tr>
+                    <th style="width:48%">Что входит</th>
+                    <th>Старт<br><span style="font-size:10px;font-weight:400;color:var(--txt2)">3–4 дня</span></th>
+                    <th>Профессиональный<br><span style="font-size:10px;font-weight:400;color:var(--teal)">7–12 дней</span></th>
+                    <th>Премиум<br><span style="font-size:10px;font-weight:400;color:var(--green)">12–20 дней</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Адаптация шаблона под реквизиты и продукт</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td></tr>
+                  <tr><td>Полная разработка программы с нуля</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Форма регистрации и защиты сделки</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Матрица скидок под продукт и конкуренцию</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Система защиты сделок (безопасно для ФАС)</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Правила ответственности за демпинг и фиктивные регистрации</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Стратегические рекомендации по развитию канала</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>1 месяц консультационной поддержки после запуска</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Корректировка пунктов по реальной практике</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr style="background:var(--sur2)"><td style="font-weight:700;color:var(--navy)">Стоимость</td>
+                    <td><span class="cmp-pr">По запросу</span></td>
+                    <td><span class="cmp-pr" style="color:var(--blue)">По запросу</span></td>
+                    <td><span class="cmp-pr" style="color:var(--green)">По запросу</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- ── Вкладка: Услуги à la carte ────────────────────────────────────── -->

@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await renderPackages();
   await renderMaterials();
   await renderServices();
+  await renderPartnerPackages();
 
   // Update dashboard orders count
   const localOrders = Orders.getLocalOrders();
@@ -316,12 +317,14 @@ window.fltMat = function(btn, pkg) {
 
 // ── Services à la carte ───────────────────────────────────────────────────────
 
-// Переключение вкладок Пакеты / Услуги
+// Переключение вкладок Пакеты / Партнёрская программа / Услуги
 window.switchSvcTab = function(tab) {
-  document.getElementById('svc-pkgs-section').style.display = tab === 'pkgs' ? '' : 'none';
-  document.getElementById('svc-svcs-section').style.display = tab === 'svcs' ? '' : 'none';
-  document.getElementById('tab-pkgs').classList.toggle('active', tab === 'pkgs');
-  document.getElementById('tab-svcs').classList.toggle('active', tab === 'svcs');
+  document.getElementById('svc-pkgs-section').style.display     = tab === 'pkgs'    ? '' : 'none';
+  document.getElementById('svc-partner-section').style.display  = tab === 'partner' ? '' : 'none';
+  document.getElementById('svc-svcs-section').style.display     = tab === 'svcs'    ? '' : 'none';
+  document.getElementById('tab-pkgs').classList.toggle('active',    tab === 'pkgs');
+  document.getElementById('tab-partner').classList.toggle('active', tab === 'partner');
+  document.getElementById('tab-svcs').classList.toggle('active',    tab === 'svcs');
 };
 
 async function renderServices() {
@@ -370,6 +373,72 @@ function buildServiceCard(svc) {
         <button class="btn btn-o btn-order" style="font-size:12px;padding:6px 14px"
           onclick="handleOrder(this.closest('.svc-card'))">
           <i class="ti ti-send" style="font-size:12px"></i>Запросить
+        </button>
+      </div>
+    </div>`;
+}
+
+// ── Partner packages ──────────────────────────────────────────────────────────
+
+async function renderPartnerPackages() {
+  const grid = document.getElementById('partner-grid');
+  if (!grid) return;
+  try {
+    const packages = await Content.getPartnerPackages();
+    grid.innerHTML = packages.map(buildPartnerCard).join('');
+  } catch (e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:20px;color:#c00">Ошибка: ${e.message}</div>`;
+  }
+}
+
+function buildPartnerCard(pp) {
+  const tierColors = {
+    start:   { accent: 'var(--teal)',  dim: 'rgba(0,176,189,.12)' },
+    pro:     { accent: 'var(--blue)',  dim: 'rgba(0,174,239,.12)' },
+    premium: { accent: 'var(--green)', dim: 'rgba(0,179,125,.12)' }
+  };
+  const c = tierColors[pp.tier] || tierColors.pro;
+
+  const items = pp.items.map(it => `
+    <div class="pkg-li">
+      <i class="ti ${it.icon}" style="color:${c.accent}"></i>
+      <span>${it.text}</span>
+    </div>`).join('');
+
+  const recommendedBadge = pp.recommended
+    ? `<span style="position:absolute;top:14px;right:14px;background:${c.accent};color:#fff;
+         font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;">Рекомендуем</span>`
+    : '';
+
+  return `
+    <div class="pkg" style="position:relative;"
+      data-service-id="${pp.id}"
+      data-service-name="Партнёрская программа: ${pp.badge}"
+      data-service-block="Партнёрская программа"
+      data-service-price="0"
+      data-service-price-display="${pp.priceDisplay}">
+      ${recommendedBadge}
+      <div class="pkg-h">
+        <span class="pkg-badge" style="background:${c.dim};color:${c.accent}">${pp.badge}</span>
+        <div class="pkg-tt">${pp.name}</div>
+        <div class="pkg-goal">${pp.subtitle}</div>
+        <div class="pkg-price" style="color:var(--txt2);font-size:14px;font-weight:600;">
+          <i class="ti ti-clock" style="font-size:12px;margin-right:4px;"></i>${pp.timeline}
+        </div>
+      </div>
+      <div class="pkg-eng" style="background:var(--sur2);">
+        <i class="ti ti-git-branch" style="color:${c.accent};font-size:14px;flex-shrink:0;"></i>
+        <span>Результат: готовые документы к передаче партнёрам</span>
+      </div>
+      <div class="pkg-b">
+        <div class="pkg-sec-lbl">Что входит</div>
+        ${items}
+        <div class="pkg-res"><strong>Итог:</strong> ${pp.result}</div>
+      </div>
+      <div class="pkg-ft">
+        <button class="btn btn-p btn-order" style="flex:1;background:${c.accent};border:none;"
+          onclick="handleOrder(this.closest('.pkg'))">
+          <i class="ti ti-send" style="font-size:13px"></i>Запросить
         </button>
       </div>
     </div>`;
