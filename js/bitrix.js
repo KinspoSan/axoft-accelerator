@@ -54,7 +54,7 @@ const Bitrix = {
   // ── Пакеты: заказы → Сделки ──────────────────────────────────────────────
 
   async createDeal(orderData, vendorProfile) {
-    return await this.call('crm.deal.add', {
+    const dealId = await this.call('crm.deal.add', {
       fields: {
         TITLE:       `[ЛК Сколково] ${orderData.serviceName} — ${vendorProfile.company}`,
         OPPORTUNITY: orderData.price,
@@ -74,6 +74,14 @@ const Bitrix = {
         ...(vendorProfile.leadId ? { LEAD_ID: vendorProfile.leadId } : {})
       }
     });
+
+    this._sendVendorConfirmation(dealId, 5, {
+      name:         orderData.serviceName,
+      block:        orderData.block,
+      priceDisplay: orderData.priceDisplay || 'По запросу'
+    }, vendorProfile).catch(() => {});
+
+    return dealId;
   },
 
   async getDeals(email) {
@@ -125,8 +133,15 @@ const Bitrix = {
       }
     });
 
-    // Email-activity — дублирует уведомление в почту (если настроен коннектор)
+    // Уведомление менеджеру
     await this._sendEmailActivity(leadId, serviceData, vendorProfile, now, notifyEmail);
+
+    // Подтверждение вендору
+    this._sendVendorConfirmation(leadId, 1, {
+      name:         serviceData.name,
+      block:        serviceData.block,
+      priceDisplay: serviceData.priceDisplay || 'По запросу'
+    }, vendorProfile).catch(() => {});
 
     return leadId;
   },
@@ -172,6 +187,67 @@ const Bitrix = {
       // Не критично — основной лид уже создан
       console.warn('Email activity not created:', e.message);
     }
+  },
+
+  async _sendVendorConfirmation(entityId, entityTypeId, item, vendorProfile) {
+    const now = new Date().toLocaleString('ru');
+    const subject = `Заявка принята: ${item.name} — Axoft × Сколково`;
+    const body = `
+<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:580px;color:#1e2849">
+  <div style="background:#1e2849;padding:18px 24px;border-radius:8px 8px 0 0;display:flex;align-items:center;gap:10px">
+    <span style="background:#00b0bd;color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;letter-spacing:.5px">AXOFT</span>
+    <span style="color:rgba(255,255,255,.55);font-size:12px">× Сколково Channel Readiness</span>
+  </div>
+  <div style="background:#fff;padding:28px 24px;border:1px solid #e0e4ef;border-top:none;border-radius:0 0 8px 8px">
+    <h2 style="font-size:17px;font-weight:700;margin:0 0 6px;color:#1e2849">Заявка принята ✓</h2>
+    <p style="font-size:13px;color:#6b7290;margin:0 0 22px;line-height:1.5">
+      Ваша заявка зарегистрирована. Менеджер Axoft свяжется с вами по этому адресу в течение 1 рабочего дня.
+    </p>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;line-height:1.5">
+      <tr>
+        <td style="padding:9px 0;color:#6b7290;width:38%;border-top:1px solid #f0f2f7">Услуга</td>
+        <td style="padding:9px 0;font-weight:600;border-top:1px solid #f0f2f7">${item.name}</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 0;color:#6b7290;border-top:1px solid #f0f2f7">Блок</td>
+        <td style="padding:9px 0;border-top:1px solid #f0f2f7">${item.block || '—'}</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 0;color:#6b7290;border-top:1px solid #f0f2f7">Стоимость</td>
+        <td style="padding:9px 0;border-top:1px solid #f0f2f7">${item.priceDisplay}</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 0;color:#6b7290;border-top:1px solid #f0f2f7">Компания</td>
+        <td style="padding:9px 0;border-top:1px solid #f0f2f7">${vendorProfile.company}</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 0;color:#6b7290;border-top:1px solid #f0f2f7">Дата</td>
+        <td style="padding:9px 0;border-top:1px solid #f0f2f7">${now}</td>
+      </tr>
+    </table>
+    <p style="margin:20px 0 0;font-size:11px;color:#9aa0b8;border-top:1px solid #f0f2f7;padding-top:16px;line-height:1.6">
+      Это письмо отправлено автоматически. Отвечать на него не нужно.<br>
+      По вопросам программы: <a href="mailto:program@axoft.ru" style="color:#00b0bd;text-decoration:none">program@axoft.ru</a>
+    </p>
+  </div>
+</div>`.trim();
+
+    await this.call('crm.activity.add', {
+      fields: {
+        OWNER_TYPE_ID:    entityTypeId,
+        OWNER_ID:         entityId,
+        TYPE_ID:          4,
+        DIRECTION:        2,
+        SUBJECT:          subject,
+        DESCRIPTION:      body,
+        DESCRIPTION_TYPE: 3,
+        COMPLETED:        'N',
+        COMMUNICATIONS: [{
+          VALUE:       vendorProfile.email,
+          ENTITY_TYPE: 'EMAIL'
+        }]
+      }
+    });
   },
 
   // ── Вендоры: аутентификация ──────────────────────────────────────────────
