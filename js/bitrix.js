@@ -84,10 +84,28 @@ const Bitrix = {
     return dealId;
   },
 
-  async getDeals(email) {
+  async getDeals(companyName) {
     const result = await this.call('crm.deal.list', {
-      filter: { '%TITLE': email },
-      select: ['ID', 'TITLE', 'OPPORTUNITY', 'CURRENCY_ID', 'STAGE_ID', 'DATE_CREATE']
+      filter: { '%TITLE%': companyName },
+      select: ['ID', 'TITLE', 'OPPORTUNITY', 'STAGE_ID', 'DATE_CREATE']
+    });
+    return result || [];
+  },
+
+  async getDealsByIds(ids) {
+    if (!ids.length) return [];
+    const result = await this.call('crm.deal.list', {
+      filter: { 'ID': ids },
+      select: ['ID', 'STAGE_ID']
+    });
+    return result || [];
+  },
+
+  async getLeadsByIds(ids) {
+    if (!ids.length) return [];
+    const result = await this.call('crm.lead.list', {
+      filter: { 'ID': ids },
+      select: ['ID', 'STATUS_ID']
     });
     return result || [];
   },
