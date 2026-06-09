@@ -2,6 +2,14 @@ import Auth from './auth.js';
 import Orders from './orders.js';
 import Content from './content.js';
 
+// Экранирование HTML — применять ко всем данным из Bitrix/localStorage перед вставкой в innerHTML
+const esc = s => String(s ?? '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
 // Версия кэша — при изменении сбрасывает устаревшие данные у всех пользователей
 const CACHE_VERSION = '2';
 const CACHE_VER_KEY = 'axoft_cache_ver';
@@ -126,16 +134,16 @@ async function loadOrders() {
 
     const rows = orders.map(o => `
       <tr>
-        <td><strong>${o.serviceName}</strong></td>
-        <td>${o.block ? `<span class="pill pt">${o.block}</span>` : '—'}</td>
-        <td>${o.priceDisplay || '—'}</td>
-        <td>${o.paymentType || 'Счёт'}</td>
-        <td><span class="stag ${Orders.getStatusClass(o.status)}">${o.statusLabel}</span></td>
+        <td><strong>${esc(o.serviceName)}</strong></td>
+        <td>${o.block ? `<span class="pill pt">${esc(o.block)}</span>` : '—'}</td>
+        <td>${esc(o.priceDisplay || '—')}</td>
+        <td>${esc(o.paymentType || 'Счёт')}</td>
+        <td><span class="stag ${Orders.getStatusClass(o.status)}">${esc(o.statusLabel)}</span></td>
         <td>
           ${o.bitrixDealId
-            ? `<a href="https://axoft.bitrix24.ru/crm/deal/details/${o.bitrixDealId}/" target="_blank" class="btn btn-o" style="font-size:11px;padding:5px 10px">Сделка #${o.bitrixDealId}</a>`
+            ? `<a href="https://axoft.bitrix24.ru/crm/deal/details/${Number(o.bitrixDealId)}/" target="_blank" class="btn btn-o" style="font-size:11px;padding:5px 10px">Сделка #${Number(o.bitrixDealId)}</a>`
             : o.bitrixLeadId
-            ? `<a href="https://axoft.bitrix24.ru/crm/lead/details/${o.bitrixLeadId}/" target="_blank" class="btn btn-o" style="font-size:11px;padding:5px 10px">Лид #${o.bitrixLeadId}</a>`
+            ? `<a href="https://axoft.bitrix24.ru/crm/lead/details/${Number(o.bitrixLeadId)}/" target="_blank" class="btn btn-o" style="font-size:11px;padding:5px 10px">Лид #${Number(o.bitrixLeadId)}</a>`
             : ''}
         </td>
       </tr>`).join('');
@@ -205,7 +213,7 @@ function buildPackageCard(pkg) {
   }).join('');
 
   const items = pkg.items.map(it =>
-    `<div class="pkg-li"><i class="ti ${it.icon}" style="color:${c.accent}"></i>${it.text}</div>`
+    `<div class="pkg-li"><i class="ti ${it.icon}" style="color:${c.accent}"></i>${esc(it.text)}</div>`
   ).join('');
 
   const btn = pkg.buttonType === 'diag'
@@ -218,25 +226,25 @@ function buildPackageCard(pkg) {
 
   return `
     <div class="pkg" data-pkg="p${pkg.number}"
-      data-service-id="${pkg.id}"
-      data-service-name="Пакет ${pkg.name}"
-      data-service-block="${pkg.name}"
-      data-service-price="${pkg.price}"
-      data-service-price-display="${pkg.priceDisplay}">
+      data-service-id="${esc(pkg.id)}"
+      data-service-name="Пакет ${esc(pkg.name)}"
+      data-service-block="${esc(pkg.name)}"
+      data-service-price="${Number(pkg.price)}"
+      data-service-price-display="${esc(pkg.priceDisplay)}">
       <div class="pkg-h">
-        <span class="pkg-badge" style="background:${c.dim};color:${c.accent}">Пакет ${pkg.number}</span>
-        <div class="pkg-tt">${pkg.name}</div>
-        <div class="pkg-goal">${pkg.goal}</div>
-        <div class="pkg-price${pkg.price === 0 ? ' fr' : ''}" ${pkg.price > 0 ? 'style="color:var(--navy)"' : ''}>${pkg.priceDisplay}</div>
+        <span class="pkg-badge" style="background:${c.dim};color:${c.accent}">Пакет ${esc(pkg.number)}</span>
+        <div class="pkg-tt">${esc(pkg.name)}</div>
+        <div class="pkg-goal">${esc(pkg.goal)}</div>
+        <div class="pkg-price${pkg.price === 0 ? ' fr' : ''}" ${pkg.price > 0 ? 'style="color:var(--navy)"' : ''}>${esc(pkg.priceDisplay)}</div>
       </div>
       <div class="pkg-eng">
         <div class="pkg-eng-dots">${dots}</div>
-        <span>Вовлечённость Axoft: ${pkg.engagement}</span>
+        <span>Вовлечённость Axoft: ${esc(pkg.engagement)}</span>
       </div>
       <div class="pkg-b">
         <div class="pkg-sec-lbl">Что входит</div>
         ${items}
-        <div class="pkg-res"><strong>Результат:</strong> ${pkg.result}</div>
+        <div class="pkg-res"><strong>Результат:</strong> ${esc(pkg.result)}</div>
       </div>
       <div class="pkg-ft">${btn}</div>
     </div>`;
@@ -288,25 +296,26 @@ function buildMaterialCard(mat) {
   const icon  = typeIcons[mat.type] || 'ti-file';
   const color = pkgColors[mat.pkg]  || 'var(--teal)';
 
-  const actionBtn = mat.fileUrl
-    ? `<a href="${mat.fileUrl}" target="_blank" class="btn btn-o" style="font-size:12px;white-space:nowrap">
+  const safeUrl = mat.fileUrl && /^https?:\/\//i.test(mat.fileUrl) ? mat.fileUrl : null;
+  const actionBtn = safeUrl
+    ? `<a href="${esc(safeUrl)}" target="_blank" class="btn btn-o" style="font-size:12px;white-space:nowrap">
          <i class="ti ti-download" style="font-size:12px"></i>Скачать
        </a>`
     : `<span style="font-size:11px;color:var(--txt3);padding:4px 8px">Скоро</span>`;
 
   const duration = mat.duration
-    ? `<span class="pill" style="background:var(--sur2);color:var(--txt2)">${mat.duration}</span>`
+    ? `<span class="pill" style="background:var(--sur2);color:var(--txt2)">${esc(mat.duration)}</span>`
     : '';
 
   return `
-    <div class="mat-card" data-pkg="${mat.pkg}">
+    <div class="mat-card" data-pkg="${esc(mat.pkg)}">
       <div class="mat-icon"><i class="ti ${icon}" style="color:${color};font-size:22px"></i></div>
       <div class="mat-body">
-        <div class="mat-name">${mat.name}</div>
-        ${mat.description ? `<div class="mat-desc">${mat.description}</div>` : ''}
+        <div class="mat-name">${esc(mat.name)}</div>
+        ${mat.description ? `<div class="mat-desc">${esc(mat.description)}</div>` : ''}
         <div class="mat-meta">
-          <span class="pill pt">${mat.pkgLabel}</span>
-          <span class="pill" style="background:var(--sur2);color:var(--txt2)">${mat.typeLabel}</span>
+          <span class="pill pt">${esc(mat.pkgLabel)}</span>
+          <span class="pill" style="background:var(--sur2);color:var(--txt2)">${esc(mat.typeLabel)}</span>
           ${duration}
         </div>
       </div>
@@ -362,22 +371,22 @@ function buildServiceCard(svc) {
     : svc.priceText === 'По запросу' ? 'on-req' : '';
 
   return `
-    <div class="svc-card" data-pkg="${svc.pkg}"
-      data-service-id="${svc.id}"
-      data-service-name="${svc.name}"
-      data-service-block="${svc.pkgLabel}"
-      data-service-price="${svc.price}"
-      data-service-price-display="${svc.priceText}">
+    <div class="svc-card" data-pkg="${esc(svc.pkg)}"
+      data-service-id="${esc(svc.id)}"
+      data-service-name="${esc(svc.name)}"
+      data-service-block="${esc(svc.pkgLabel)}"
+      data-service-price="${Number(svc.price)}"
+      data-service-price-display="${esc(svc.priceText)}">
       <div class="svc-card-head">
         <div class="svc-card-ic">
           <i class="ti ${svc.icon}" style="color:${color};font-size:18px"></i>
         </div>
-        <div class="svc-card-name">${svc.name}</div>
+        <div class="svc-card-name">${esc(svc.name)}</div>
       </div>
-      ${svc.pkgLabel ? `<div class="svc-card-pkg"><span class="pill pt">${svc.pkgLabel}</span></div>` : ''}
-      <div class="svc-card-desc">${svc.description}</div>
+      ${svc.pkgLabel ? `<div class="svc-card-pkg"><span class="pill pt">${esc(svc.pkgLabel)}</span></div>` : ''}
+      <div class="svc-card-desc">${esc(svc.description)}</div>
       <div class="svc-card-foot">
-        <span class="svc-price ${priceClass}">${svc.priceText}</span>
+        <span class="svc-price ${priceClass}">${esc(svc.priceText)}</span>
         <button class="btn btn-o btn-order" style="font-size:12px;padding:6px 14px"
           onclick="handleOrder(this.closest('.svc-card'))">
           <i class="ti ti-send" style="font-size:12px"></i>Запросить
@@ -410,7 +419,7 @@ function buildPartnerCard(pp) {
   const items = pp.items.map(it => `
     <div class="pkg-li">
       <i class="ti ${it.icon}" style="color:${c.accent}"></i>
-      <span>${it.text}</span>
+      <span>${esc(it.text)}</span>
     </div>`).join('');
 
   const recommendedBadge = pp.recommended
@@ -420,18 +429,18 @@ function buildPartnerCard(pp) {
 
   return `
     <div class="pkg" style="position:relative;"
-      data-service-id="${pp.id}"
-      data-service-name="Партнёрская программа: ${pp.badge}"
+      data-service-id="${esc(pp.id)}"
+      data-service-name="Партнёрская программа: ${esc(pp.badge)}"
       data-service-block="Партнёрская программа"
       data-service-price="0"
-      data-service-price-display="${pp.priceDisplay}">
+      data-service-price-display="${esc(pp.priceDisplay)}">
       ${recommendedBadge}
       <div class="pkg-h">
-        <span class="pkg-badge" style="background:${c.dim};color:${c.accent}">${pp.badge}</span>
-        <div class="pkg-tt">${pp.name}</div>
-        <div class="pkg-goal">${pp.subtitle}</div>
+        <span class="pkg-badge" style="background:${c.dim};color:${c.accent}">${esc(pp.badge)}</span>
+        <div class="pkg-tt">${esc(pp.name)}</div>
+        <div class="pkg-goal">${esc(pp.subtitle)}</div>
         <div class="pkg-price" style="color:var(--txt2);font-size:14px;font-weight:600;">
-          <i class="ti ti-clock" style="font-size:12px;margin-right:4px;"></i>${pp.timeline}
+          <i class="ti ti-clock" style="font-size:12px;margin-right:4px;"></i>${esc(pp.timeline)}
         </div>
       </div>
       <div class="pkg-eng" style="background:var(--sur2);">
@@ -441,7 +450,7 @@ function buildPartnerCard(pp) {
       <div class="pkg-b">
         <div class="pkg-sec-lbl">Что входит</div>
         ${items}
-        <div class="pkg-res"><strong>Итог:</strong> ${pp.result}</div>
+        <div class="pkg-res"><strong>Итог:</strong> ${esc(pp.result)}</div>
       </div>
       <div class="pkg-ft">
         <button class="btn btn-p btn-order" style="flex:1;background:${c.accent};border:none;"

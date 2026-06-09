@@ -183,6 +183,18 @@ import Auth from './js/auth.js';
 // ── Вставь сюда свой DaData API-ключ (бесплатно: dadata.ru/profile/#info)
 const DADATA_TOKEN = '7ab30c0f9bc413a8d30e178916c76c9af83f6502';
 
+// Проверка контрольной цифры ИНН юридического лица (10 знаков)
+function validateINN(inn) {
+  if (!/^\d{10}$/.test(inn)) return false;
+  const d = inn.split('').map(Number);
+  const w = [2, 4, 10, 3, 5, 9, 4, 6, 8];
+  const check = w.reduce((sum, wi, i) => sum + d[i] * wi, 0) % 11 % 10;
+  return check === d[9];
+}
+
+// Экранирование для вставки в HTML
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
 if (Auth.isLoggedIn()) window.location.href = 'cabinet.html';
 
 // ── Вкладки ───────────────────────────────────────────────────────
@@ -254,7 +266,7 @@ async function lookupInn(inn) {
       const status = isActive
         ? '<span style="color:var(--green)">●</span> Действующая'
         : '<span style="color:#c00">●</span> Недействующая';
-      compHint.innerHTML  = `${status} — ОГРН ${d.ogrn || '—'}`;
+      compHint.innerHTML  = `${status} — ОГРН ${esc(d.ogrn || '—')}`;
       compHint.style.display = 'block';
 
       hint.textContent = '✓ Компания найдена в ЕГРЮЛ';
@@ -296,8 +308,13 @@ document.getElementById('r-inn').addEventListener('input', function() {
   clearTimeout(innTimer);
 
   if (inn.length === 10) {
-    hint.textContent = 'ИНН введён — проверяем...';
-    innTimer = setTimeout(() => lookupInn(inn), 400);
+    if (!validateINN(inn)) {
+      hint.textContent = 'Некорректный ИНН — проверьте цифры';
+      hint.style.color = '#c00';
+    } else {
+      hint.textContent = 'ИНН введён — проверяем...';
+      innTimer = setTimeout(() => lookupInn(inn), 400);
+    }
   } else {
     hint.textContent = `ИНН юридического лица (10 цифр) — введено ${inn.length}`;
   }
@@ -317,8 +334,8 @@ document.getElementById('btn-register').addEventListener('click', async () => {
   const password  = document.getElementById('r-password').value;
   const password2 = document.getElementById('r-password2').value;
 
-  if (!inn || inn.length !== 10 || !/^\d+$/.test(inn)) {
-    showError('reg-error', 'Введите корректный ИНН (10 цифр)');
+  if (!validateINN(inn)) {
+    showError('reg-error', 'Проверьте ИНН: 10 цифр с корректной контрольной суммой.');
     document.getElementById('r-inn').focus();
     return;
   }

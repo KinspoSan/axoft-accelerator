@@ -1,6 +1,15 @@
 // js/auth-init.js — подключается только в index.html
 import Auth from './auth.js';
 
+// Проверка контрольной цифры ИНН юридического лица (10 знаков)
+function validateINN(inn) {
+  if (!/^\d{10}$/.test(inn)) return false;
+  const d = inn.split('').map(Number);
+  const w = [2, 4, 10, 3, 5, 9, 4, 6, 8];
+  const check = w.reduce((sum, wi, i) => sum + d[i] * wi, 0) % 11 % 10;
+  return check === d[9];
+}
+
 if (Auth.isLoggedIn()) {
   window.location.href = 'cabinet.html';
 }
@@ -41,8 +50,8 @@ document.getElementById('btn-register').addEventListener('click', async () => {
     errEl.classList.add('show');
     return;
   }
-  if (!/^\d{10}$/.test(inn)) {
-    errEl.textContent = 'ИНН организации должен содержать ровно 10 цифр.';
+  if (!validateINN(inn)) {
+    errEl.textContent = 'Проверьте ИНН: должен содержать 10 цифр и пройти контрольную проверку.';
     errEl.classList.add('show');
     return;
   }
