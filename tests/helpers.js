@@ -25,7 +25,21 @@ export async function seedSession(page, session = TEST_SESSION) {
 // Открыть кабинет с заранее засеянной сессией.
 // addInitScript устанавливает localStorage ДО запуска скриптов страницы —
 // избегает двойной навигации (goto index + goto cabinet).
+// page.route перехватывает Bitrix write-операции — предотвращает создание
+// тестовых сделок/лидов/активностей в реальном CRM при каждом прогоне CI.
 export async function openCabinet(page, session = TEST_SESSION) {
+  // Паттерн /rest/<id>/ соответствует любому Bitrix webhook без знания токена
+  await page.route(/\/rest\/\d+\//, route => {
+    const url = route.request().url();
+    if (url.includes('crm.deal.add'))         return route.fulfill({ contentType: 'application/json', body: '{"result":9999}' });
+    if (url.includes('crm.lead.add'))         return route.fulfill({ contentType: 'application/json', body: '{"result":9998}' });
+    if (url.includes('crm.activity.add'))     return route.fulfill({ contentType: 'application/json', body: '{"result":true}' });
+    if (url.includes('lists.element.add'))    return route.fulfill({ contentType: 'application/json', body: '{"result":9997}' });
+    if (url.includes('lists.element.update')) return route.fulfill({ contentType: 'application/json', body: '{"result":true}' });
+    // Read-операции (crm.lead.list, lists.element.get, etc.) — пропускаем
+    return route.continue();
+  });
+
   await page.addInitScript((s) => {
     localStorage.clear();
     localStorage.setItem('axoft_vendor_session', JSON.stringify(s));
