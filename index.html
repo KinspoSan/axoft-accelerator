@@ -280,6 +280,16 @@ function clearError(id) {
   el.textContent = ''; el.classList.remove('show');
 }
 
+// Очищаем ошибку при вводе в любое поле формы
+['r-inn','r-company','r-direction','r-stage','r-email','r-password','r-password2',
+ 'l-email','l-password'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    clearError('reg-error');
+    clearError('login-error');
+  });
+});
+
 // ── Редактирование названия вручную ──────────────────────────────
 window.enableCompanyEdit = function() {
   const inp = document.getElementById('r-company');
