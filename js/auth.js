@@ -1,223 +1,82 @@
-import Bitrix from './bitrix.js';
+// Авторизация через REST API сервера (ветка backend-api)
+// На GitHub Pages используется версия из main (Bitrix-напрямую)
 
-const AUTH_KEY = 'axoft_vendor_session';
-const SALT     = 'axoft-skolkovo-2025';
-
-// SHA-256 через Web Crypto API
-async function sha256(str) {
-  const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function hashPassword(password, email) {
-  return sha256(password + email + SALT);
-}
+const AUTH_KEY  = 'axoft_vendor_session';
+const TOKEN_KEY = 'axoft_vendor_token';
+const API       = '/api/auth';
 
 const Auth = {
+
   async register(formData) {
-    const hash = await hashPassword(formData.password, formData.email);
-
-    const profile = {
-      leadId:       null,
-      email:        formData.email,
-      company:      formData.company,
-      inn:          formData.inn,
-      direction:    formData.direction,
-      stage:        formData.stage,
-      skolkovo:     formData.skolkovo,
-      tier:         'base',
-      registeredAt: new Date().toISOString()
-    };
-
-    // Сохраняем сессию локально сразу — вход не зависит от Bitrix
-    localStorage.setItem(AUTH_KEY, JSON.stringify({ ...profile, _h: hash }));
-
-    // Сохраняем в Bitrix (параллельно: CRM лид + список вендоров)
-    try {
-      const [leadId] = await Promise.all([
-        Bitrix.createLead(formData),
-        Bitrix.saveVendorCredentials(formData.email, hash, profile)
-      ]);
-      profile.leadId = leadId;
-      localStorage.setItem(AUTH_KEY, JSON.stringify({ ...profile, _h: hash }));
-      Bitrix.addActivity(leadId, `Вендор зарегистрировался в ЛК. Email: ${formData.email}`).catch(() => {});
-    } catch (e) {
-      // Код ошибки Bitrix при дубликате CODE — компания уже зарегистрирована
-      if (e.message?.includes('CODE') || e.message?.includes('duplicate') || e.message?.includes('exist')) {
-        localStorage.removeItem(AUTH_KEY);
-        throw new Error('Этот email уже зарегистрирован. Войдите в личный кабинет.');
-      }
-      console.warn('Bitrix недоступен при регистрации, сессия сохранена локально:', e.message);
-    }
-
-    return profile;
+    const res  = await this._post(`${API}/register`, formData);
+    this._saveSession(res.token, res.profile);
+    return res.profile;
   },
 
   async login(email, password) {
-    const hash = await hashPassword(password, email);
-
-    // 1. Быстрый путь — локальная сессия
-    const stored = localStorage.getItem(AUTH_KEY);
-    if (stored) {
-      try {
-        const local = JSON.parse(stored);
-        if (local.email === email) {
-          if (local._h === hash) {
-            return this._profileFromStored(local);
-          }
-          // Старый формат хэша (btoa) — миграция
-          const oldHash = (() => { try { return btoa(unescape(encodeURIComponent(password + email))); } catch { return null; } })();
-          if (local.passwordHash === oldHash || local.passwordHash === btoa(password + email)) {
-            // Обновляем до нового хэша
-            const updated = { ...local, _h: hash, passwordHash: undefined };
-            localStorage.setItem(AUTH_KEY, JSON.stringify(updated));
-            this._migrateToNewHash(email, hash, this._profileFromStored(local)).catch(() => {});
-            return this._profileFromStored(updated);
-          }
-          throw new Error('Неверный пароль.');
-        }
-      } catch (e) {
-        if (e.message === 'Неверный пароль.') throw e;
-      }
-    }
-
-    // 2. Другое устройство — ищем по хэшу в Bitrix
-    // (поиск по CODE не работает в Universal Lists REST API, поиск по PROPERTY_325 работает)
-    let vendor = null;
-    try {
-      vendor = await Bitrix.findVendorByHash(hash);
-    } catch (_) {}
-
-    if (!vendor) {
-      throw new Error('Неверный email или пароль.');
-    }
-
-    // Хэш совпал (нашли по нему) — восстанавливаем профиль из PROPERTY_327
-    let profile;
-    try {
-      const raw = vendor['PROPERTY_327'] ? Object.values(vendor['PROPERTY_327'])[0] : null;
-      profile = raw ? JSON.parse(raw) : {};
-    } catch (_) {
-      profile = {};
-    }
-
-    profile.email = email;
-    if (!profile.company) profile.company = vendor.NAME || email;
-
-    // Записываем сессию локально
-    localStorage.setItem(AUTH_KEY, JSON.stringify({ ...profile, _h: hash }));
-    return profile;
+    const res = await this._post(`${API}/login`, { email, password });
+    this._saveSession(res.token, res.profile);
+    return res.profile;
   },
 
   logout() {
     localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem(TOKEN_KEY);
     window.location.href = 'index.html';
   },
 
   getProfile() {
-    const stored = localStorage.getItem(AUTH_KEY);
-    if (!stored) return null;
     try {
-      const d = JSON.parse(stored);
-      return this._profileFromStored(d);
-    } catch (_) { return null; }
+      const s = localStorage.getItem(AUTH_KEY);
+      return s ? JSON.parse(s) : null;
+    } catch { return null; }
+  },
+
+  getToken() {
+    return localStorage.getItem(TOKEN_KEY);
   },
 
   isLoggedIn() {
-    return !!this.getProfile();
+    return !!(this.getToken() && this.getProfile());
   },
 
   updateTier(tier) {
-    const stored = localStorage.getItem(AUTH_KEY);
-    if (!stored) return;
-    try {
-      const d = JSON.parse(stored);
-      d.tier = tier;
-      localStorage.setItem(AUTH_KEY, JSON.stringify(d));
-      // Обновляем профиль в Bitrix (не критично)
-      const profile = this._profileFromStored(d);
-      Bitrix.updateVendorCredentials(d.email, d._h, profile).catch(() => {});
-    } catch (_) {}
+    const p = this.getProfile();
+    if (p) {
+      p.tier = tier;
+      localStorage.setItem(AUTH_KEY, JSON.stringify(p));
+    }
   },
 
-  // ── Сброс пароля ─────────────────────────────────────────────────────────
+  // ── Сброс пароля ──────────────────────────────────────────────────────────
 
   async requestPasswordReset(email) {
-    const vendor = await Bitrix.findVendorByEmail(email).catch(() => null);
-    if (!vendor) {
-      const lead = await Bitrix.findLeadByEmail(email).catch(() => null);
-      if (!lead) throw new Error('Компания с таким email не зарегистрирована.');
-      throw new Error('Для сброса пароля обратитесь: program@axoft.ru');
-    }
-
-    const arr = new Uint8Array(20);
-    crypto.getRandomValues(arr);
-    const token = Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
-
-    localStorage.setItem('axoft_reset', JSON.stringify({
-      token, email, expires: Date.now() + 3_600_000
-    }));
-
-    const resetUrl = `${location.href.split('?')[0]}?reset=${token}`;
-
-    // Логируем в Bitrix (не критично)
-    try {
-      const raw = vendor['PROPERTY_327'] ? Object.values(vendor['PROPERTY_327'])[0] : null;
-      const profile = raw ? JSON.parse(raw) : {};
-      if (profile.leadId) {
-        await Bitrix.addActivity(profile.leadId,
-          `Запрошен сброс пароля. Ссылка действительна 1 час.`
-        );
-      }
-    } catch (_) {}
-
-    return { resetUrl, email };
+    const res = await this._post(`${API}/reset-request`, { email });
+    return res.message;
   },
 
-  async confirmPasswordReset(token, newPassword) {
-    const stored = (() => {
-      try { return JSON.parse(localStorage.getItem('axoft_reset')); }
-      catch (_) { return null; }
-    })();
-
-    if (!stored || stored.token !== token)
-      throw new Error('Ссылка недействительна или уже использована.');
-    if (Date.now() > stored.expires)
-      throw new Error('Ссылка истекла — запросите новую.');
-    if (newPassword.length < 8)
-      throw new Error('Пароль должен быть не менее 8 символов.');
-
-    const email = stored.email;
-    const hash  = await hashPassword(newPassword, email);
-
-    // Обновляем или создаём локальную сессию
-    let profile = {};
-    try {
-      const local = JSON.parse(localStorage.getItem(AUTH_KEY) || '{}');
-      if (local.email === email) profile = this._profileFromStored(local);
-    } catch (_) {}
-    profile.email = email;
-
-    localStorage.setItem(AUTH_KEY, JSON.stringify({ ...profile, _h: hash }));
-    localStorage.removeItem('axoft_reset');
-
-    // Обновляем хэш в Bitrix → вход с любого устройства теперь работает
-    Bitrix.updateVendorCredentials(email, hash, profile).catch(() => {});
-
-    return profile;
+  async confirmPasswordReset(token, password) {
+    const res = await this._post(`${API}/reset-confirm`, { token, password });
+    return res.message;
   },
 
-  // Миграция старых записей на новый хэш SHA-256
-  async _migrateToNewHash(email, newHash, profile) {
-    try {
-      await Bitrix.saveVendorCredentials(email, newHash, profile);
-    } catch (_) {}
+  // ── Внутренние ────────────────────────────────────────────────────────────
+
+  _saveSession(token, profile) {
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(AUTH_KEY, JSON.stringify(profile));
   },
 
-  _profileFromStored(d) {
-    const { _h, passwordHash, ...profile } = d;
-    return profile;
-  }
+  async _post(url, body) {
+    const res = await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Ошибка сервера');
+    return data;
+  },
 };
 
 export default Auth;

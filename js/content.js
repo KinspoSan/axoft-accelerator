@@ -1,7 +1,13 @@
-// js/content.js
-// Данные о пакетах и материалах.
-// LIST_IDS = null → mock-данные; установи ID после создания Universal Lists в Bitrix24.
-import Bitrix from './bitrix.js';
+// js/content.js — ветка backend-api
+// Данные читаются через /api/content/* (сервер проксирует Bitrix Lists).
+// Вебхук больше не нужен на клиенте.
+
+async function fetchFromApi(endpoint) {
+  const res  = await fetch(`/api/content/${endpoint}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Content API error');
+  return data;
+}
 
 const LIST_IDS = {
   packages:        123,  // «Пакеты консалтинга — Axoft × Сколково»
@@ -345,32 +351,28 @@ const MOCK_PARTNER_PACKAGES = [
 const Content = {
   async getPackages() {
     return this._withCache('content_packages', async () => {
-      if (!LIST_IDS.packages) return MOCK_PACKAGES;
-      const result = await this._fetchPackages();
+      const result = await this._fetchPackages().catch(() => []);
       return result.length > 0 ? result : MOCK_PACKAGES;
     });
   },
 
   async getMaterials() {
     return this._withCache('content_materials', async () => {
-      if (!LIST_IDS.materials) return MOCK_MATERIALS;
-      const result = await this._fetchMaterials();
+      const result = await this._fetchMaterials().catch(() => []);
       return result.length > 0 ? result : MOCK_MATERIALS;
     });
   },
 
   async getServices() {
     return this._withCache('content_services', async () => {
-      if (!LIST_IDS.services) return MOCK_SERVICES;
-      const result = await this._fetchServices();
+      const result = await this._fetchServices().catch(() => []);
       return result.length > 0 ? result : MOCK_SERVICES;
     });
   },
 
   async getPartnerPackages() {
     return this._withCache('content_partner', async () => {
-      if (!LIST_IDS.partnerPackages) return MOCK_PARTNER_PACKAGES;
-      const result = await this._fetchPartnerPackages();
+      const result = await this._fetchPartnerPackages().catch(() => []);
       return result.length > 0 ? result : MOCK_PARTNER_PACKAGES;
     });
   },
@@ -378,7 +380,7 @@ const Content = {
   // Настройки: читаются каждый раз (TTL 10 мин), ключ → значение
   async getSettings() {
     return this._withCache('content_settings', async () => {
-      const elements = await Bitrix.getListElements(LIST_IDS.settings);
+      const elements = await fetchFromApi('settings');
       const fm = FIELD_MAP.settings;
       const map = {};
       for (const el of elements) {
@@ -407,7 +409,7 @@ const Content = {
   },
 
   async _fetchPackages() {
-    const elements = await Bitrix.getListElements(LIST_IDS.packages);
+    const elements = await fetchFromApi('packages');
     const fm = FIELD_MAP.packages;
     return elements
       .map(el => ({
@@ -428,7 +430,7 @@ const Content = {
   },
 
   async _fetchMaterials() {
-    const elements = await Bitrix.getListElements(LIST_IDS.materials);
+    const elements = await fetchFromApi('materials');
     const fm = FIELD_MAP.materials;
     const mats = elements.map(el => ({
       id:          el.CODE || `mat-${el.ID}`,
@@ -457,7 +459,7 @@ const Content = {
   },
 
   async _fetchServices() {
-    const elements = await Bitrix.getListElements(LIST_IDS.services);
+    const elements = await fetchFromApi('services');
     const fm = FIELD_MAP.services;
     return elements.map(el => ({
       id:          el.CODE || `svc-${el.ID}`,
@@ -473,7 +475,7 @@ const Content = {
   },
 
   async _fetchPartnerPackages() {
-    const elements = await Bitrix.getListElements(LIST_IDS.partnerPackages);
+    const elements = await fetchFromApi('partner-packages');
     const fm = FIELD_MAP.partnerPackages;
     return elements.map(el => ({
       id:          el.CODE || `pp-${el.ID}`,
