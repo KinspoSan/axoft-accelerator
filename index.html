@@ -35,7 +35,7 @@
     .tabs{display:flex;border-bottom:1px solid var(--bdr);}
     .tab{flex:1;padding:14px;font-size:13px;font-weight:600;text-align:center;
       cursor:pointer;color:var(--txt2);border:none;background:transparent;
-      transition:all .2s;font-family:'Golos Text',sans-serif;}
+      transition:all .2s;font-family:'Golos Text',sans-serif;touch-action:manipulation;}
     .tab.active{color:var(--teal);border-bottom:2px solid var(--teal);}
 
     .form-body{padding:24px 32px;}
@@ -55,7 +55,7 @@
     .divider{height:1px;background:var(--bdr);margin:4px 0 16px;}
     .btn-submit{width:100%;padding:12px;background:var(--teal);color:#fff;border:none;
       border-radius:var(--rs);font-family:'Golos Text',sans-serif;font-size:14px;
-      font-weight:600;cursor:pointer;transition:background .2s;}
+      font-weight:600;cursor:pointer;transition:background .2s;touch-action:manipulation;}
     .btn-submit:hover{background:#00c9d8;}
     .btn-submit:disabled{opacity:.6;cursor:not-allowed;}
 
@@ -74,10 +74,10 @@
       transition:all .2s;}
     .btn-copy:hover{border-color:var(--teal);color:var(--teal);}
     .back-link{font-size:12px;color:var(--txt2);text-align:center;margin-top:14px;cursor:pointer;
-      display:block;}
+      display:block;touch-action:manipulation;}
     .back-link:hover{color:var(--teal);}
     .forgot-link{font-size:12px;color:var(--txt2);text-align:center;margin-top:10px;
-      cursor:pointer;display:block;}
+      cursor:pointer;display:block;touch-action:manipulation;}
     .forgot-link:hover{color:var(--teal);}
     @keyframes spin{to{transform:translateY(-50%) rotate(360deg);}}
     .company-autofill{background:rgba(0,179,125,.04)!important;border-color:rgba(0,179,125,.3)!important;}
@@ -106,16 +106,18 @@
     <!-- ВХОД -->
     <div id="form-login" class="form-body">
       <div class="error-msg" id="login-error"></div>
-      <div class="field">
-        <label class="label" for="l-email">Корпоративный email <span>*</span></label>
-        <input class="input" id="l-email" type="email" placeholder="info@company.ru" autocomplete="email">
-      </div>
-      <div class="field">
-        <label class="label" for="l-password">Пароль <span>*</span></label>
-        <input class="input" id="l-password" type="password" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <div class="divider"></div>
-      <button class="btn-submit" id="btn-login">Войти</button>
+      <form action="javascript:void(0)" novalidate>
+        <div class="field">
+          <label class="label" for="l-email">Корпоративный email <span>*</span></label>
+          <input class="input" id="l-email" type="email" placeholder="info@company.ru" autocomplete="email">
+        </div>
+        <div class="field">
+          <label class="label" for="l-password">Пароль <span>*</span></label>
+          <input class="input" id="l-password" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div class="divider"></div>
+        <button class="btn-submit" id="btn-login" type="submit">Войти</button>
+      </form>
       <span class="forgot-link" onclick="showTab('reset-req')">Забыл пароль?</span>
     </div>
 
@@ -472,11 +474,11 @@ document.getElementById('btn-login').addEventListener('click', async () => {
   }
 });
 
+// Enter в форме регистрации (не обёрнута в <form>) — сабмитим вручную
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
-  const loginVisible = document.getElementById('form-login').style.display !== 'none';
-  if (loginVisible) document.getElementById('btn-login').click();
-  else document.getElementById('btn-register').click();
+  const registerVisible = document.getElementById('form-register').style.display !== 'none';
+  if (registerVisible) document.getElementById('btn-register').click();
 });
 
 // ── Сброс пароля: шаг 1 — запрос ─────────────────────────────────
