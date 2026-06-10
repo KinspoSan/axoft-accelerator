@@ -43,6 +43,7 @@ export async function openCabinet(page, session = TEST_SESSION) {
   await page.addInitScript((s) => {
     localStorage.clear();
     localStorage.setItem('axoft_vendor_session', JSON.stringify(s));
+    localStorage.setItem('axoft_tour_done', '1'); // подавляем авто-тур в тестах
   }, session);
   await page.goto('./cabinet.html');
   await page.waitForFunction(() =>
