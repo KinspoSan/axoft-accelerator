@@ -2,6 +2,37 @@ import Auth from './auth.js';
 import Orders from './orders.js';
 import Content from './content.js';
 
+// ── Notify module ─────────────────────────────────────────────────────────────
+const Notify = {
+  STORAGE: 'axoft_notifications',
+  add(type, title, message) {
+    const list = this.getAll();
+    list.unshift({ id: Date.now(), type, title, message, ts: new Date().toISOString(), read: false });
+    localStorage.setItem(this.STORAGE, JSON.stringify(list.slice(0, 50)));
+    this.updateBadge();
+  },
+  getAll() {
+    try { return JSON.parse(localStorage.getItem(this.STORAGE) || '[]'); } catch { return []; }
+  },
+  markAllRead() {
+    const list = this.getAll().map(n => ({ ...n, read: true }));
+    localStorage.setItem(this.STORAGE, JSON.stringify(list));
+    this.updateBadge();
+  },
+  clear() {
+    localStorage.removeItem(this.STORAGE);
+    this.updateBadge();
+  },
+  updateBadge() {
+    const count = this.getAll().filter(n => !n.read).length;
+    const badge = document.getElementById('notif-badge');
+    if (!badge) return;
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+  }
+};
+window.Notify = Notify;
+
 // Экранирование HTML — применять ко всем данным из Bitrix/localStorage перед вставкой в innerHTML
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;')
@@ -71,6 +102,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const localOrders = Orders.getLocalOrders();
   const dashCount = document.getElementById('dash-orders-count');
   if (dashCount) dashCount.textContent = localOrders.length;
+
+  // Notification badge on load
+  Notify.updateBadge();
+
+  // Onboarding tour
+  maybeStartTour();
 });
 
 window.handleOrder = async function(card) {
@@ -99,11 +136,13 @@ window.handleOrder = async function(card) {
       btn.style.color = '#fff';
       btn.style.border = 'none';
       showToast(`Запрос на «${serviceData.name}» отправлен. Менеджер свяжется по email.`);
+      Notify.add('request', 'Запрос отправлен', `«${serviceData.name}» — менеджер свяжется по email`);
     } else {
       await Orders.placeOrder(serviceData);
       btn.innerHTML = '<i class="ti ti-check" style="font-size:13px"></i> Заказано';
       btn.style.background = 'var(--green)';
       showToast(`Заказ «${serviceData.name}» оформлен! Менеджер свяжется с вами.`);
+      Notify.add('order', 'Заказ оформлен', `«${serviceData.name}» — менеджер свяжется по email`);
     }
     await loadOrders();
   } catch (e) {
@@ -184,6 +223,148 @@ window.showToast = function(message, type = 'success') {
 };
 
 window.AuthLogout = () => Auth.logout();
+
+// ── Notification panel ────────────────────────────────────────────────────────
+function renderNotifPanel() {
+  const list = document.getElementById('notif-list');
+  const notifs = Notify.getAll();
+  if (!notifs.length) {
+    list.innerHTML = '<div class="notif-empty">Уведомлений пока нет</div>';
+    return;
+  }
+  list.innerHTML = notifs.map(n => `
+    <div class="notif-item ${n.read ? '' : 'unread'}">
+      <div class="notif-title">${esc(n.title)}</div>
+      <div class="notif-msg">${esc(n.message)}</div>
+      <div class="notif-ts">${new Date(n.ts).toLocaleString('ru', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`).join('');
+}
+window.renderNotifPanel = renderNotifPanel;
+
+window.toggleNotifPanel = function() {
+  const panel = document.getElementById('notif-panel');
+  const isOpen = panel.style.display !== 'none';
+  if (isOpen) {
+    panel.style.display = 'none';
+  } else {
+    renderNotifPanel();
+    panel.style.display = 'block';
+    Notify.markAllRead();
+  }
+};
+
+// Close notification panel on outside click
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('notif-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    const panel = document.getElementById('notif-panel');
+    if (panel) panel.style.display = 'none';
+  }
+});
+
+// ── Onboarding Tour ───────────────────────────────────────────────────────────
+const TOUR_KEY = 'axoft_tour_done';
+
+const TOUR_STEPS = [
+  {
+    sel: '.dash-hero',
+    title: 'Добро пожаловать!',
+    desc: 'Это ваш личный кабинет программы Axoft × Сколково. Давайте быстро познакомимся с интерфейсом.'
+  },
+  {
+    sel: 'button.nb[onclick="goPage(\'services\')"]',
+    title: 'Сервисы',
+    desc: 'Каталог пакетов программы и услуг à la carte. Здесь вы можете оформить заказ.'
+  },
+  {
+    sel: 'button.nb[onclick="goPage(\'diag\')"]',
+    title: 'Диагностика',
+    desc: 'Пройдите оценку канальной готовности — это поможет подобрать нужные сервисы.'
+  },
+  {
+    sel: 'button.nb[onclick="goPage(\'orders\')"]',
+    title: 'Заказы',
+    desc: 'История всех ваших заказов. Статусы обновляются менеджером программы.'
+  },
+  {
+    sel: 'button.nb[onclick="goPage(\'settings\')"]',
+    title: 'Настройки',
+    desc: 'Данные вашей компании. Тур можно запустить повторно в любой момент.'
+  },
+];
+
+let tourStep = 0;
+let highlightEl = null;
+let cardEl = null;
+
+window.startTour = function() {
+  tourStep = 0;
+  if (!highlightEl) {
+    highlightEl = document.createElement('div');
+    highlightEl.className = 'tour-highlight';
+    document.body.appendChild(highlightEl);
+  }
+  if (!cardEl) {
+    cardEl = document.createElement('div');
+    cardEl.className = 'tour-card';
+    document.body.appendChild(cardEl);
+  }
+  showTourStep(tourStep);
+};
+
+window.showTourStep = function showTourStep(idx) {
+  const step = TOUR_STEPS[idx];
+  const target = document.querySelector(step.sel);
+
+  if (!target) {
+    if (idx + 1 < TOUR_STEPS.length) showTourStep(idx + 1);
+    else endTour();
+    return;
+  }
+
+  const r = target.getBoundingClientRect();
+  const pad = 6;
+  highlightEl.style.cssText = `
+    position:fixed;z-index:1001;border-radius:8px;pointer-events:none;
+    box-shadow:0 0 0 4000px rgba(0,0,0,.55);
+    top:${r.top - pad}px;left:${r.left - pad}px;
+    width:${r.width + pad * 2}px;height:${r.height + pad * 2}px;
+    transition:all .35s ease;`;
+
+  const cardTop = r.bottom + 16 < window.innerHeight - 180
+    ? r.bottom + 12
+    : r.top - 200;
+  const cardLeft = Math.max(12, Math.min(r.left, window.innerWidth - 292));
+
+  const isLast = idx === TOUR_STEPS.length - 1;
+  cardEl.innerHTML = `
+    <div class="tour-card-title">${step.title}</div>
+    <div class="tour-card-desc">${step.desc}</div>
+    <div class="tour-card-foot">
+      <span class="tour-step-count">${idx + 1} / ${TOUR_STEPS.length}</span>
+      <div class="tour-btns">
+        <button class="tour-btn tour-btn-skip" onclick="endTour()">Пропустить</button>
+        <button class="tour-btn tour-btn-next" onclick="${isLast ? 'endTour()' : `showTourStep(${idx + 1})`}">
+          ${isLast ? 'Завершить' : 'Далее →'}
+        </button>
+      </div>
+    </div>`;
+  cardEl.style.cssText = `position:fixed;z-index:1002;background:#fff;border-radius:12px;
+    padding:20px 24px;max-width:280px;box-shadow:0 8px 32px rgba(0,0,0,.2);
+    top:${cardTop}px;left:${cardLeft}px;`;
+};
+
+window.endTour = function() {
+  localStorage.setItem(TOUR_KEY, '1');
+  if (highlightEl) { highlightEl.remove(); highlightEl = null; }
+  if (cardEl) { cardEl.remove(); cardEl = null; }
+};
+
+function maybeStartTour() {
+  if (!localStorage.getItem(TOUR_KEY)) {
+    setTimeout(() => window.startTour(), 900);
+  }
+}
 
 // ── Packages ─────────────────────────────────────────────────────────────────
 
