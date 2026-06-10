@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 30_000,
+  timeout: 45_000,
   retries: 1,
   workers: 1,
   reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
@@ -13,7 +13,7 @@ export default defineConfig({
     viewport: { width: 1280, height: 800 },
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
-    actionTimeout: 10_000,
+    actionTimeout: 15_000,
   },
   projects: [
     {

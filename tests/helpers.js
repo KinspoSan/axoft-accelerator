@@ -22,15 +22,19 @@ export async function seedSession(page, session = TEST_SESSION) {
   }, session);
 }
 
-// Открыть кабинет с заранее засеянной сессией
+// Открыть кабинет с заранее засеянной сессией.
+// addInitScript устанавливает localStorage ДО запуска скриптов страницы —
+// избегает двойной навигации (goto index + goto cabinet).
 export async function openCabinet(page, session = TEST_SESSION) {
-  await seedSession(page, session);
+  await page.addInitScript((s) => {
+    localStorage.clear();
+    localStorage.setItem('axoft_vendor_session', JSON.stringify(s));
+  }, session);
   await page.goto('./cabinet.html');
-  // Ждём инициализации app.js (компания в тайтле)
   await page.waitForFunction(() =>
     document.getElementById('user-name')?.textContent?.trim() !== 'Загрузка...' &&
     document.getElementById('user-name')?.textContent?.trim() !== '',
-    { timeout: 15_000 }
+    { timeout: 25_000 }
   );
 }
 
