@@ -42,6 +42,7 @@ function authorized(req) {
   const token = header.startsWith('Bearer ') ? header.slice(7) : '';
   const a = Buffer.from(token);
   const b = Buffer.from(INBOUND_TOKEN);
+  // timingSafeEqual предотвращает timing-атаку: сравнение всегда занимает одно время
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
@@ -111,6 +112,8 @@ app.post('/api/register', async (req, res) => {
 
   try {
     let companyId;
+    // Дедупликация по ИНН: ищем через реквизиты, а не по названию компании —
+    // название могут написать по-разному, ИНН уникален
     const found = await bitrix('crm.requisite.list', {
       filter: { RQ_INN: inn, ENTITY_TYPE_ID: COMPANY_ENTITY_TYPE_ID },
       select: ['ENTITY_ID'],
@@ -129,6 +132,7 @@ app.post('/api/register', async (req, res) => {
           OPENED: 'Y',
           ASSIGNED_BY_ID: 1,
         },
+        // REGISTER_SONET_EVENT создаёт уведомление в ленте Bitrix24 при появлении компании
         params: { REGISTER_SONET_EVENT: 'Y' },
       });
 
@@ -144,12 +148,14 @@ app.post('/api/register', async (req, res) => {
       });
     }
 
+    // Не создаём вторую карточку вендора, если компания уже проходила регистрацию
     const existing = await bitrix('crm.item.list', {
       entityTypeId: VENDOR_ENTITY_TYPE_ID,
       filter: { companyId },
       select: ['id'],
     });
     if (existing.items?.length) {
+      // 200, а не 201: ничего нового не создано
       return res.status(200).json({
         ok: true, duplicate: true,
         companyId, vendorId: existing.items[0].id,
