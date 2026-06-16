@@ -950,7 +950,8 @@
   // Лиды с лендинга попадают в Bitrix24 с пометкой [Лендинг UP] в названии.
   // CRM → Лиды → фильтр по "[Лендинг UP]"
 
-  const BITRIX_WEBHOOK = 'https://axoft.bitrix24.ru/rest/1/itnzkkug13yjhs7v';
+  const PROXY = 'http://155.212.225.161:3001';
+  const PROXY_TOKEN = 'cc93bd3bf217e756f2a398a1c4abd1ad0c8d06daad6e6bd3c9f82eaf2feec63c';
 
   document.getElementById('email-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -973,28 +974,23 @@
     btn.textContent = '…';
     btn.disabled    = true;
 
-    const params = new URLSearchParams();
-    params.append('fields[TITLE]',                    `[Лендинг UP] ${email}`);
-    params.append('fields[EMAIL][0][VALUE]',          email);
-    params.append('fields[EMAIL][0][VALUE_TYPE]',     'WORK');
-    params.append('fields[SOURCE_ID]',                'WEB');
-    params.append('fields[STATUS_ID]',                'NEW');
-    params.append('fields[COMMENTS]',                 `Источник: лендинг Axoft × Сколково\nДата: ${new Date().toLocaleString('ru')}`);
-    params.append('fields[ASSIGNED_BY_ID]',           '1');
-
-    let bitrixOk = false;
+    let ok = false;
     try {
-      const res  = await fetch(`${BITRIX_WEBHOOK}/crm.lead.add.json`, {
+      const res  = await fetch(`${PROXY}/api/lead`, {
         method: 'POST',
-        body:   params
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${PROXY_TOKEN}`,
+        },
+        body: JSON.stringify({ email }),
       });
       const data = await res.json();
-      bitrixOk   = !!data.result;
+      ok = !!data.ok;
     } catch (err) {
-      console.error('Bitrix24 error:', err);
+      console.error('Proxy error:', err);
     }
 
-    if (!bitrixOk) {
+    if (!ok) {
       btn.textContent = 'Уведомить меня';
       btn.disabled    = false;
       const errEl = document.getElementById('consent-error');

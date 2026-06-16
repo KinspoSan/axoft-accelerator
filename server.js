@@ -1,6 +1,6 @@
-// server.js — посредник: лендинг подрядчика → этот сервис → Битрикс24.
-// Создаёт компанию + реквизит (ИНН в блоке «Организация») + связанную
-// карточку вендора в смарт-процессе. Защита — общий секрет в заголовке.
+// server.js — посредник: лендинг → этот сервис → Битрикс24.
+// POST /api/lead     — лид с лендинга (email + согласие)
+// POST /api/register — полная регистрация вендора (компания + смарт-процесс)
 
 import express from 'express';
 import crypto from 'node:crypto';
@@ -14,6 +14,22 @@ if (!BITRIX_WEBHOOK || !INBOUND_TOKEN) {
   console.error('Нужны BITRIX_WEBHOOK и INBOUND_TOKEN');
   process.exit(1);
 }
+
+// CORS — разрешаем GitHub Pages и любой localhost для разработки
+const ALLOWED_ORIGINS = [
+  'https://kinsposan.github.io',
+  'https://kinspon8.github.io',
+];
+app.use((req, res, next) => {
+  const origin = req.get('origin') || '';
+  if (ALLOWED_ORIGINS.includes(origin) || /^http:\/\/localhost(:\d+)?$/.test(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
 
 // --- Константы Битрикса ----------------------------------------------------
 const COMPANY_ENTITY_TYPE_ID = 4;    // стандартный тип «Компания»
@@ -40,11 +56,15 @@ async function bitrix(method, params) {
   return data.result;
 }
 
-function validate(b) {
+function validateEmail(email) {
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email || '');
+}
+
+function validateRegister(b) {
   const errors = [];
   if (!b.company_name?.trim()) errors.push('company_name обязателен');
   if (!/^\d{10}(\d{2})?$/.test(b.inn || '')) errors.push('inn: ожидаются 10 или 12 цифр');
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(b.email || '')) errors.push('email некорректен');
+  if (!validateEmail(b.email)) errors.push('email некорректен');
   if (!b.direction?.trim()) errors.push('direction обязателен');
   if (!b.product_name?.trim()) errors.push('product_name обязателен');
   if (b.product_url && !/^https?:\/\//i.test(b.product_url)) errors.push('product_url: нужен http(s)-адрес');
@@ -52,10 +72,36 @@ function validate(b) {
   return errors;
 }
 
+// ── POST /api/lead — лид с лендинга ─────────────────────────────────────────
+app.post('/api/lead', async (req, res) => {
+  if (!authorized(req)) return res.status(401).json({ ok: false, error: 'unauthorized' });
+
+  const email = (req.body.email || '').trim().toLowerCase();
+  if (!validateEmail(email)) return res.status(400).json({ ok: false, error: 'email некорректен' });
+
+  try {
+    const leadId = await bitrix('crm.lead.add', {
+      fields: {
+        TITLE:       `[Лендинг UP] ${email}`,
+        EMAIL:       [{ VALUE: email, VALUE_TYPE: 'WORK' }],
+        SOURCE_ID:   'WEB',
+        STATUS_ID:   'NEW',
+        COMMENTS:    `Источник: лендинг Axoft × Сколково\nДата: ${new Date().toLocaleString('ru')}`,
+        ASSIGNED_BY_ID: 1,
+      },
+    });
+    return res.status(201).json({ ok: true, leadId });
+  } catch (e) {
+    console.error('[bitrix/lead]', e.message);
+    return res.status(502).json({ ok: false, error: 'bitrix_error' });
+  }
+});
+
+// ── POST /api/register — регистрация вендора ─────────────────────────────────
 app.post('/api/register', async (req, res) => {
   if (!authorized(req)) return res.status(401).json({ ok: false, error: 'unauthorized' });
 
-  const errors = validate(req.body);
+  const errors = validateRegister(req.body);
   if (errors.length) return res.status(400).json({ ok: false, errors });
 
   const {
@@ -118,7 +164,6 @@ app.post('/api/register', async (req, res) => {
         categoryId: VENDOR_CATEGORY_ID,
 
         // Продуктовые поля зальём позже импортом — коды полей подставим тогда.
-        // Пока закомментированы, чтобы Битрикс не отклонял запрос.
         // ufCrm_DIRECTION: direction,
         // ufCrm_PRODUCT: product_name,
         // ufCrm_URL: product_url || '',
