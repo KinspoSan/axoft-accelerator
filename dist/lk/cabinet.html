@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Акселератор × Сколково — Личный кабинет</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    :root{
+      --navy:#1e2849;--teal:#00b0bd;--tl:#00c9d8;--green:#00b37d;--blue:#00aeef;
+      --bg:#f0f2f7;--sur:#fff;--sur2:#f7f8fb;--bdr:rgba(30,40,73,.1);
+      --txt:#1e2849;--txt2:#6b7290;--txt3:#a0a6be;--r:12px;--rs:8px;
+      --tdim:rgba(0,176,189,.12);--gdim:rgba(0,179,125,.12);--bdim:rgba(0,174,239,.12);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Golos Text',sans-serif;background:var(--bg);min-height:100vh;display:flex;}
+
+    /* ── Sidebar ── */
+    .sb{width:220px;background:var(--navy);min-height:100vh;position:fixed;left:0;top:0;
+      display:flex;flex-direction:column;z-index:50;}
+    .sb-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+    .ax-badge{background:var(--teal);color:#fff;font-family:'Unbounded',sans-serif;
+      font-size:10px;font-weight:700;padding:4px 8px;border-radius:5px;letter-spacing:.5px;}
+    .sb-sko{display:flex;align-items:center;gap:6px;margin-top:8px;}
+    .sko-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+    .sb-sko span{color:rgba(255,255,255,.6);font-size:11px;}
+
+    .sb-nav{flex:1;padding:12px 0;}
+    .nav-section{padding:8px 18px 4px;font-size:10px;font-weight:600;
+      color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;}
+    .nb{display:flex;align-items:center;gap:10px;padding:9px 18px;
+      color:rgba(255,255,255,.7);font-size:13px;font-weight:500;
+      cursor:pointer;border:none;background:transparent;width:100%;text-align:left;
+      border-radius:0;transition:all .2s;text-decoration:none;}
+    .nb:hover,.nb.active{background:rgba(255,255,255,.08);color:#fff;}
+    .nb.active{border-left:3px solid var(--teal);}
+    .nb i{font-size:16px;width:18px;text-align:center;flex-shrink:0;}
+    .nb .badge{margin-left:auto;background:var(--teal);color:#fff;
+      font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center;}
+
+    .sb-user{padding:16px 18px;border-top:1px solid rgba(255,255,255,.08);}
+    .u-row{display:flex;align-items:center;gap:10px;}
+    .av{width:34px;height:34px;border-radius:50%;background:var(--teal);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+    .u-info{flex:1;min-width:0;}
+    .u-name{color:#fff;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .u-role{color:rgba(255,255,255,.45);font-size:10px;margin-top:1px;}
+    .btn-logout{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);
+      padding:4px;border-radius:4px;transition:color .2s;margin-left:4px;}
+    .btn-logout:hover{color:rgba(255,255,255,.8);}
+
+    /* ── Main ── */
+    .main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;overflow-x:hidden;}
+    .topbar{background:var(--sur);border-bottom:1px solid var(--bdr);
+      padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:40;}
+    .tb-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--navy);}
+    .tb-right{display:flex;align-items:center;gap:12px;}
+    .pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;
+      font-size:11px;font-weight:600;}
+    .pill.pg{background:rgba(0,179,125,.1);color:var(--green);}
+    .pill.pt{background:rgba(0,174,239,.1);color:var(--blue);}
+    .pill.pp{background:rgba(0,176,189,.1);color:var(--teal);}
+
+    .content{padding:28px;flex:1;}
+    .page{display:none;}
+    .page.active{display:block;}
+
+    /* ── Cards ── */
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+    .stat-card{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);padding:20px;}
+    .sc-label{font-size:11px;color:var(--txt2);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+    .sc-val{font-size:28px;font-weight:700;color:var(--navy);font-family:'Unbounded',sans-serif;line-height:1;}
+    .sc-sub{font-size:12px;color:var(--txt2);margin-top:4px;}
+    .sc-icon{font-size:20px;margin-bottom:8px;}
+
+    /* ── Dashboard hero ── */
+    .dash-hero{background:linear-gradient(135deg,var(--navy) 0%,#2a3875 100%);
+      border-radius:var(--r);padding:28px 32px;margin-bottom:24px;color:#fff;}
+    .ph-label{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;}
+    .ph-t{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;margin-bottom:4px;}
+    .ph-sub{font-size:13px;color:rgba(255,255,255,.6);}
+
+    /* ── Progress steps ── */
+    .steps{display:flex;gap:0;margin-bottom:24px;background:var(--sur);
+      border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden;}
+    .step{flex:1;padding:16px 20px;border-right:1px solid var(--bdr);position:relative;}
+    .step:last-child{border-right:none;}
+    .step-n{width:24px;height:24px;border-radius:50%;background:var(--bdr);
+      display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+      color:var(--txt2);margin-bottom:8px;}
+    .step.done .step-n{background:var(--green);color:#fff;}
+    .step.active .step-n{background:var(--teal);color:#fff;}
+    .step-title{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:2px;}
+    .step-sub{font-size:11px;color:var(--txt2);}
+    .step.done .step-title{color:var(--green);}
+    .step.active .step-title{color:var(--teal);}
+
+    /* ── Tier cards ── */
+    .tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+    @media(max-width:700px){.tier-grid{grid-template-columns:1fr;}}
+    .tier-card{background:var(--sur);border-radius:var(--r);border:2px solid var(--bdr);
+      padding:24px;transition:border-color .2s;position:relative;overflow:hidden;}
+    .tier-card.current{border-color:var(--teal);}
+    .tier-card.current::before{content:'Ваш тариф';position:absolute;top:14px;right:14px;
+      background:var(--teal);color:#fff;font-size:10px;font-weight:700;
+      padding:3px 8px;border-radius:4px;}
+    .tier-card.strat-card{border-color:rgba(0,179,125,.4);}
+    .tier-name{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;
+      color:var(--navy);margin-bottom:4px;}
+    .tier-price{font-size:22px;font-weight:700;color:var(--teal);margin-bottom:12px;}
+    .tier-price small{font-size:13px;font-weight:400;color:var(--txt2);}
+    .tier-feat{list-style:none;margin-bottom:16px;}
+    .tier-feat li{font-size:12px;color:var(--txt);padding:4px 0;display:flex;gap:8px;}
+    .tier-feat li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--rs);
+      font-family:'Golos Text',sans-serif;font-size:13px;font-weight:600;
+      cursor:pointer;border:none;transition:all .2s;text-decoration:none;}
+    .btn-p{background:var(--teal);color:#fff;}
+    .btn-p:hover{background:#00c9d8;}
+    .btn-o{background:transparent;color:var(--teal);border:1px solid var(--teal);}
+    .btn-o:hover{background:rgba(0,176,189,.08);}
+    .btn-g{background:transparent;color:var(--txt2);border:1px solid var(--bdr);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+    /* ── Services ── */
+    .svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+    .svcc{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      padding:20px;transition:box-shadow .2s;}
+    .svcc:hover{box-shadow:0 4px 16px rgba(30,40,73,.1);}
+    .svc-block{font-size:10px;font-weight:700;color:var(--txt2);letter-spacing:.8px;
+      text-transform:uppercase;margin-bottom:10px;}
+    .svc-name{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+    .svc-desc{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:14px;}
+    .svc-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .svc-price{font-size:16px;font-weight:700;color:var(--navy);}
+    .svc-price small{font-size:11px;font-weight:400;color:var(--txt2);}
+    .btn-order{background:var(--teal);color:#fff;border:none;padding:8px 16px;
+      border-radius:var(--rs);font-family:'Golos Text',sans-serif;font-size:13px;
+      font-weight:600;cursor:pointer;transition:background .2s;}
+    .btn-order:hover{background:#00c9d8;}
+    .btn-order:disabled{opacity:.6;cursor:not-allowed;}
+    .tag-tier{font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px;margin-bottom:10px;display:inline-block;}
+    .tag-base{background:rgba(0,174,239,.1);color:var(--blue);}
+    .tag-strat{background:rgba(0,179,125,.1);color:var(--green);}
+    .tag-free{background:rgba(30,40,73,.07);color:var(--txt2);}
+
+    /* ── Orders table ── */
+    .ot{width:100%;border-collapse:collapse;}
+    .ot th{text-align:left;font-size:11px;font-weight:600;color:var(--txt2);
+      text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;
+      border-bottom:2px solid var(--bdr);}
+    .ot td{padding:12px;border-bottom:1px solid var(--bdr);font-size:13px;color:var(--txt);}
+    .ot tbody tr:last-child td{border-bottom:none;}
+    .ot tbody tr:hover td{background:rgba(30,40,73,.02);}
+    .stag{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+    .sa2{background:rgba(0,174,239,.1);color:var(--blue);}
+    .sr2{background:rgba(255,165,0,.1);color:#e6a800;}
+    .sd{background:rgba(0,179,125,.1);color:var(--green);}
+
+    /* ── Settings ── */
+    .set-section{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      margin-bottom:16px;overflow:hidden;}
+    .set-head{padding:16px 20px;border-bottom:1px solid var(--bdr);
+      font-size:13px;font-weight:700;color:var(--navy);}
+    .set-row{display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid var(--bdr);}
+    .set-row:last-child{border-bottom:none;}
+    .set-k{font-size:12px;color:var(--txt2);font-weight:600;width:200px;flex-shrink:0;}
+    .set-v{font-size:13px;color:var(--txt);font-weight:500;}
+
+    /* ── Page header ── */
+    .page-hd{margin-bottom:24px;}
+    .page-hd h2{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;
+      color:var(--navy);margin-bottom:4px;}
+    .page-hd p{font-size:13px;color:var(--txt2);}
+
+    /* ── Service filter buttons ── */
+    .sf{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+    .fb{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;
+      border:1px solid var(--bdr);background:var(--sur);color:var(--txt2);
+      transition:all .15s;font-family:'Golos Text',sans-serif;}
+    .fb.fa{background:var(--navy);color:#fff;border-color:var(--navy);}
+    .fb:hover:not(.fa){background:var(--sur2);}
+
+    /* ── Package cards ── */
+    .pkg-g{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+    @media(max-width:900px){.pkg-g{grid-template-columns:1fr;}}
+    .pkg{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s;}
+    .pkg:hover{box-shadow:0 6px 24px rgba(30,40,73,.1);}
+    .pkg-h{padding:22px 22px 18px;}
+    .pkg-badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+      padding:3px 10px;border-radius:10px;display:inline-block;margin-bottom:12px;}
+    .pkg-tt{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;
+      color:var(--navy);margin-bottom:5px;}
+    .pkg-goal{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:14px;}
+    .pkg-price{font-size:20px;font-weight:700;font-family:'Unbounded',sans-serif;}
+    .pkg-price.fr{color:var(--green);}
+    .pkg-eng{display:flex;align-items:center;gap:8px;padding:10px 22px;
+      background:var(--sur2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);
+      font-size:11px;color:var(--txt2);}
+    .pkg-eng-dots{display:flex;gap:3px;flex-shrink:0;}
+    .pkg-eng-dot{width:9px;height:9px;border-radius:50%;}
+    .pkg-eng-dot.on{background:var(--teal);}
+    .pkg-eng-dot.on.g{background:var(--green);}
+    .pkg-eng-dot.on.b{background:var(--blue);}
+    .pkg-eng-dot.off{background:var(--bdr);}
+    .pkg-b{padding:18px 22px;flex:1;}
+    .pkg-sec-lbl{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;
+      letter-spacing:.8px;margin-bottom:8px;}
+    .pkg-li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:12px;
+      color:var(--txt);line-height:1.45;border-bottom:1px solid var(--bdr);}
+    .pkg-li:last-child{border-bottom:none;}
+    .pkg-li i{font-size:14px;flex-shrink:0;margin-top:1px;}
+    .pkg-res{background:var(--sur2);border-radius:var(--rs);padding:10px 12px;
+      font-size:11px;color:var(--txt2);line-height:1.5;margin-top:12px;}
+    .pkg-res strong{color:var(--navy);font-weight:600;}
+    .pkg-ft{padding:16px 22px;border-top:1px solid var(--bdr);display:flex;align-items:center;gap:8px;}
+
+    /* ── Comparison table ── */
+    .cmp-wrap{margin-top:28px;}
+    .cmp-lbl{font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:14px;
+      text-transform:uppercase;letter-spacing:.5px;}
+    .cmp-card{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden;}
+    .cmp{width:100%;border-collapse:collapse;font-size:12px;}
+    .cmp th{padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:var(--navy);
+      border-bottom:2px solid var(--bdr);background:var(--sur2);}
+    .cmp th:first-child{text-align:left;}
+    .cmp td{padding:9px 14px;text-align:center;border-bottom:1px solid var(--bdr);color:var(--txt2);}
+    .cmp td:first-child{text-align:left;font-weight:500;color:var(--navy);}
+    .cmp tr:last-child td{border-bottom:none;}
+    .cmp tr:hover td{background:var(--sur2);}
+    .cmp-y{color:var(--green);font-size:15px;}
+    .cmp-n{color:var(--bdr);font-size:16px;}
+    .cmp-num{color:var(--teal);font-weight:700;}
+    .cmp-pr{font-weight:700;color:var(--navy);}
+
+    /* ── Diagnostics ── */
+    .diag-wrap{--dg-red:#A02020;--dg-red-lt:#FDE8E8;--dg-amber:#B06000;--dg-amber-lt:#FFF3DC;
+      --dg-grey:#3A3A3A;font-family:'Golos Text',sans-serif;font-size:15px;color:var(--dg-grey);}
+    .dg-prog{background:var(--navy);border-radius:var(--r);overflow:hidden;margin-bottom:20px;padding:12px 0 16px;}
+    .dg-prog-track{display:flex;position:relative;padding:0 24px;}
+    .dg-prog-line{position:absolute;top:14px;left:24px;right:24px;height:2px;background:rgba(255,255,255,.15);}
+    .dg-prog-fill{position:absolute;top:14px;left:24px;height:2px;background:var(--teal);transition:width .4s;z-index:1;}
+    .dg-prog-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;z-index:2;}
+    .dg-prog-dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.3);
+      background:var(--navy);display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:700;color:rgba(255,255,255,.5);transition:all .3s;}
+    .dg-prog-step.active .dg-prog-dot{background:var(--teal);border-color:#00d9e8;color:#fff;}
+    .dg-prog-step.done .dg-prog-dot{background:var(--green);border-color:#52C68A;color:#fff;}
+    .dg-prog-lbl{font-size:11px;color:rgba(255,255,255,.5);}
+    .dg-prog-step.active .dg-prog-lbl,.dg-prog-step.done .dg-prog-lbl{color:rgba(255,255,255,.85);}
+    .dg-card{background:#fff;border-radius:var(--r);border:1px solid var(--bdr);padding:28px 32px;
+      margin-bottom:16px;box-shadow:0 2px 14px rgba(30,40,73,.06);}
+    .dg-scr{display:none;}.dg-scr.on{display:block;}
+    .dg-cat-hdr{display:flex;align-items:flex-start;gap:14px;padding-bottom:16px;
+      border-bottom:2px solid var(--bdr);margin-bottom:26px;}
+    .dg-cat-pill{padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;margin-top:2px;}
+    .dg-cat-ttl{font-size:18px;font-weight:700;color:var(--navy);}
+    .dg-cat-sub{font-size:13px;color:#888;margin-top:3px;}
+    .dg-g-q{margin-bottom:26px;}
+    .dg-g-q-lbl{font-weight:600;color:var(--navy);margin-bottom:10px;font-size:15px;
+      display:flex;align-items:flex-start;gap:9px;}
+    .dg-g-q-lbl .n{background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;
+      display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;}
+    .dg-opts{display:flex;flex-direction:column;gap:7px;}
+    .dg-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;
+      border:1.5px solid var(--bdr);border-radius:var(--rs);cursor:pointer;transition:border-color .15s,background .15s;}
+    .dg-opt:hover{border-color:var(--teal);background:var(--tdim);}
+    .dg-opt.sel{border-color:var(--teal);background:var(--tdim);}
+    .dg-opt.warn{border-color:#E8B060;background:var(--dg-amber-lt);}
+    .dg-opt.stop{border-color:#E08080;background:var(--dg-red-lt);}
+    .dg-opt input[type=radio]{margin-top:3px;accent-color:var(--teal);flex-shrink:0;}
+    .dg-opt-txt{font-size:14px;line-height:1.5;color:var(--dg-grey);}
+    .dg-badge{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:6px;}
+    .dg-badge-w{background:#FFE8B0;color:#8A5000;}.dg-badge-s{background:#FFD0D0;color:#900;}
+    .dg-fail-box{border-radius:var(--rs);padding:16px 20px;margin-top:16px;display:none;}
+    .dg-fail-box.on{display:block;}
+    .dg-fail-title{font-weight:700;font-size:15px;margin-bottom:6px;}.dg-fail-txt{font-size:14px;}
+    .dg-cat-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;}
+    .dg-cn{padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;
+      background:var(--sur2);color:#888;border:1.5px solid var(--bdr);}
+    .dg-cn.act{color:#fff;border-color:transparent;background:var(--teal);}
+    .dg-cn.done{background:var(--gdim);color:var(--green);border-color:rgba(0,179,125,.3);}
+    .dg-sq{margin-bottom:28px;}
+    .dg-sq-lbl{font-weight:600;color:var(--navy);margin-bottom:11px;font-size:15px;
+      display:flex;align-items:flex-start;gap:8px;}
+    .dg-wt{font-size:11px;background:var(--sur2);color:#777;padding:2px 8px;border-radius:10px;white-space:nowrap;margin-top:2px;}
+    .dg-sopts{display:flex;flex-direction:column;gap:6px;}
+    .dg-sopt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;
+      border:1.5px solid var(--bdr);border-radius:var(--rs);cursor:pointer;transition:border-color .15s,background .15s;}
+    .dg-sopt:hover{border-color:var(--teal);background:var(--tdim);}
+    .dg-sopt.sel{border-color:var(--teal);background:var(--tdim);}
+    .dg-sopt input[type=radio]{margin-top:3px;accent-color:var(--teal);flex-shrink:0;}
+    .dg-sn{font-weight:700;color:var(--teal);min-width:18px;font-size:14px;}
+    .dg-st{font-size:14px;line-height:1.5;color:var(--dg-grey);}
+    .dg-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:26px;}
+    .dg-btn{padding:11px 26px;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;
+      border:none;transition:all .15s;font-family:'Golos Text',sans-serif;}
+    .dg-btn-p{background:var(--teal);color:#fff;}.dg-btn-p:hover{background:var(--tl);}
+    .dg-btn-p:disabled{background:#bbb;cursor:not-allowed;}
+    .dg-btn-s{background:#fff;color:var(--navy);border:1.5px solid var(--bdr);}
+    .dg-btn-s:hover{border-color:var(--teal);color:var(--teal);}
+    .dg-wc-hero{text-align:center;padding:8px 0 24px;}
+    .dg-wc-hero h1{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:10px;
+      font-family:'Unbounded',sans-serif;line-height:1.3;}
+    .dg-wc-hero p{font-size:14px;color:#666;max-width:520px;margin:0 auto 22px;}
+    .dg-wc-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:26px;}
+    .dg-tag{padding:4px 14px;border-radius:20px;font-size:13px;font-weight:600;}
+    .dg-tag-bl{background:var(--tdim);color:var(--teal);}.dg-tag-gn{background:var(--gdim);color:var(--green);}
+    .dg-wc-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;}
+    .dg-ws{background:var(--sur2);border-radius:var(--rs);padding:18px 14px;text-align:center;}
+    .dg-ws-ic{font-size:28px;margin-bottom:8px;}.dg-ws-tt{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+    .dg-ws-tx{font-size:12px;color:#777;}
+    .dg-ring-wrap{width:150px;height:150px;margin:0 auto 20px;position:relative;}
+    .dg-ring-wrap svg{transform:rotate(-90deg);}
+    .dg-ring-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+    .dg-ring-num{font-size:38px;font-weight:800;color:var(--navy);line-height:1;}
+    .dg-ring-max{font-size:13px;color:#999;}
+    .dg-res-lvl{text-align:center;font-size:19px;font-weight:700;margin-bottom:5px;}
+    .dg-res-desc{text-align:center;color:#666;font-size:14px;margin-bottom:28px;max-width:540px;margin-left:auto;margin-right:auto;}
+    .dg-bar-section{margin:20px 0 24px;}.dg-bar-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;}
+    .dg-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+    .dg-bar-lbl{width:185px;font-size:13px;color:var(--navy);font-weight:600;flex-shrink:0;}
+    .dg-bar-track{flex:1;height:9px;background:var(--sur2);border-radius:5px;overflow:hidden;}
+    .dg-bar-fill{height:100%;border-radius:5px;transition:width .7s;}
+    .dg-bar-val{width:44px;text-align:right;font-size:13px;font-weight:700;}
+    .dg-recs-wrap{margin-top:24px;}.dg-recs-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;}
+    .dg-rec{display:flex;gap:11px;padding:13px 15px;border-radius:var(--rs);margin-bottom:9px;border:1.5px solid var(--bdr);}
+    .dg-rec-ico{font-size:17px;font-weight:700;flex-shrink:0;margin-top:1px;width:20px;text-align:center;}
+    .dg-rec-cat{font-size:11px;color:#999;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px;}
+    .dg-rec-txt{font-size:14px;color:var(--dg-grey);}
+    .dg-rec-ok{border-color:#9EDDB9;background:var(--gdim);}
+    .dg-rec-wn{border-color:#F0C868;background:#FFFBEE;}
+    .dg-rec-bd{border-color:#F0A0A0;background:var(--dg-red-lt);}
+    .dg-pkg-block{margin-top:26px;padding:22px 24px;border-radius:var(--rs);border:2px solid var(--bdr);background:var(--sur2);}
+    .dg-pkg-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+    .dg-pkg-title{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:'Unbounded',sans-serif;}
+    .dg-pkg-desc{font-size:14px;color:#555;line-height:1.6;}
+    .dg-note{font-size:12px;color:#aaa;text-align:center;margin-top:14px;}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── Notification Bell ── */
+    .notif-wrap{position:relative;}
+    .notif-btn{background:none;border:none;color:var(--txt2);cursor:pointer;
+      padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+      transition:color .2s;touch-action:manipulation;position:relative;}
+    .notif-btn:hover{color:var(--navy);background:rgba(30,40,73,.06);}
+    .notif-badge{position:absolute;top:2px;right:2px;min-width:16px;height:16px;
+      background:#e53935;color:#fff;font-size:10px;font-weight:700;
+      border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+    .notif-panel{position:absolute;top:calc(100% + 8px);right:0;width:300px;
+      background:#fff;border-radius:12px;border:1px solid var(--bdr);
+      box-shadow:0 8px 32px rgba(30,40,73,.15);z-index:200;overflow:hidden;}
+    .notif-head{display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px;border-bottom:1px solid var(--bdr);font-size:13px;font-weight:600;color:var(--navy);}
+    .notif-list{max-height:320px;overflow-y:auto;}
+    .notif-item{padding:12px 16px;border-bottom:1px solid var(--bdr);cursor:default;}
+    .notif-item:last-child{border-bottom:none;}
+    .notif-item.unread{background:rgba(0,176,189,.04);}
+    .notif-title{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:3px;}
+    .notif-msg{font-size:11px;color:var(--txt2);line-height:1.4;}
+    .notif-ts{font-size:10px;color:var(--txt2);margin-top:4px;opacity:.7;}
+    .notif-empty{padding:32px 16px;text-align:center;font-size:12px;color:var(--txt2);}
+
+    /* ── Onboarding Tour ── */
+    .tour-highlight{position:fixed;z-index:1001;border-radius:8px;
+      box-shadow:0 0 0 4000px rgba(0,0,0,.55);pointer-events:none;transition:all .35s ease;}
+    .tour-card{position:fixed;z-index:1002;background:#fff;border-radius:12px;
+      padding:20px 24px;max-width:280px;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+    .tour-card-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;
+      color:var(--navy);margin-bottom:8px;}
+    .tour-card-desc{font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:16px;}
+    .tour-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .tour-step-count{font-size:11px;color:var(--txt2);}
+    .tour-btns{display:flex;gap:8px;}
+    .tour-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;touch-action:manipulation;font-family:'Golos Text',sans-serif;}
+    .tour-btn-skip{background:none;color:var(--txt2);border:1px solid var(--bdr);}
+    .tour-btn-next{background:var(--teal);color:#fff;}
+    .tour-btn-skip:hover{border-color:var(--teal);color:var(--teal);}
+    .tour-btn-next:hover{background:#00c9d8;}
+
+    /* ── Mobile ── */
+    /* ── Service tabs ── */
+    .svc-tabs{display:inline-flex;gap:4px;background:var(--sur2);padding:4px;
+      border-radius:var(--rs);margin-bottom:20px;}
+    .svc-tab{padding:8px 22px;border-radius:6px;border:none;background:transparent;
+      font-family:'Golos Text',sans-serif;font-size:13px;font-weight:600;
+      color:var(--txt2);cursor:pointer;transition:all .2s;}
+    .svc-tab.active{background:var(--sur);color:var(--navy);
+      box-shadow:0 1px 4px rgba(30,40,73,.1);}
+
+    /* ── Services à la carte ── */
+    .svc-g{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+    @media(max-width:1000px){.svc-g{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:600px){.svc-g{grid-template-columns:1fr;}}
+    .svc-card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);
+      padding:20px;display:flex;flex-direction:column;transition:box-shadow .2s;
+      data-pkg:attr(data-pkg);}
+    .svc-card:hover{box-shadow:0 4px 16px rgba(30,40,73,.08);}
+    .svc-card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;}
+    .svc-card-ic{width:38px;height:38px;border-radius:10px;background:var(--sur2);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .svc-card-name{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35;padding-top:2px;}
+    .svc-card-desc{font-size:12px;color:var(--txt2);line-height:1.5;flex:1;margin-bottom:14px;}
+    .svc-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;}
+    .svc-price{font-size:14px;font-weight:700;color:var(--navy);}
+    .svc-price.free{color:var(--green);}
+    .svc-price.on-req{font-size:12px;font-weight:500;color:var(--txt2);}
+
+    /* ── Materials ── */
+    .mat-card{display:flex;align-items:flex-start;gap:16px;padding:16px 20px;
+      border-bottom:1px solid var(--bdr);}
+    .mat-card:last-child{border-bottom:none;}
+    .mat-icon{width:40px;height:40px;border-radius:10px;background:var(--sur2);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+    .mat-body{flex:1;min-width:0;}
+    .mat-name{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;line-height:1.35;}
+    .mat-desc{font-size:12px;color:var(--txt2);margin-bottom:8px;line-height:1.5;}
+    .mat-meta{display:flex;flex-wrap:wrap;gap:6px;}
+    .mat-action{flex-shrink:0;padding-top:2px;}
+    .video-embed{position:relative;width:100%;padding-bottom:56.25%;height:0;border-radius:10px;overflow:hidden}
+    .video-embed iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+    .video-embed video{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background:#000}
+
+    /* ── Skolkovo course ── */
+    .sko-intro{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      padding:24px 28px;margin-bottom:20px;font-size:13px;color:var(--txt2);line-height:1.65;}
+    .sko-intro strong{color:var(--navy);}
+    .mod-card{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      padding:24px 28px;margin-bottom:16px;}
+    .mod-hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      gap:10px;margin-bottom:18px;}
+    .mod-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:var(--navy);}
+    .mod-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;
+      border-radius:20px;font-size:11px;font-weight:600;}
+    .mod-badge.done{background:rgba(0,179,125,.12);color:var(--green);}
+    .mod-badge.pending{background:rgba(107,114,144,.1);color:var(--txt2);}
+    .test-block{margin-top:20px;border-top:1px solid var(--bdr);padding-top:18px;}
+    .test-block.hidden{display:none;}
+    .test-wait{font-size:12px;color:var(--txt2);padding:10px 0;display:flex;align-items:center;gap:8px;}
+    .q-block{margin-bottom:18px;}
+    .q-text{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px;line-height:1.45;}
+    .q-opt{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:8px;
+      border:1px solid var(--bdr);margin-bottom:6px;cursor:pointer;font-size:13px;color:var(--txt);
+      transition:border-color .15s,background .15s;}
+    .q-opt:hover{border-color:var(--teal);background:rgba(0,176,189,.04);}
+    .q-opt input{margin-top:2px;accent-color:var(--teal);flex-shrink:0;}
+    .q-opt.correct{border-color:var(--green);background:rgba(0,179,125,.07);color:var(--green);}
+    .q-opt.wrong{border-color:#e05050;background:rgba(224,80,80,.07);color:#c00;}
+    .test-result{padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;margin:14px 0;}
+    .test-result.passed{background:rgba(0,179,125,.1);color:var(--green);}
+    .test-result.failed{background:rgba(224,80,80,.08);color:#c00;}
+    .sko-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;
+      border-radius:var(--rs);font-family:'Golos Text',sans-serif;font-size:13px;font-weight:600;
+      cursor:pointer;border:none;transition:background .2s;margin-top:4px;}
+    .sko-btn-p{background:var(--teal);color:#fff;}
+    .sko-btn-p:hover{background:#00c9d8;}
+    .sko-btn-p:disabled{opacity:.55;cursor:not-allowed;}
+    .sko-btn-r{background:transparent;color:var(--teal);border:1px solid var(--teal);}
+    .sko-btn-r:hover{background:rgba(0,176,189,.08);}
+
+    /* ── Responsive ── */
+    @media(max-width:768px){
+      .sb{width:60px;}
+      .sb-logo .ax-badge,.sb-sko,.u-info,.nb span,.nav-section,.u-name,.u-role{display:none;}
+      .main{margin-left:60px;}
+      .nb{padding:12px;justify-content:center;}
+      .sb-user{padding:12px 8px;}
+    }
+
+    /* ── Mobile (≤600px) ── */
+    @media(max-width:600px){
+      /* Отступы */
+      .content{padding:14px;}
+      .topbar{padding:0 14px;}
+      .dash-hero{padding:18px 16px;}
+
+      /* Заголовки страниц */
+      .ph-t{font-size:16px;}
+      .page-hd h2{font-size:15px;}
+
+      /* Шаги прогресса — 2×2 */
+      .steps{flex-wrap:wrap;}
+      .step{flex:1 1 calc(50% - 1px);min-width:0;}
+      .step-title{font-size:11px;}
+      .step-sub{font-size:10px;}
+
+      /* Стат-карточки — 2 колонки */
+      .stat-grid{grid-template-columns:1fr 1fr;}
+      .sc-val{font-size:22px;}
+
+      /* Настройки — метка над значением */
+      .set-row{flex-direction:column;align-items:flex-start;gap:2px;padding:10px 14px;}
+      .set-k{width:auto;font-size:11px;}
+      .set-head{padding:12px 14px;}
+
+      /* Вкладки сервисов — горизонтальный скролл */
+      .svc-tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;
+        scrollbar-width:none;width:100%;}
+      .svc-tabs::-webkit-scrollbar{display:none;}
+      .svc-tab{flex-shrink:0;padding:7px 14px;font-size:12px;}
+
+      /* Таблица сравнения — скролл */
+      .cmp-card{overflow-x:auto !important;-webkit-overflow-scrolling:touch;}
+      .cmp{min-width:480px;}
+
+      /* Таблица заказов */
+      .ot th,.ot td{padding:8px 8px;font-size:12px;}
+      .ot th:nth-child(4),.ot td:nth-child(4){display:none;}
+
+      /* Фильтры */
+      .sf{gap:6px;}
+      .fb{font-size:11px;padding:5px 10px;}
+
+      /* Диагностика: шкалы */
+      .dg-bar-lbl{width:110px;font-size:12px;}
+      .dg-bar-val{width:36px;font-size:12px;}
+
+      /* Диагностика: шаги на старте — 1 колонка */
+      .dg-wc-steps{grid-template-columns:1fr;}
+
+      /* Диагностика: кнопки навигации */
+      .dg-btns{flex-direction:column-reverse;}
+      .dg-btn{width:100%;text-align:center;}
+
+      /* Диагностика: категории — скролл */
+      .dg-cat-nav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+        scrollbar-width:none;padding-bottom:4px;}
+      .dg-cat-nav::-webkit-scrollbar{display:none;}
+      .dg-cn{flex-shrink:0;}
+
+      /* Диагностика: карточка */
+      .dg-card{padding:18px 16px;}
+
+      /* Пакеты */
+      .pkg-h{padding:16px 16px 12px;}
+      .pkg-b{padding:14px 16px;}
+      .pkg-ft{padding:12px 16px;}
+      .pkg-eng{padding:8px 16px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="ax-badge">АКСЕЛЕРАТОР</div>
+    <div class="sb-sko"><div class="sko-dot"></div><span>Сколково</span></div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-section">Навигация</div>
+    <button class="nb active" onclick="goPage('dash')">
+      <i class="ti ti-dashboard"></i><span>Дашборд</span>
+    </button>
+    <button class="nb" onclick="goPage('diag')">
+      <i class="ti ti-stethoscope"></i><span>Диагностика</span>
+    </button>
+    <button class="nb" onclick="goPage('materials')">
+      <i class="ti ti-books"></i><span>Материалы</span>
+    </button>
+    <button class="nb" onclick="goPage('services')">
+      <i class="ti ti-apps"></i><span>Сервисы</span>
+    </button>
+    <button class="nb" onclick="goPage('orders')">
+      <i class="ti ti-shopping-cart"></i><span>Заказы</span>
+      <span class="badge" id="orders-badge">0</span>
+    </button>
+    <div class="nav-section">Аккаунт</div>
+    <button class="nb" onclick="goPage('settings')">
+      <i class="ti ti-settings"></i><span>Настройки</span>
+    </button>
+  </nav>
+
+  <div class="sb-user">
+    <div class="u-row">
+      <div class="av" id="user-avatar">АИ</div>
+      <div class="u-info">
+        <div class="u-name" id="user-name">Загрузка...</div>
+        <div class="u-role">Вендор</div>
+      </div>
+      <button class="btn-logout" onclick="AuthLogout()" title="Выйти">
+        <i class="ti ti-logout" style="font-size:15px"></i>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <header class="topbar">
+    <div class="tb-title" id="page-title">Дашборд</div>
+    <div class="tb-right">
+      <span class="pill pg"><i class="ti ti-building" style="font-size:12px"></i>Участник</span>
+      <div class="notif-wrap" id="notif-wrap">
+        <button class="notif-btn" id="notif-btn" onclick="toggleNotifPanel()" title="Уведомления">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+        </button>
+        <div class="notif-panel" id="notif-panel" style="display:none">
+          <div class="notif-head">
+            <span>Уведомления</span>
+            <button onclick="Notify.clear(); renderNotifPanel()" style="background:none;border:none;font-size:11px;color:var(--txt2);cursor:pointer;touch-action:manipulation">Очистить</button>
+          </div>
+          <div class="notif-list" id="notif-list"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ДАШБОРД -->
+    <div class="page active" id="page-dash">
+      <div class="dash-hero">
+        <div class="ph-label">Личный кабинет вендора</div>
+        <div class="ph-t">Добро пожаловать, <span id="dash-company">...</span>!</div>
+        <div class="ph-sub">Программа Акселератор × Сколково — Channel Readiness</div>
+      </div>
+
+      <div class="steps">
+        <div class="step done">
+          <div class="step-n">1</div>
+          <div class="step-title">Регистрация</div>
+          <div class="step-sub">Аккаунт создан</div>
+        </div>
+        <div class="step active">
+          <div class="step-n">2</div>
+          <div class="step-title">Знакомство с Акселератором</div>
+          <div class="step-sub">Запланируйте встречу</div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-title">Аудит готовности</div>
+          <div class="step-sub">Оцените зрелость продукта</div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-title">Запуск в канале</div>
+          <div class="step-sub">Первые партнёрские продажи</div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="sc-icon">📋</div>
+          <div class="sc-label">Активных заказов</div>
+          <div class="sc-val" id="dash-orders-count">0</div>
+          <div class="sc-sub">Сервисов оформлено</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon">📅</div>
+          <div class="sc-label">Дата регистрации</div>
+          <div class="sc-val" id="dash-reg-date" style="font-size:18px">—</div>
+          <div class="sc-sub">В программе Акселератор × Сколково</div>
+        </div>
+      </div>
+
+      <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);padding:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px">Быстрые действия</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-p" onclick="goPage('services')">
+            <i class="ti ti-apps" style="font-size:14px"></i>Каталог сервисов
+          </button>
+          <button class="btn btn-o" onclick="goPage('orders')">
+            <i class="ti ti-shopping-cart" style="font-size:14px"></i>Мои заказы
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- СЕРВИСЫ -->
+    <div class="page" id="page-services">
+      <div class="page-hd">
+        <h2>Каталог сервисов</h2>
+        <p>Консалтинговые пакеты и отдельные услуги от экспертов Акселератора</p>
+      </div>
+
+      <!-- Вкладки -->
+      <div class="svc-tabs">
+        <button class="svc-tab active" id="tab-pkgs"    onclick="switchSvcTab('pkgs')">Пакеты</button>
+        <button class="svc-tab"        id="tab-partner" onclick="switchSvcTab('partner')">Партнёрская программа</button>
+        <button class="svc-tab"        id="tab-svcs"    onclick="switchSvcTab('svcs')">Услуги à la carte</button>
+      </div>
+
+      <!-- ── Вкладка: Пакеты ──────────────────────────────────────────────── -->
+      <div id="svc-pkgs-section">
+        <div class="sf">
+          <button class="fb pkg-filters fa" onclick="fltPkg(this,'all')">Все</button>
+          <button class="fb pkg-filters" onclick="fltPkg(this,'p1')">Диагностика</button>
+          <button class="fb pkg-filters" onclick="fltPkg(this,'p2')">Аудит</button>
+          <button class="fb pkg-filters" onclick="fltPkg(this,'p3')">Упаковка</button>
+        </div>
+
+        <div id="packages-grid" class="pkg-g">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">
+            <i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i>
+          </div>
+        </div>
+
+        <!-- Сравнение пакетов -->
+        <div class="cmp-wrap">
+          <div class="cmp-lbl">Сравнение пакетов</div>
+          <div class="cmp-card">
+            <div style="overflow-x:auto">
+              <table class="cmp">
+                <thead>
+                  <tr>
+                    <th style="width:42%">Что входит</th>
+                    <th>Диагностика<br><span style="font-size:10px;font-weight:400;color:var(--green)">Бесплатно</span></th>
+                    <th>Аудит<br><span style="font-size:10px;font-weight:400;color:var(--teal)">от 100 000 ₽</span></th>
+                    <th>Упаковка<br><span style="font-size:10px;font-weight:400;color:var(--blue)">от 300 000 ₽</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Образовательные материалы о дистрибуции</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Чек-лист самооценки готовности</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Онбординг-встреча с Акселератором (до 1 ч.)</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Детальный аудит продукта с отчётом</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Анализ конкурентов в партнёрском канале</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Дорожная карта устранения пробелов</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Рабочие сессии с экспертами Акселератора</td><td><i class="ti ti-minus cmp-n"></i></td><td><span class="cmp-num">2-3</span></td><td><span class="cmp-num">5+</span></td></tr>
+                  <tr><td>Разработка УТП и позиционирования</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Партнёрская программа и one-pager</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Маркетинговые и обучающие материалы</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr style="background:var(--sur2)"><td style="font-weight:700;color:var(--navy)">Стоимость (ориентировочная)</td><td><span class="cmp-pr" style="color:var(--green)">Бесплатно</span></td><td><span class="cmp-pr">от 100 тыс. ₽</span></td><td><span class="cmp-pr">от 300 тыс. ₽</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Вкладка: Партнёрская программа ──────────────────────────────── -->
+      <div id="svc-partner-section" style="display:none">
+
+        <!-- Преамбула -->
+        <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+             padding:20px 24px;margin-bottom:20px;">
+          <div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;
+               color:var(--navy);margin-bottom:8px;">Разработка и аудит партнёрской программы</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:1.6;max-width:720px;">
+            Помогаем вендорам выстроить прозрачную и юридически безопасную систему работы
+            с партнёрским каналом: от матрицы скидок до защиты сделок без рисков ФАС.
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);">
+              <i class="ti ti-shield-check" style="color:var(--green);font-size:14px;"></i>
+              Система защиты сделок без рисков ФАС
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);">
+              <i class="ti ti-math-function" style="color:var(--teal);font-size:14px;"></i>
+              Индивидуальная матрица скидок
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);">
+              <i class="ti ti-file-certificate" style="color:var(--blue);font-size:14px;"></i>
+              Программа как публичная оферта
+            </div>
+          </div>
+        </div>
+
+        <!-- Карточки пакетов -->
+        <div class="pkg-g" id="partner-grid">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">
+            <i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i>
+          </div>
+        </div>
+
+        <!-- Сравнение -->
+        <div class="cmp-wrap">
+          <div class="cmp-lbl">Сравнение пакетов</div>
+          <div class="cmp-card">
+            <div style="overflow-x:auto">
+              <table class="cmp">
+                <thead>
+                  <tr>
+                    <th style="width:48%">Что входит</th>
+                    <th>Старт<br><span style="font-size:10px;font-weight:400;color:var(--txt2)">3–4 дня</span></th>
+                    <th>Профессиональный<br><span style="font-size:10px;font-weight:400;color:var(--teal)">7–12 дней</span></th>
+                    <th>Премиум<br><span style="font-size:10px;font-weight:400;color:var(--green)">12–20 дней</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Адаптация шаблона под реквизиты и продукт</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td></tr>
+                  <tr><td>Полная разработка программы с нуля</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Форма регистрации и защиты сделки</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Матрица скидок под продукт и конкуренцию</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Система защиты сделок (безопасно для ФАС)</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Правила ответственности за демпинг и фиктивные регистрации</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Стратегические рекомендации по развитию канала</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>1 месяц консультационной поддержки после запуска</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Корректировка пунктов по реальной практике</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr style="background:var(--sur2)"><td style="font-weight:700;color:var(--navy)">Стоимость</td>
+                    <td><span class="cmp-pr">По запросу</span></td>
+                    <td><span class="cmp-pr" style="color:var(--blue)">По запросу</span></td>
+                    <td><span class="cmp-pr" style="color:var(--green)">По запросу</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Вкладка: Услуги à la carte ────────────────────────────────────── -->
+      <div id="svc-svcs-section" style="display:none">
+        <div class="sf">
+          <button class="fb svc-filters fa" onclick="fltSvc(this,'all')">Все</button>
+          <button class="fb svc-filters" onclick="fltSvc(this,'diag')">Диагностика</button>
+          <button class="fb svc-filters" onclick="fltSvc(this,'audit')">Аудит</button>
+          <button class="fb svc-filters" onclick="fltSvc(this,'pack')">Упаковка</button>
+        </div>
+        <div id="services-grid" class="svc-g">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--txt2)">
+            <i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ЗАКАЗЫ -->
+    <div class="page" id="page-orders">
+      <div class="page-hd">
+        <h2>Мои заказы</h2>
+        <p>История заказанных сервисов и их статусы</p>
+      </div>
+      <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden;">
+        <div id="orders-table-container" style="padding:20px;text-align:center;color:var(--txt2)">
+          Загрузка заказов...
+        </div>
+      </div>
+    </div>
+
+    <!-- МАТЕРИАЛЫ -->
+    <div class="page" id="page-materials">
+      <div class="page-hd">
+        <h2>Учебные материалы</h2>
+        <p>Видео, чек-листы, шаблоны и кейсы по программе Акселератор × Сколково</p>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" class="mat-filters-wrap">
+        <button class="fb mat-filters fa" onclick="fltMat(this,'all')">Все</button>
+        <button class="fb mat-filters" onclick="fltMat(this,'diag')">Диагностика</button>
+        <button class="fb mat-filters" onclick="fltMat(this,'audit')">Аудит</button>
+        <button class="fb mat-filters" onclick="fltMat(this,'pack')">Упаковка</button>
+        <button class="fb mat-filters" onclick="fltMat(this,'skolkovo')">Полезное от Сколково</button>
+      </div>
+
+      <div id="materials-grid-wrap" style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden">
+        <div id="materials-grid">
+          <div style="padding:40px;text-align:center;color:var(--txt2)">Загрузка...</div>
+        </div>
+      </div>
+
+      <div id="skolkovo-course" style="display:none"></div>
+    </div>
+
+
+    <!-- ДИАГНОСТИКА -->
+    <div class="page" id="page-diag">
+      <div class="page-hd">
+        <h2>Диагностика вендора</h2>
+        <p>Самооценка готовности к партнёрскому каналу — 10-12 минут, 13 критериев</p>
+      </div>
+      <div class="diag-wrap">
+        <div class="dg-prog">
+          <div class="dg-prog-track">
+            <div class="dg-prog-line"></div>
+            <div class="dg-prog-fill" id="dg-pf" style="width:0%"></div>
+            <div class="dg-prog-step active" id="dg-ps0"><div class="dg-prog-dot">1</div><div class="dg-prog-lbl">Старт</div></div>
+            <div class="dg-prog-step" id="dg-ps1"><div class="dg-prog-dot">2</div><div class="dg-prog-lbl">Фильтр</div></div>
+            <div class="dg-prog-step" id="dg-ps2"><div class="dg-prog-dot">3</div><div class="dg-prog-lbl">Оценка</div></div>
+            <div class="dg-prog-step" id="dg-ps3"><div class="dg-prog-dot">4</div><div class="dg-prog-lbl">Результат</div></div>
+          </div>
+        </div>
+        <div class="dg-scr on" id="dg-s0"><div class="dg-card">
+          <div class="dg-wc-hero">
+            <h1>Готов ли ваш продукт к продажам через партнёрский канал?</h1>
+            <p>Пройдите самодиагностику и узнайте, насколько ваш продукт готов к работе с реселлерами. Результат — конкретный балл и рекомендации по каждой категории.</p>
+            <div class="dg-wc-tags">
+              <span class="dg-tag dg-tag-bl">10-12 минут</span><span class="dg-tag dg-tag-bl">13 критериев</span>
+              <span class="dg-tag dg-tag-gn">Бесплатно</span><span class="dg-tag dg-tag-gn">Результат сразу</span>
+            </div>
+          </div>
+          <div class="dg-wc-steps">
+            <div class="dg-ws"><div class="dg-ws-ic"><i class="ti ti-filter" style="color:var(--teal);font-size:26px"></i></div><div class="dg-ws-tt">Базовый фильтр</div><div class="dg-ws-tx">5 вопросов о продукте и компании</div></div>
+            <div class="dg-ws"><div class="dg-ws-ic"><i class="ti ti-chart-bar" style="color:var(--teal);font-size:26px"></i></div><div class="dg-ws-tt">Оценка</div><div class="dg-ws-tx">13 критериев по 5 ключевым категориям</div></div>
+            <div class="dg-ws"><div class="dg-ws-ic"><i class="ti ti-target" style="color:var(--green);font-size:26px"></i></div><div class="dg-ws-tt">Результат</div><div class="dg-ws-tx">Балл, разбивка и рекомендации</div></div>
+          </div>
+          <div class="dg-btns" style="justify-content:center"><button class="dg-btn dg-btn-p" onclick="dGo(1)">Начать диагностику <i class="ti ti-arrow-right" style="font-size:14px"></i></button></div>
+        </div></div>
+        <div class="dg-scr" id="dg-s1"><div class="dg-card">
+          <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:var(--teal)">Шаг 1 из 2</div><div><div class="dg-cat-ttl">Базовый фильтр</div><div class="dg-cat-sub">Проверяем соответствие минимальным требованиям для работы с дистрибьютором</div></div></div>
+          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">1</span>Что представляет собой ваш продукт?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">Программное обеспечение (SaaS, on-premise, ПО собственной разработки)</span></label><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">IT-оборудование или программно-аппаратный комплекс</span></label><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">IT-платформа или облачный сервис (IaaS, PaaS)</span></label><label class="dg-opt"><input type="radio" name="dg1" value="warn"><span class="dg-opt-txt">IT-услуги или консалтинг <span class="dg-badge dg-badge-w">как правило не дистрибутируется</span></span></label><label class="dg-opt stop"><input type="radio" name="dg1" value="fail"><span class="dg-opt-txt">Не IT-продукт <span class="dg-badge dg-badge-s">не входит в канал Акселератора</span></span></label></div></div>
+          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">2</span>Кто ваши конечные покупатели?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Корпоративные клиенты (B2B)</span></label><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Государственные заказчики (B2G)</span></label><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Корпоративные и государственные (B2B + B2G)</span></label><label class="dg-opt stop"><input type="radio" name="dg2" value="fail"><span class="dg-opt-txt">Физические лица (B2C) <span class="dg-badge dg-badge-s">канал Акселератора ориентирован на корпоративный рынок</span></span></label></div></div>
+          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">3</span>Кому принадлежат права на ваш продукт?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg3" value="ok"><span class="dg-opt-txt">Нам — исключительные права оформлены на нашу компанию</span></label><label class="dg-opt"><input type="radio" name="dg3" value="warn"><span class="dg-opt-txt">Частично нам, частично третьим лицам <span class="dg-badge dg-badge-w">требует уточнения</span></span></label><label class="dg-opt stop"><input type="radio" name="dg3" value="fail"><span class="dg-opt-txt">Права не оформлены <span class="dg-badge dg-badge-s">блокирующий критерий</span></span></label></div></div>
+          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">4</span>Зарегистрировано ли юридическое лицо в России?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg4" value="ok"><span class="dg-opt-txt">Да, зарегистрировано российское юрлицо (ООО, АО, ИП)</span></label><label class="dg-opt"><input type="radio" name="dg4" value="warn"><span class="dg-opt-txt">В процессе регистрации <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label><label class="dg-opt"><input type="radio" name="dg4" value="warn"><span class="dg-opt-txt">Нет <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label></div></div>
+          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">5</span>На какой стадии готовности ваш продукт?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg5" value="ok"><span class="dg-opt-txt">Готовый продукт с платящими клиентами</span></label><label class="dg-opt"><input type="radio" name="dg5" value="ok"><span class="dg-opt-txt">MVP готов и проходит тестирование с реальными пользователями</span></label><label class="dg-opt"><input type="radio" name="dg5" value="warn"><span class="dg-opt-txt">MVP в разработке <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label><label class="dg-opt stop"><input type="radio" name="dg5" value="fail_soft"><span class="dg-opt-txt">Только концепция / идея без прототипа <span class="dg-badge dg-badge-w">пока рано</span></span></label></div></div>
+          <div class="dg-fail-box" id="dg-fail-box" style="background:var(--dg-red-lt);border:1.5px solid #E08080"><div class="dg-fail-title" style="color:var(--dg-red)">Есть блокирующий критерий</div><div class="dg-fail-txt" id="dg-fail-msg" style="color:#802020"></div></div>
+          <div class="dg-btns"><button class="dg-btn dg-btn-s" onclick="dGo(0)">Назад</button><button class="dg-btn dg-btn-p" id="dg-gate-btn" onclick="dGateNext()" disabled>Перейти к оценке</button></div>
+        </div></div>
+        <div class="dg-scr" id="dg-s2"><div class="dg-card">
+          <div class="dg-cat-nav"><div class="dg-cn act" id="dg-cn0">1. Рынок</div><div class="dg-cn" id="dg-cn1">2. Продукт</div><div class="dg-cn" id="dg-cn2">3. Команда</div><div class="dg-cn" id="dg-cn3">4. Канальный потенциал</div><div class="dg-cn" id="dg-cn4">5. Готовность к каналу</div></div>
+          <div id="dg-c0">
+            <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:#1B5E8B">Категория 1</div><div><div class="dg-cat-ttl">Рынок и бизнес-трекшн</div><div class="dg-cat-sub">Макс. 20 баллов</div></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Насколько чётко сформулировано ценностное предложение (CVP) вашего продукта? <span class="dg-wt">вес x2</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq1a" value="1"><span class="dg-sn">1</span><span class="dg-st">Затрудняемся чётко сформулировать — нет конкретики</span></label><label class="dg-sopt"><input type="radio" name="dq1a" value="2"><span class="dg-sn">2</span><span class="dg-st">Проблема понятна, но CVP расплывчато</span></label><label class="dg-sopt"><input type="radio" name="dq1a" value="3"><span class="dg-sn">3</span><span class="dg-st">Чёткое CVP с дифференциацией, но аргументация не всегда убедительна</span></label><label class="dg-sopt"><input type="radio" name="dq1a" value="4"><span class="dg-sn">4</span><span class="dg-st">Сильное CVP, подтверждено пилотами или LOI от клиентов</span></label><label class="dg-sopt"><input type="radio" name="dq1a" value="5"><span class="dg-sn">5</span><span class="dg-st">Исключительно чёткое CVP, подтверждено платящими клиентами, преимущество измеримо</span></label></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Как вы оцениваете объём целевого рынка? <span class="dg-wt">вес x1</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq1b" value="1"><span class="dg-sn">1</span><span class="dg-st">Рынок не определён или оценка нереалистична</span></label><label class="dg-sopt"><input type="radio" name="dq1b" value="2"><span class="dg-sn">2</span><span class="dg-st">До 500 млн руб. — узкая ниша</span></label><label class="dg-sopt"><input type="radio" name="dq1b" value="3"><span class="dg-sn">3</span><span class="dg-st">500 млн - 2 млрд руб. — умеренный потенциал</span></label><label class="dg-sopt"><input type="radio" name="dq1b" value="4"><span class="dg-sn">4</span><span class="dg-st">Более 2 млрд руб. — значительный рынок с данными</span></label><label class="dg-sopt"><input type="radio" name="dq1b" value="5"><span class="dg-sn">5</span><span class="dg-st">Более 5 млрд руб., рост более 20%/год — детальная обоснованная оценка</span></label></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Какова текущая годовая выручка (ARR)? <span class="dg-wt">вес x1</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq1c" value="1"><span class="dg-sn">1</span><span class="dg-st">Выручки нет — только гранты или инвестиции</span></label><label class="dg-sopt"><input type="radio" name="dq1c" value="2"><span class="dg-sn">2</span><span class="dg-st">До 5 млн руб. — единичные пилоты</span></label><label class="dg-sopt"><input type="radio" name="dq1c" value="3"><span class="dg-sn">3</span><span class="dg-st">5-20 млн руб. — несколько платящих клиентов</span></label><label class="dg-sopt"><input type="radio" name="dq1c" value="4"><span class="dg-sn">4</span><span class="dg-st">20-50 млн руб. — устойчивый рост</span></label><label class="dg-sopt"><input type="radio" name="dq1c" value="5"><span class="dg-sn">5</span><span class="dg-st">Более 50 млн руб. — значимая клиентская база</span></label></div></div>
+            <div class="dg-btns"><button class="dg-btn dg-btn-p" onclick="dCatNext(0)">Следующая категория</button></div>
+          </div>
+          <div id="dg-c1" style="display:none">
+            <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:var(--teal)">Категория 2</div><div><div class="dg-cat-ttl">Продукт и технологическая зрелость</div><div class="dg-cat-sub">Макс. 30 баллов</div></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">На какой стадии зрелости находится ваш продукт? <span class="dg-wt">вес x3 — ключевой</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq2a" value="1"><span class="dg-sn">1</span><span class="dg-st">Только концепция — MVP ещё не готов</span></label><label class="dg-sopt"><input type="radio" name="dq2a" value="2"><span class="dg-sn">2</span><span class="dg-st">MVP в разработке, ещё не тестировался с клиентами</span></label><label class="dg-sopt"><input type="radio" name="dq2a" value="3"><span class="dg-sn">3</span><span class="dg-st">MVP протестирован с реальными пользователями, есть пилот</span></label><label class="dg-sopt"><input type="radio" name="dq2a" value="4"><span class="dg-sn">4</span><span class="dg-st">Коммерческий продукт с платящими клиентами</span></label><label class="dg-sopt"><input type="radio" name="dq2a" value="5"><span class="dg-sn">5</span><span class="dg-st">Зрелый продукт с базой, референсами, SLA и документацией</span></label></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Насколько уникален продукт относительно конкурентов? <span class="dg-wt">вес x2</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq2b" value="1"><span class="dg-sn">1</span><span class="dg-st">На рынке есть прямые аналоги без значимых отличий</span></label><label class="dg-sopt"><input type="radio" name="dq2b" value="2"><span class="dg-sn">2</span><span class="dg-st">Есть отличия, но незначительные и легко копируемые</span></label><label class="dg-sopt"><input type="radio" name="dq2b" value="3"><span class="dg-sn">3</span><span class="dg-st">Чёткие технические отличия с умеренным барьером входа</span></label><label class="dg-sopt"><input type="radio" name="dq2b" value="4"><span class="dg-sn">4</span><span class="dg-st">Технологическое или патентное преимущество</span></label><label class="dg-sopt"><input type="radio" name="dq2b" value="5"><span class="dg-sn">5</span><span class="dg-st">Уникальное решение с IP-защитой и сетевыми эффектами</span></label></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Совместимость с российской ИТ-инфраструктурой? <span class="dg-wt">вес x1</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq2c" value="1"><span class="dg-sn">1</span><span class="dg-st">Не работает на отечественных ОС и СУБД</span></label><label class="dg-sopt"><input type="radio" name="dq2c" value="2"><span class="dg-sn">2</span><span class="dg-st">Совместимость не проверялась</span></label><label class="dg-sopt"><input type="radio" name="dq2c" value="3"><span class="dg-sn">3</span><span class="dg-st">Частичная совместимость с 1-2 российскими компонентами</span></label><label class="dg-sopt"><input type="radio" name="dq2c" value="4"><span class="dg-sn">4</span><span class="dg-st">Подтверждена совместимость с Astra Linux и PostgresPro</span></label><label class="dg-sopt"><input type="radio" name="dq2c" value="5"><span class="dg-sn">5</span><span class="dg-st">Полная совместимость + сертификаты ФСТЭК/ФСБ или реестр Минцифры</span></label></div></div>
+            <div class="dg-btns"><button class="dg-btn dg-btn-s" onclick="dCatBack(1)">Назад</button><button class="dg-btn dg-btn-p" onclick="dCatNext(1)">Следующая категория</button></div>
+          </div>
+          <div id="dg-c2" style="display:none">
+            <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:#4A7A30">Категория 3</div><div><div class="dg-cat-ttl">Команда</div><div class="dg-cat-sub">Макс. 10 баллов</div></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Как укомплектована ваша команда? <span class="dg-wt">вес x2</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq3" value="1"><span class="dg-sn">1</span><span class="dg-st">Один фаундер, ключевые роли не закрыты</span></label><label class="dg-sopt"><input type="radio" name="dq3" value="2"><span class="dg-sn">2</span><span class="dg-st">Команда частично сформирована — есть значимые пробелы</span></label><label class="dg-sopt"><input type="radio" name="dq3" value="3"><span class="dg-sn">3</span><span class="dg-st">Основные роли закрыты (CEO + CTO), есть техническая и коммерческая экспертиза</span></label><label class="dg-sopt"><input type="radio" name="dq3" value="4"><span class="dg-sn">4</span><span class="dg-st">Сильная команда с релевантным B2B-опытом</span></label><label class="dg-sopt"><input type="radio" name="dq3" value="5"><span class="dg-sn">5</span><span class="dg-st">Полностью укомплектованная команда с опытом в корпоративном IT</span></label></div></div>
+            <div class="dg-btns"><button class="dg-btn dg-btn-s" onclick="dCatBack(2)">Назад</button><button class="dg-btn dg-btn-p" onclick="dCatNext(2)">Следующая категория</button></div>
+          </div>
+          <div id="dg-c3" style="display:none">
+            <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:#B06000">Категория 4</div><div><div class="dg-cat-ttl">Потенциал в партнёрском канале</div><div class="dg-cat-sub">Макс. 25 баллов</div></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Насколько ваш продукт дополняет другие корпоративные IT-решения? <span class="dg-wt">вес x3 — ключевой</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq4a" value="1"><span class="dg-sn">1</span><span class="dg-st">Продукт изолирован — реселлер не может продать его вместе с чем-то ещё</span></label><label class="dg-sopt"><input type="radio" name="dq4a" value="2"><span class="dg-sn">2</span><span class="dg-st">Теоретическая связь с другими решениями есть, но конкретных сценариев нет</span></label><label class="dg-sopt"><input type="radio" name="dq4a" value="3"><span class="dg-sn">3</span><span class="dg-st">Есть 1-2 чёткие точки интеграции — совместная продажа возможна</span></label><label class="dg-sopt"><input type="radio" name="dq4a" value="4"><span class="dg-sn">4</span><span class="dg-st">Чёткий up-sell / cross-sell сценарий — корзина сделки растёт на 20%+</span></label><label class="dg-sopt"><input type="radio" name="dq4a" value="5"><span class="dg-sn">5</span><span class="dg-st">Стратегически дополняет несколько категорий решений</span></label></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Закрывает ли ваш продукт реальный пробел, которого нет у конкурентов? <span class="dg-wt">вес x2</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq4b" value="1"><span class="dg-sn">1</span><span class="dg-st">Продукт дублирует существующие решения</span></label><label class="dg-sopt"><input type="radio" name="dq4b" value="2"><span class="dg-sn">2</span><span class="dg-st">Дополнительная ценность незначительна</span></label><label class="dg-sopt"><input type="radio" name="dq4b" value="3"><span class="dg-sn">3</span><span class="dg-st">Закрывает реальную нишу, но не стратегическую</span></label><label class="dg-sopt"><input type="radio" name="dq4b" value="4"><span class="dg-sn">4</span><span class="dg-st">Закрывает подтверждённый рыночный пробел</span></label><label class="dg-sopt"><input type="radio" name="dq4b" value="5"><span class="dg-sn">5</span><span class="dg-st">Стратегически расширяет предложение — позволяет выигрывать сделки</span></label></div></div>
+            <div class="dg-btns"><button class="dg-btn dg-btn-s" onclick="dCatBack(3)">Назад</button><button class="dg-btn dg-btn-p" onclick="dCatNext(3)">Следующая категория</button></div>
+          </div>
+          <div id="dg-c4" style="display:none">
+            <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:var(--navy)">Категория 5</div><div><div class="dg-cat-ttl">Готовность к партнёрскому каналу</div><div class="dg-cat-sub">Макс. 15 баллов</div></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Есть ли у вас материалы, с которыми реселлер может работать самостоятельно? <span class="dg-wt">вес x1</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq5a" value="1"><span class="dg-sn">1</span><span class="dg-st">Нет партнёрских материалов</span></label><label class="dg-sopt"><input type="radio" name="dq5a" value="2"><span class="dg-sn">2</span><span class="dg-st">Базовые материалы не адаптированы под канальные продажи</span></label><label class="dg-sopt"><input type="radio" name="dq5a" value="3"><span class="dg-sn">3</span><span class="dg-st">Есть питч-дек и прайс для партнёра</span></label><label class="dg-sopt"><input type="radio" name="dq5a" value="4"><span class="dg-sn">4</span><span class="dg-st">Полный комплект: питч, прайс, техлист, FAQ, кейсы</span></label><label class="dg-sopt"><input type="radio" name="dq5a" value="5"><span class="dg-sn">5</span><span class="dg-st">Всё вышеперечисленное + онлайн-демо и обучающие материалы</span></label></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Есть ли финансовая модель для реселлера (маржа, ROI)? <span class="dg-wt">вес x1</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq5b" value="1"><span class="dg-sn">1</span><span class="dg-st">Нет — маржа и условия для реселлера не определены</span></label><label class="dg-sopt"><input type="radio" name="dq5b" value="2"><span class="dg-sn">2</span><span class="dg-st">Маржа обозначена, финансовая модель не просчитана</span></label><label class="dg-sopt"><input type="radio" name="dq5b" value="3"><span class="dg-sn">3</span><span class="dg-st">Рабочая модель: маржа партнёра более 15%</span></label><label class="dg-sopt"><input type="radio" name="dq5b" value="4"><span class="dg-sn">4</span><span class="dg-st">Финмодель на 12 месяцев с ROI для партнёра</span></label><label class="dg-sopt"><input type="radio" name="dq5b" value="5"><span class="dg-sn">5</span><span class="dg-st">Детальная финмодель со сценарным анализом — готова к передаче</span></label></div></div>
+            <div class="dg-sq"><div class="dg-sq-lbl">Каков средний чек одной сделки? <span class="dg-wt">вес x1</span></div><div class="dg-sopts"><label class="dg-sopt"><input type="radio" name="dq5c" value="1"><span class="dg-sn">1</span><span class="dg-st">Менее 50 тыс. руб. — нерентабельно для двухуровневой дистрибуции</span></label><label class="dg-sopt"><input type="radio" name="dq5c" value="2"><span class="dg-sn">2</span><span class="dg-st">50-150 тыс. руб. — нижняя граница рентабельности</span></label><label class="dg-sopt"><input type="radio" name="dq5c" value="3"><span class="dg-sn">3</span><span class="dg-st">150-500 тыс. руб. — приемлемый диапазон</span></label><label class="dg-sopt"><input type="radio" name="dq5c" value="4"><span class="dg-sn">4</span><span class="dg-st">500 тыс. - 2 млн руб. — хороший чек</span></label><label class="dg-sopt"><input type="radio" name="dq5c" value="5"><span class="dg-sn">5</span><span class="dg-st">Более 2 млн руб. — высокий ACV</span></label></div></div>
+            <div class="dg-btns"><button class="dg-btn dg-btn-s" onclick="dCatBack(4)">Назад</button><button class="dg-btn dg-btn-p" onclick="dShowResult()">Получить результат <i class="ti ti-arrow-right" style="font-size:13px"></i></button></div>
+          </div>
+        </div></div>
+        <div class="dg-scr" id="dg-s3"><div class="dg-card">
+          <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:var(--navy)">Результат</div><div><div class="dg-cat-ttl">Ваша готовность к дистрибуции</div><div class="dg-cat-sub">13 критериев · 5 категорий · макс. 100 баллов</div></div></div>
+          <div class="dg-ring-wrap"><svg width="150" height="150" viewBox="0 0 150 150"><circle cx="75" cy="75" r="62" fill="none" stroke="#EDF4FC" stroke-width="13"/><circle cx="75" cy="75" r="62" fill="none" stroke="var(--teal)" stroke-width="13" stroke-dasharray="389.56" stroke-dashoffset="389.56" stroke-linecap="round" id="dg-arc"/></svg><div class="dg-ring-inner"><div class="dg-ring-num" id="dg-rnum">0</div><div class="dg-ring-max">из 100</div></div></div>
+          <div class="dg-res-lvl" id="dg-rlvl"></div>
+          <div class="dg-res-desc" id="dg-rdesc"></div>
+          <div class="dg-bar-section" id="dg-bars"></div>
+          <div class="dg-recs-wrap" id="dg-recs"></div>
+          <div class="dg-pkg-block" id="dg-pkg"></div>
+          <div class="dg-note">Диагностика носит ориентировочный характер и основана на методологии оценки вендоров Акселератора.</div>
+          <div class="dg-btns" style="margin-top:20px;justify-content:space-between">
+            <button class="dg-btn dg-btn-s" onclick="dRestart()">Пройти заново</button>
+            <button class="btn btn-p" onclick="goPage('services')"><i class="ti ti-apps" style="font-size:13px"></i>К каталогу пакетов</button>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- НАСТРОЙКИ -->
+    <div class="page" id="page-settings">
+      <div class="page-hd">
+        <h2>Настройки аккаунта</h2>
+        <p>Данные вашей компании в программе Акселератор × Сколково</p>
+      </div>
+
+      <div class="set-section">
+        <div class="set-head">Данные юридического лица</div>
+        <div class="set-row">
+          <div class="set-k">Название компании</div>
+          <div class="set-v" id="set-company">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">ИНН организации</div>
+          <div class="set-v" id="set-inn">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Направление</div>
+          <div class="set-v" id="set-direction">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Стадия компании</div>
+          <div class="set-v" id="set-stage">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Резидент Сколково</div>
+          <div class="set-v" id="set-skolkovo">—</div>
+        </div>
+      </div>
+
+      <div class="set-section">
+        <div class="set-head">Аккаунт</div>
+        <div class="set-row">
+          <div class="set-k">Корпоративный email</div>
+          <div class="set-v" id="set-email">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Тариф</div>
+          <div class="set-v" id="set-tier">—</div>
+        </div>
+        <div class="set-row">
+          <div class="set-k">Дата регистрации</div>
+          <div class="set-v" id="set-reg-date">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-o" onclick="startTour()" style="touch-action:manipulation">
+          <i class="ti ti-map-2" style="font-size:13px"></i>Повторить тур
+        </button>
+        <button class="btn btn-g" onclick="AuthLogout()">
+          <i class="ti ti-logout" style="font-size:14px"></i>Выйти из аккаунта
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<script>
+// Page navigation
+const pageTitles = {
+  dash: 'Дашборд', diag: 'Диагностика вендора', materials: 'Учебные материалы',
+  services: 'Каталог сервисов', orders: 'Мои заказы', settings: 'Настройки'
+};
+
+window.goPage = function(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[id] || id;
+  document.querySelectorAll('.nb').forEach(b => {
+    if (b.getAttribute('onclick') === `goPage('${id}')`) b.classList.add('active');
+  });
+};
+
+
+// Diagnostics
+const DW={dq1a:2,dq1b:1,dq1c:1,dq2a:3,dq2b:2,dq2c:1,dq3:2,dq4a:3,dq4b:2,dq5a:1,dq5b:1,dq5c:1};
+const DCATQ=[['dq1a','dq1b','dq1c'],['dq2a','dq2b','dq2c'],['dq3'],['dq4a','dq4b'],['dq5a','dq5b','dq5c']];
+const DCATMAX=[20,30,10,25,15];
+const DCATNAME=['Рынок и трекшн','Продукт','Команда','Канальный потенциал','Готовность к каналу'];
+let dScr=0,dCur=0;
+window.dGo=function(n){
+  document.getElementById('dg-s'+dScr).classList.remove('on');dScr=n;
+  document.getElementById('dg-s'+n).classList.add('on');
+  const pcts=[0,33,66,100];
+  document.getElementById('dg-pf').style.width=pcts[n]+'%';
+  for(let i=0;i<4;i++){const el=document.getElementById('dg-ps'+i);el.classList.remove('active','done');if(i<n)el.classList.add('done');else if(i===n)el.classList.add('active');}
+  document.getElementById('page-diag').scrollIntoView({behavior:'smooth',block:'start'});
+};
+function dRefreshGate(){
+  const fb=document.getElementById('dg-fail-box'),fm=document.getElementById('dg-fail-msg'),btn=document.getElementById('dg-gate-btn');
+  const g1=document.querySelector('input[name=dg1]:checked'),g2=document.querySelector('input[name=dg2]:checked'),g3=document.querySelector('input[name=dg3]:checked'),g5=document.querySelector('input[name=dg5]:checked');
+  let fail=false,msg='';
+  if(g1?.value==='fail'){fail=true;msg='Продукты не из сферы IT не входят в партнёрский канал Акселератора.';}
+  else if(g2?.value==='fail'){fail=true;msg='Канал Акселератора ориентирован на корпоративный и государственный рынок. B2C-продукты не дистрибутируются.';}
+  else if(g3?.value==='fail'){fail=true;msg='Отсутствие оформленных прав на интеллектуальную собственность — блокирующее условие.';}
+  else if(g5?.value==='fail_soft'){fail=true;msg='На стадии концепции без прототипа диагностика преждевременна.';}
+  if(fail){fb.classList.add('on');fm.textContent=msg;btn.disabled=true;}
+  else{fb.classList.remove('on');btn.disabled=!['dg1','dg2','dg3','dg4','dg5'].every(n=>document.querySelector('input[name='+n+']:checked'));}
+}
+document.querySelectorAll('input[name^=dg]').forEach(r=>r.addEventListener('change',function(){
+  this.closest('.dg-opts').querySelectorAll('.dg-opt').forEach(o=>o.classList.remove('sel'));
+  this.closest('.dg-opt').classList.add('sel');dRefreshGate();
+}));
+window.dGateNext=function(){dGo(2);};
+window.dShowCat=function(i){
+  for(let j=0;j<5;j++){document.getElementById('dg-c'+j).style.display=j===i?'':'none';const cn=document.getElementById('dg-cn'+j);cn.classList.remove('act','done');if(j<i)cn.classList.add('done');else if(j===i)cn.classList.add('act');}dCur=i;
+};
+window.dCatNext=function(i){
+  if(!DCATQ[i].every(q=>document.querySelector('input[name='+q+']:checked'))){alert('Пожалуйста, ответьте на все вопросы.');return;}
+  if(i<4)dShowCat(i+1);
+};
+window.dCatBack=function(i){i>0?dShowCat(i-1):dGo(1);};
+document.querySelectorAll('input[name^=dq]').forEach(r=>r.addEventListener('change',function(){
+  this.closest('.dg-sopts').querySelectorAll('.dg-sopt').forEach(o=>o.classList.remove('sel'));
+  this.closest('.dg-sopt').classList.add('sel');
+}));
+function dGetV(q){const r=document.querySelector('input[name='+q+']:checked');return r?+r.value:0;}
+window.dShowResult=function(){
+  if(!DCATQ[4].every(q=>document.querySelector('input[name='+q+']:checked'))){alert('Пожалуйста, ответьте на все вопросы.');return;}
+  const sc={};Object.keys(DW).forEach(q=>sc[q]=dGetV(q)*DW[q]);
+  const catSc=DCATQ.map(qs=>qs.reduce((s,q)=>s+sc[q],0));
+  const total=catSc.reduce((s,v)=>s+v,0);
+  const arc=document.getElementById('dg-arc'),C=2*Math.PI*62;
+  setTimeout(()=>{arc.style.strokeDashoffset=C*(1-total/100);arc.style.transition='stroke-dashoffset 1.2s ease';},80);
+  let col,lvl,desc;
+  if(total>=70){col='var(--green)';lvl='Высокая готовность';desc='Продукт демонстрирует сильные показатели — есть хорошая база для разговора о дистрибуции.';}
+  else if(total>=45){col='var(--teal)';lvl='Средняя готовность';desc='Есть задел, но ряд категорий требует доработки. Правильная упаковка откроет путь к каналу.';}
+  else{col='#B06000';lvl='Начальная стадия';desc='Продукт или бизнес-модель нуждаются в серьёзной проработке перед выходом в канал.';}
+  arc.style.stroke=col;
+  document.getElementById('dg-rnum').textContent=total;document.getElementById('dg-rnum').style.color=col;
+  document.getElementById('dg-rlvl').textContent=lvl;document.getElementById('dg-rlvl').style.color=col;
+  document.getElementById('dg-rdesc').textContent=desc;
+  const bel=document.getElementById('dg-bars');
+  bel.innerHTML='<div class="dg-bar-title">Результат по категориям</div>';
+  catSc.forEach((sc2,i)=>{const pct=Math.round(sc2/DCATMAX[i]*100);const bc=pct>=70?'var(--green)':pct>=45?'var(--teal)':'#B06000';bel.innerHTML+=`<div class="dg-bar-row"><div class="dg-bar-lbl">${DCATNAME[i]}</div><div class="dg-bar-track"><div class="dg-bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="dg-bar-val" style="color:${bc}">${sc2}/${DCATMAX[i]}</div></div>`;});
+  const rl=document.getElementById('dg-recs');
+  rl.innerHTML='<div class="dg-recs-title">Рекомендации по категориям</div>';
+  const RD=[
+    {good:'Сильная рыночная позиция и трекшн — убедительный аргумент для реселлеров.',warn:'Укрепите CVP конкретными цифрами и кейсами.',bad:'Зафиксируйте ценностное предложение и проведите первые продажи.'},
+    {good:'Зрелый продукт с хорошей совместимостью — ключевое условие для дистрибуции.',warn:'Доработайте до коммерческой версии. Проверьте совместимость с отечественными ОС.',bad:'Требуется существенная доработка: минимум — работающий MVP с тестированием.'},
+    {good:'Команда укомплектована — партнёры видят надёжного вендора.',warn:'Усильте команду в области B2B-продаж или разработки.',bad:'Необходимо сформировать полноценную команду.'},
+    {good:'Продукт хорошо встраивается в экосистему IT-решений.',warn:'Проработайте сценарии up-sell и cross-sell. Подготовьте аргументы для реселлеров.',bad:'Без чёткого канального потенциала реселлерам сложно продавать ваш продукт.'},
+    {good:'Канальная упаковка готова — реселлер может начать продажи самостоятельно.',warn:'Подготовьте полный партнёрский пакет: FAQ, кейсы, финмодель.',bad:'Необходима разработка канальной упаковки: условия, материалы, экономика сделки.'},
+  ];
+  catSc.forEach((sc2,i)=>{const pct=sc2/DCATMAX[i];let cls,ico,txt;if(pct>=.7){cls='dg-rec-ok';ico='✓';txt=RD[i].good;}else if(pct>=.45){cls='dg-rec-wn';ico='!';txt=RD[i].warn;}else{cls='dg-rec-bd';ico='×';txt=RD[i].bad;}rl.innerHTML+=`<div class="dg-rec ${cls}"><div class="dg-rec-ico">${ico}</div><div><div class="dg-rec-cat">${DCATNAME[i]}</div><div class="dg-rec-txt">${txt}</div></div></div>`;});
+  const pel=document.getElementById('dg-pkg');
+  let eyebrow,ptitle,desc2;
+  if(total>=70){pel.style.borderColor='var(--green)';pel.style.background='var(--gdim)';eyebrow='<span style="color:var(--green)">Следующий шаг</span>';ptitle='Ваши показатели говорят о хорошей готовности к каналу';desc2='Рекомендуем обратиться к менеджеру Акселератора для обсуждения возможностей сотрудничества.';}
+  else if(total>=45){pel.style.borderColor='var(--teal)';pel.style.background='var(--tdim)';eyebrow='<span style="color:var(--teal)">Рекомендованный шаг</span>';ptitle='Пакет «Упаковка»';desc2='Есть хорошая база, но для выхода в канал нужна коммерческая упаковка. Эксперты Акселератора помогут подготовить всё необходимое.';}
+  else{pel.style.borderColor='#B06000';pel.style.background='#FFF3DC';eyebrow='<span style="color:#B06000">Рекомендованный шаг</span>';ptitle='Пакет «Аудит»';desc2='Прежде чем выходить в канал, важно понять пробелы. Эксперты Акселератора проведут детальный аудит и дадут конкретный план.';}
+  pel.innerHTML=`<div class="dg-pkg-eyebrow">${eyebrow}</div><div class="dg-pkg-title">${ptitle}</div><div class="dg-pkg-desc">${desc2}</div>`;
+  dGo(3);
+};
+window.dRestart=function(){
+  document.querySelectorAll('input[name^=dg],input[name^=dq]').forEach(r=>r.checked=false);
+  document.querySelectorAll('.dg-opt,.dg-sopt').forEach(o=>o.classList.remove('sel'));
+  document.getElementById('dg-gate-btn').disabled=true;
+  document.getElementById('dg-fail-box').classList.remove('on');
+  dShowCat(0);dGo(0);
+};
+</script>
+
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/skolkovo.js"></script>
+</body>
+</html>

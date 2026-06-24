@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Акселератор × Сколково — Вход</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:#1e2849; --teal:#00b0bd; --green:#00b37d; --blue:#00aeef;
+      --bg:#f0f2f7; --sur:#fff; --bdr:rgba(30,40,73,.1);
+      --txt:#1e2849; --txt2:#6b7290; --r:12px; --rs:8px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Golos Text',sans-serif;background:var(--bg);min-height:100vh;}
+
+    .tb{position:fixed;top:0;left:0;right:0;height:64px;background:var(--navy);
+      display:flex;align-items:center;padding:0 24px;gap:12px;z-index:100;}
+    .ax-badge{background:var(--teal);color:#fff;font-family:'Unbounded',sans-serif;
+      font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;letter-spacing:.5px;}
+    .tb-sep{width:1px;height:24px;background:rgba(255,255,255,.18);}
+    .sko-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+    .tb-sko{display:flex;align-items:center;gap:8px;}
+    .tb-sko span{color:rgba(255,255,255,.8);font-size:13px;}
+
+    .wrap{display:flex;align-items:center;justify-content:center;
+      min-height:100vh;padding:80px 16px 32px;}
+    .card{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      width:100%;max-width:480px;overflow:hidden;box-shadow:0 4px 24px rgba(30,40,73,.08);}
+    .card-h{background:var(--navy);padding:28px 32px;}
+    .card-title{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;
+      color:#fff;margin-bottom:4px;}
+    .card-sub{font-size:12px;color:rgba(255,255,255,.55);}
+
+    .tabs{display:flex;border-bottom:1px solid var(--bdr);}
+    .tab{flex:1;padding:14px;font-size:13px;font-weight:600;text-align:center;
+      cursor:pointer;color:var(--txt2);border:none;background:transparent;
+      transition:all .2s;font-family:'Golos Text',sans-serif;touch-action:manipulation;}
+    .tab.active{color:var(--teal);border-bottom:2px solid var(--teal);}
+
+    .form-body{padding:24px 32px;}
+    .field{margin-bottom:16px;}
+    .label{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:5px;display:block;}
+    .label span{color:#c00;}
+    .input{width:100%;padding:10px 12px;border:1px solid var(--bdr);border-radius:var(--rs);
+      font-family:'Golos Text',sans-serif;font-size:13px;color:var(--txt);
+      background:#f7f8fb;transition:border .2s;}
+    .input:focus{outline:none;border-color:var(--teal);background:#fff;}
+    select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7290' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+    .hint{font-size:11px;color:var(--txt2);margin-top:4px;}
+    .check-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt);}
+    .check-row input{accent-color:var(--teal);width:15px;height:15px;}
+
+    .divider{height:1px;background:var(--bdr);margin:4px 0 16px;}
+    .btn-submit{width:100%;padding:12px;background:var(--teal);color:#fff;border:none;
+      border-radius:var(--rs);font-family:'Golos Text',sans-serif;font-size:14px;
+      font-weight:600;cursor:pointer;transition:background .2s;touch-action:manipulation;}
+    .btn-submit:hover{background:#00c9d8;}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;}
+
+    .disclaimer{font-size:11px;color:var(--txt2);text-align:center;margin-top:14px;line-height:1.5;}
+    .error-msg{background:rgba(200,0,0,.07);border:1px solid rgba(200,0,0,.2);
+      border-radius:var(--rs);padding:10px 14px;font-size:12px;color:#c00;
+      margin-bottom:16px;display:none;}
+    .error-msg.show{display:block;}
+    .reset-link-box{background:rgba(0,176,189,.06);border:1px solid rgba(0,176,189,.25);
+      border-radius:var(--rs);padding:14px;margin:14px 0;display:none;}
+    .reset-link-box.show{display:block;}
+    .reset-link-text{font-family:monospace;font-size:11px;word-break:break-all;
+      color:var(--navy);line-height:1.5;margin:6px 0 10px;}
+    .btn-copy{padding:5px 14px;background:none;border:1px solid var(--bdr);border-radius:6px;
+      font-family:'Golos Text',sans-serif;font-size:12px;cursor:pointer;color:var(--txt2);
+      transition:all .2s;}
+    .btn-copy:hover{border-color:var(--teal);color:var(--teal);}
+    .back-link{font-size:12px;color:var(--txt2);text-align:center;margin-top:14px;cursor:pointer;
+      display:block;touch-action:manipulation;}
+    .back-link:hover{color:var(--teal);}
+    .forgot-link{font-size:12px;color:var(--txt2);text-align:center;margin-top:10px;
+      cursor:pointer;display:block;touch-action:manipulation;}
+    .forgot-link:hover{color:var(--teal);}
+    @keyframes spin{to{transform:translateY(-50%) rotate(360deg);}}
+    .company-autofill{background:rgba(0,179,125,.04)!important;border-color:rgba(0,179,125,.3)!important;}
+  </style>
+</head>
+<body>
+
+<header class="tb">
+  <div class="ax-badge">АКСЕЛЕРАТОР</div>
+  <div class="tb-sep"></div>
+  <div class="tb-sko"><div class="sko-dot"></div><span>Сколково</span></div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="card-h">
+      <div class="card-title">Личный кабинет вендора</div>
+      <div class="card-sub">Программа Акселератор × Сколково — Channel Readiness</div>
+    </div>
+
+    <!-- только вкладка «Войти» — регистрация перенесена на лендинг -->
+    <div class="tabs" id="tabs-row">
+      <button class="tab active" id="tab-login" onclick="showTab('login')">Войти</button>
+    </div>
+
+    <!-- ВХОД -->
+    <div id="form-login" class="form-body">
+      <div class="error-msg" id="login-error"></div>
+      <form action="javascript:void(0)" novalidate>
+        <div class="field">
+          <label class="label" for="l-email">Корпоративный email <span>*</span></label>
+          <input class="input" id="l-email" type="email" placeholder="info@company.ru" autocomplete="email">
+        </div>
+        <div class="field">
+          <label class="label" for="l-password">Пароль <span>*</span></label>
+          <input class="input" id="l-password" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div class="divider"></div>
+        <button class="btn-submit" id="btn-login" type="submit">Войти</button>
+      </form>
+      <span class="forgot-link" onclick="showTab('reset-req')">Забыл пароль?</span>
+    </div>
+
+    <!-- СБРОС ПАРОЛЯ — запрос ссылки -->
+    <div id="form-reset-req" class="form-body" style="display:none">
+      <div class="error-msg" id="reset-req-error"></div>
+      <p style="font-size:13px;color:var(--txt2);margin-bottom:18px;line-height:1.6">
+        Введите корпоративный email, использованный при регистрации. Мы отправим ссылку для сброса пароля.
+      </p>
+      <div class="field">
+        <label class="label" for="reset-email">Корпоративный email <span>*</span></label>
+        <input class="input" id="reset-email" type="email" placeholder="info@company.ru" autocomplete="email">
+      </div>
+      <button class="btn-submit" id="btn-reset-req">Отправить ссылку</button>
+
+      <div class="reset-link-box" id="reset-sent-box" style="display:none">
+        <div style="font-size:13px;color:var(--txt2);line-height:1.6">
+          Если такой email есть в системе, мы отправили ссылку на почту.<br>
+          Проверьте папку «Спам», если письмо не пришло в течение минуты.
+        </div>
+      </div>
+
+      <span class="back-link" onclick="showTab('login')">← Назад ко входу</span>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import Auth from './js/auth.js';
+
+if (await Auth.ensure()) window.location.href = 'cabinet.html';
+
+window.showTab = function(tab) {
+  const isReset = tab === 'reset-req';
+  document.getElementById('tabs-row').style.display = isReset ? 'none' : '';
+  document.getElementById('form-login').style.display     = tab === 'login'     ? '' : 'none';
+  document.getElementById('form-reset-req').style.display = tab === 'reset-req' ? '' : 'none';
+};
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+function clearError(id) {
+  const el = document.getElementById(id);
+  el.textContent = ''; el.classList.remove('show');
+}
+
+['l-email','l-password'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', () => clearError('login-error'));
+});
+
+// ── Вход ─────────────────────────────────────────────────────────
+document.getElementById('btn-login').addEventListener('click', async () => {
+  clearError('login-error');
+  const btn      = document.getElementById('btn-login');
+  const email    = document.getElementById('l-email').value.trim().toLowerCase();
+  const password = document.getElementById('l-password').value;
+
+  if (!email || !password) { showError('login-error', 'Введите email и пароль'); return; }
+
+  btn.textContent = 'Входим...';
+  btn.disabled = true;
+  try {
+    await Auth.login(email, password);
+    window.location.href = 'cabinet.html';
+  } catch (e) {
+    showError('login-error', e.message);
+    btn.textContent = 'Войти';
+    btn.disabled = false;
+  }
+});
+
+// ── Сброс пароля: запрос ─────────────────────────────────────────
+document.getElementById('btn-reset-req').addEventListener('click', async () => {
+  clearError('reset-req-error');
+  const btn   = document.getElementById('btn-reset-req');
+  const email = document.getElementById('reset-email').value.trim().toLowerCase();
+  if (!email) { showError('reset-req-error', 'Введите email'); return; }
+
+  btn.textContent = 'Отправляем...';
+  btn.disabled = true;
+  try {
+    await Auth.requestReset(email);
+    document.getElementById('reset-sent-box').style.display = 'block';
+    btn.textContent = '✓ Отправлено';
+    btn.style.background = 'var(--green)';
+  } catch (e) {
+    showError('reset-req-error', 'Не удалось отправить запрос. Попробуйте позже.');
+    btn.textContent = 'Отправить ссылку';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
