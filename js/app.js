@@ -50,7 +50,7 @@ if (localStorage.getItem(CACHE_VER_KEY) !== CACHE_VERSION) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  if (!Auth.isLoggedIn()) {
+  if (!(await Auth.ensure())) {
     window.location.href = 'index.html';
     return;
   }
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     'set-stage':     profile.stage,
     'set-skolkovo':  profile.skolkovo ? 'Да' : 'Нет',
     'set-reg-date':  new Date(profile.registeredAt).toLocaleDateString('ru'),
-    'set-tier':      profile.tier === 'strat' ? 'UP STRAT' : 'UP BASE'
+    'set-tier':      profile.tier === 'strat' ? 'Стратегический' : 'Базовый'
   };
   Object.entries(setFields).forEach(([id, val]) => {
     const el = document.getElementById(id);
@@ -269,7 +269,7 @@ const TOUR_STEPS = [
   {
     sel: '.dash-hero',
     title: 'Добро пожаловать!',
-    desc: 'Это ваш личный кабинет программы Axoft × Сколково. Давайте быстро познакомимся с интерфейсом.'
+    desc: 'Это ваш личный кабинет программы Акселератор × Сколково. Давайте быстро познакомимся с интерфейсом.'
   },
   {
     sel: 'button.nb[onclick="goPage(\'services\')"]',
@@ -420,7 +420,7 @@ function buildPackageCard(pkg) {
       </div>
       <div class="pkg-eng">
         <div class="pkg-eng-dots">${dots}</div>
-        <span>Вовлечённость Axoft: ${esc(pkg.engagement)}</span>
+        <span>Вовлечённость Акселератора: ${esc(pkg.engagement)}</span>
       </div>
       <div class="pkg-b">
         <div class="pkg-sec-lbl">Что входит</div>
@@ -504,13 +504,35 @@ function buildMaterialCard(mat) {
     </div>`;
 }
 
+// Флаг: курс уже загружен
+let _skolkovoCourseLoaded = false;
+
 // Фильтр материалов (вызывается из HTML)
 window.fltMat = function(btn, pkg) {
-  document.querySelectorAll('#materials-grid .mat-card').forEach(c => {
-    c.style.display = (pkg === 'all' || c.dataset.pkg === pkg) ? '' : 'none';
-  });
+  const gridWrap = document.getElementById('materials-grid-wrap');
+  const courseEl = document.getElementById('skolkovo-course');
+
   document.querySelectorAll('.fb.mat-filters').forEach(b => b.classList.remove('fa'));
   btn.classList.add('fa');
+
+  if (pkg === 'skolkovo') {
+    if (gridWrap) gridWrap.style.display = 'none';
+    if (courseEl) {
+      courseEl.style.display = '';
+      if (!_skolkovoCourseLoaded) {
+        _skolkovoCourseLoaded = true;
+        import('./skolkovo.js').then(m => m.default.render(courseEl)).catch(e => {
+          courseEl.innerHTML = `<div style="padding:20px;color:#c00">Ошибка загрузки курса: ${e.message}</div>`;
+        });
+      }
+    }
+  } else {
+    if (gridWrap) gridWrap.style.display = '';
+    if (courseEl) courseEl.style.display = 'none';
+    document.querySelectorAll('#materials-grid .mat-card').forEach(c => {
+      c.style.display = (pkg === 'all' || c.dataset.pkg === pkg) ? '' : 'none';
+    });
+  }
 };
 
 // ── Services à la carte ───────────────────────────────────────────────────────

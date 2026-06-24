@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Axoft × Сколково — Личный кабинет</title>
+  <title>Акселератор × Сколково — Личный кабинет</title>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
@@ -423,6 +423,44 @@
     .mat-meta{display:flex;flex-wrap:wrap;gap:6px;}
     .mat-action{flex-shrink:0;padding-top:2px;}
 
+    /* ── Skolkovo course ── */
+    .video-embed{position:relative;width:100%;padding-bottom:56.25%;height:0;border-radius:10px;overflow:hidden}
+    .video-embed video{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background:#000}
+    .sko-intro{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      padding:24px 28px;margin-bottom:20px;font-size:13px;color:var(--txt2);line-height:1.65;}
+    .mod-card{background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);
+      padding:24px 28px;margin-bottom:16px;}
+    .mod-hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      gap:10px;margin-bottom:18px;}
+    .mod-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:var(--navy);}
+    .mod-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;
+      border-radius:20px;font-size:11px;font-weight:600;}
+    .mod-badge.done{background:rgba(0,179,125,.12);color:var(--green);}
+    .mod-badge.pending{background:rgba(107,114,144,.1);color:var(--txt2);}
+    .test-block{margin-top:20px;border-top:1px solid var(--bdr);padding-top:18px;}
+    .test-block.hidden{display:none;}
+    .test-wait{font-size:12px;color:var(--txt2);padding:10px 0;display:flex;align-items:center;gap:8px;}
+    .q-block{margin-bottom:18px;}
+    .q-text{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px;line-height:1.45;}
+    .q-opt{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:8px;
+      border:1px solid var(--bdr);margin-bottom:6px;cursor:pointer;font-size:13px;color:var(--txt);
+      transition:border-color .15s,background .15s;}
+    .q-opt:hover{border-color:var(--teal);background:rgba(0,176,189,.04);}
+    .q-opt input{margin-top:2px;accent-color:var(--teal);flex-shrink:0;}
+    .q-opt.correct{border-color:var(--green);background:rgba(0,179,125,.07);color:var(--green);}
+    .q-opt.wrong{border-color:#e05050;background:rgba(224,80,80,.07);color:#c00;}
+    .test-result{padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;margin:14px 0;}
+    .test-result.passed{background:rgba(0,179,125,.1);color:var(--green);}
+    .test-result.failed{background:rgba(224,80,80,.08);color:#c00;}
+    .sko-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;
+      border-radius:var(--rs);font-family:'Golos Text',sans-serif;font-size:13px;font-weight:600;
+      cursor:pointer;border:none;transition:background .2s;margin-top:4px;}
+    .sko-btn-p{background:var(--teal);color:#fff;}
+    .sko-btn-p:hover{background:#00c9d8;}
+    .sko-btn-p:disabled{opacity:.55;cursor:not-allowed;}
+    .sko-btn-r{background:transparent;color:var(--teal);border:1px solid var(--teal);}
+    .sko-btn-r:hover{background:rgba(0,176,189,.08);}
+
     /* ── Responsive ── */
     @media(max-width:768px){
       .sb{width:60px;}
@@ -509,7 +547,7 @@
 <!-- Sidebar -->
 <aside class="sb">
   <div class="sb-logo">
-    <div class="ax-badge">AXOFT</div>
+    <div class="ax-badge">АКСЕЛЕРАТОР</div>
     <div class="sb-sko"><div class="sko-dot"></div><span>Сколково</span></div>
   </div>
 
@@ -531,9 +569,6 @@
       <i class="ti ti-shopping-cart"></i><span>Заказы</span>
       <span class="badge" id="orders-badge">0</span>
     </button>
-    <button class="nb" onclick="goPage('tariffs')">
-      <i class="ti ti-star"></i><span>Тарифы</span>
-    </button>
     <div class="nav-section">Аккаунт</div>
     <button class="nb" onclick="goPage('settings')">
       <i class="ti ti-settings"></i><span>Настройки</span>
@@ -545,7 +580,7 @@
       <div class="av" id="user-avatar">АИ</div>
       <div class="u-info">
         <div class="u-name" id="user-name">Загрузка...</div>
-        <div class="u-role">Вендор · UP BASE</div>
+        <div class="u-role">Вендор</div>
       </div>
       <button class="btn-logout" onclick="AuthLogout()" title="Выйти">
         <i class="ti ti-logout" style="font-size:15px"></i>
@@ -559,7 +594,7 @@
   <header class="topbar">
     <div class="tb-title" id="page-title">Дашборд</div>
     <div class="tb-right">
-      <span class="pill pg"><i class="ti ti-building" style="font-size:12px"></i>UP BASE</span>
+      <span class="pill pg"><i class="ti ti-building" style="font-size:12px"></i>Участник</span>
       <div class="notif-wrap" id="notif-wrap">
         <button class="notif-btn" id="notif-btn" onclick="toggleNotifPanel()" title="Уведомления">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -586,7 +621,7 @@
       <div class="dash-hero">
         <div class="ph-label">Личный кабинет вендора</div>
         <div class="ph-t">Добро пожаловать, <span id="dash-company">...</span>!</div>
-        <div class="ph-sub">Программа Axoft × Сколково — Channel Readiness</div>
+        <div class="ph-sub">Программа Акселератор × Сколково — Channel Readiness</div>
       </div>
 
       <div class="steps">
@@ -597,7 +632,7 @@
         </div>
         <div class="step active">
           <div class="step-n">2</div>
-          <div class="step-title">Знакомство с Axoft</div>
+          <div class="step-title">Знакомство с Акселератором</div>
           <div class="step-sub">Запланируйте встречу</div>
         </div>
         <div class="step">
@@ -620,16 +655,10 @@
           <div class="sc-sub">Сервисов оформлено</div>
         </div>
         <div class="stat-card">
-          <div class="sc-icon">⭐</div>
-          <div class="sc-label">Тариф</div>
-          <div class="sc-val" style="font-size:18px">UP BASE</div>
-          <div class="sc-sub">Обновите до UP STRAT</div>
-        </div>
-        <div class="stat-card">
           <div class="sc-icon">📅</div>
           <div class="sc-label">Дата регистрации</div>
           <div class="sc-val" id="dash-reg-date" style="font-size:18px">—</div>
-          <div class="sc-sub">В программе Axoft × Сколково</div>
+          <div class="sc-sub">В программе Акселератор × Сколково</div>
         </div>
       </div>
 
@@ -642,9 +671,6 @@
           <button class="btn btn-o" onclick="goPage('orders')">
             <i class="ti ti-shopping-cart" style="font-size:14px"></i>Мои заказы
           </button>
-          <button class="btn btn-g" onclick="goPage('tariffs')">
-            <i class="ti ti-star" style="font-size:14px"></i>Тарифы
-          </button>
         </div>
       </div>
     </div>
@@ -653,7 +679,7 @@
     <div class="page" id="page-services">
       <div class="page-hd">
         <h2>Каталог сервисов</h2>
-        <p>Консалтинговые пакеты и отдельные услуги от экспертов Axoft</p>
+        <p>Консалтинговые пакеты и отдельные услуги от экспертов Акселератора</p>
       </div>
 
       <!-- Вкладки -->
@@ -695,11 +721,11 @@
                 <tbody>
                   <tr><td>Образовательные материалы о дистрибуции</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
                   <tr><td>Чек-лист самооценки готовности</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                  <tr><td>Онбординг-встреча с Axoft (до 1 ч.)</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
+                  <tr><td>Онбординг-встреча с Акселератором (до 1 ч.)</td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
                   <tr><td>Детальный аудит продукта с отчётом</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
                   <tr><td>Анализ конкурентов в партнёрском канале</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
                   <tr><td>Дорожная карта устранения пробелов</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
-                  <tr><td>Рабочие сессии с экспертами Axoft</td><td><i class="ti ti-minus cmp-n"></i></td><td><span class="cmp-num">2-3</span></td><td><span class="cmp-num">5+</span></td></tr>
+                  <tr><td>Рабочие сессии с экспертами Акселератора</td><td><i class="ti ti-minus cmp-n"></i></td><td><span class="cmp-num">2-3</span></td><td><span class="cmp-num">5+</span></td></tr>
                   <tr><td>Разработка УТП и позиционирования</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
                   <tr><td>Партнёрская программа и one-pager</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
                   <tr><td>Маркетинговые и обучающие материалы</td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-minus cmp-n"></i></td><td><i class="ti ti-check cmp-y"></i></td></tr>
@@ -817,7 +843,7 @@
     <div class="page" id="page-materials">
       <div class="page-hd">
         <h2>Учебные материалы</h2>
-        <p>Видео, чек-листы, шаблоны и кейсы по программе Axoft × Сколково</p>
+        <p>Видео, чек-листы, шаблоны и кейсы по программе Акселератор × Сколково</p>
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" class="mat-filters-wrap">
@@ -825,59 +851,18 @@
         <button class="fb mat-filters" onclick="fltMat(this,'diag')">Диагностика</button>
         <button class="fb mat-filters" onclick="fltMat(this,'audit')">Аудит</button>
         <button class="fb mat-filters" onclick="fltMat(this,'pack')">Упаковка</button>
+        <button class="fb mat-filters" onclick="fltMat(this,'skolkovo')">Полезное от Сколково</button>
       </div>
 
-      <div style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden">
+      <div id="materials-grid-wrap" style="background:var(--sur);border-radius:var(--r);border:1px solid var(--bdr);overflow:hidden">
         <div id="materials-grid">
           <div style="padding:40px;text-align:center;color:var(--txt2)">Загрузка...</div>
         </div>
       </div>
+
+      <div id="skolkovo-course" style="display:none"></div>
     </div>
 
-    <!-- ТАРИФЫ -->
-    <div class="page" id="page-tariffs">
-      <div class="page-hd">
-        <h2>Тарифы программы</h2>
-        <p>Выберите подходящий уровень участия в программе Axoft × Сколково</p>
-      </div>
-
-      <div class="tier-grid">
-        <div class="tier-card current" id="tier-base-card">
-          <div class="tier-name">UP BASE</div>
-          <div class="tier-price">Базовый <small>тариф</small></div>
-          <ul class="tier-feat">
-            <li>Стратегическая сессия с Axoft</li>
-            <li>Аудит готовности к дистрибьюции</li>
-            <li>Анализ рынка и конкурентов</li>
-            <li>Партнёрский пакет документов</li>
-            <li>Участие в партнёрской конференции</li>
-            <li>Доступ к базе партнёров Axoft</li>
-          </ul>
-          <button class="btn btn-g" disabled>Ваш текущий тариф</button>
-        </div>
-        <div class="tier-card strat-card" id="tier-strat-card">
-          <div class="tier-name">UP STRAT</div>
-          <div class="tier-price">Стратегический <small>тариф</small></div>
-          <ul class="tier-feat">
-            <li>Всё из UP BASE</li>
-            <li>Обучение отдела продаж партнёров</li>
-            <li>Co-marketing кампания с Axoft</li>
-            <li>Персональный менеджер Axoft</li>
-            <li>Приоритетное размещение в каталоге</li>
-            <li>Расширенная аналитика канала</li>
-          </ul>
-          <button class="btn btn-p" onclick="requestTierUpgrade()">
-            <i class="ti ti-star" style="font-size:14px"></i>Запросить апгрейд
-          </button>
-        </div>
-      </div>
-
-      <div style="background:rgba(0,176,189,.05);border:1px solid rgba(0,176,189,.2);
-        border-radius:var(--r);padding:16px 20px;font-size:13px;color:var(--txt);">
-        <strong>Важно:</strong> Изменение тарифа согласовывается с менеджером программы.
-        Для вопросов: <a href="mailto:program@axoft.ru" style="color:var(--teal)">program@axoft.ru</a>
-      </div>
-    </div>
 
     <!-- ДИАГНОСТИКА -->
     <div class="page" id="page-diag">
@@ -914,8 +899,8 @@
         </div></div>
         <div class="dg-scr" id="dg-s1"><div class="dg-card">
           <div class="dg-cat-hdr"><div class="dg-cat-pill" style="background:var(--teal)">Шаг 1 из 2</div><div><div class="dg-cat-ttl">Базовый фильтр</div><div class="dg-cat-sub">Проверяем соответствие минимальным требованиям для работы с дистрибьютором</div></div></div>
-          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">1</span>Что представляет собой ваш продукт?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">Программное обеспечение (SaaS, on-premise, ПО собственной разработки)</span></label><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">IT-оборудование или программно-аппаратный комплекс</span></label><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">IT-платформа или облачный сервис (IaaS, PaaS)</span></label><label class="dg-opt"><input type="radio" name="dg1" value="warn"><span class="dg-opt-txt">IT-услуги или консалтинг <span class="dg-badge dg-badge-w">как правило не дистрибутируется</span></span></label><label class="dg-opt stop"><input type="radio" name="dg1" value="fail"><span class="dg-opt-txt">Не IT-продукт <span class="dg-badge dg-badge-s">не входит в канал Axoft</span></span></label></div></div>
-          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">2</span>Кто ваши конечные покупатели?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Корпоративные клиенты (B2B)</span></label><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Государственные заказчики (B2G)</span></label><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Корпоративные и государственные (B2B + B2G)</span></label><label class="dg-opt stop"><input type="radio" name="dg2" value="fail"><span class="dg-opt-txt">Физические лица (B2C) <span class="dg-badge dg-badge-s">канал Axoft ориентирован на корпоративный рынок</span></span></label></div></div>
+          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">1</span>Что представляет собой ваш продукт?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">Программное обеспечение (SaaS, on-premise, ПО собственной разработки)</span></label><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">IT-оборудование или программно-аппаратный комплекс</span></label><label class="dg-opt"><input type="radio" name="dg1" value="ok"><span class="dg-opt-txt">IT-платформа или облачный сервис (IaaS, PaaS)</span></label><label class="dg-opt"><input type="radio" name="dg1" value="warn"><span class="dg-opt-txt">IT-услуги или консалтинг <span class="dg-badge dg-badge-w">как правило не дистрибутируется</span></span></label><label class="dg-opt stop"><input type="radio" name="dg1" value="fail"><span class="dg-opt-txt">Не IT-продукт <span class="dg-badge dg-badge-s">не входит в канал Акселератора</span></span></label></div></div>
+          <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">2</span>Кто ваши конечные покупатели?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Корпоративные клиенты (B2B)</span></label><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Государственные заказчики (B2G)</span></label><label class="dg-opt"><input type="radio" name="dg2" value="ok"><span class="dg-opt-txt">Корпоративные и государственные (B2B + B2G)</span></label><label class="dg-opt stop"><input type="radio" name="dg2" value="fail"><span class="dg-opt-txt">Физические лица (B2C) <span class="dg-badge dg-badge-s">канал Акселератора ориентирован на корпоративный рынок</span></span></label></div></div>
           <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">3</span>Кому принадлежат права на ваш продукт?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg3" value="ok"><span class="dg-opt-txt">Нам — исключительные права оформлены на нашу компанию</span></label><label class="dg-opt"><input type="radio" name="dg3" value="warn"><span class="dg-opt-txt">Частично нам, частично третьим лицам <span class="dg-badge dg-badge-w">требует уточнения</span></span></label><label class="dg-opt stop"><input type="radio" name="dg3" value="fail"><span class="dg-opt-txt">Права не оформлены <span class="dg-badge dg-badge-s">блокирующий критерий</span></span></label></div></div>
           <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">4</span>Зарегистрировано ли юридическое лицо в России?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg4" value="ok"><span class="dg-opt-txt">Да, зарегистрировано российское юрлицо (ООО, АО, ИП)</span></label><label class="dg-opt"><input type="radio" name="dg4" value="warn"><span class="dg-opt-txt">В процессе регистрации <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label><label class="dg-opt"><input type="radio" name="dg4" value="warn"><span class="dg-opt-txt">Нет <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label></div></div>
           <div class="dg-g-q"><div class="dg-g-q-lbl"><span class="n">5</span>На какой стадии готовности ваш продукт?</div><div class="dg-opts"><label class="dg-opt"><input type="radio" name="dg5" value="ok"><span class="dg-opt-txt">Готовый продукт с платящими клиентами</span></label><label class="dg-opt"><input type="radio" name="dg5" value="ok"><span class="dg-opt-txt">MVP готов и проходит тестирование с реальными пользователями</span></label><label class="dg-opt"><input type="radio" name="dg5" value="warn"><span class="dg-opt-txt">MVP в разработке <span class="dg-badge dg-badge-w">снижает приоритет</span></span></label><label class="dg-opt stop"><input type="radio" name="dg5" value="fail_soft"><span class="dg-opt-txt">Только концепция / идея без прототипа <span class="dg-badge dg-badge-w">пока рано</span></span></label></div></div>
@@ -965,7 +950,7 @@
           <div class="dg-bar-section" id="dg-bars"></div>
           <div class="dg-recs-wrap" id="dg-recs"></div>
           <div class="dg-pkg-block" id="dg-pkg"></div>
-          <div class="dg-note">Диагностика носит ориентировочный характер и основана на методологии оценки вендоров Axoft.</div>
+          <div class="dg-note">Диагностика носит ориентировочный характер и основана на методологии оценки вендоров Акселератора.</div>
           <div class="dg-btns" style="margin-top:20px;justify-content:space-between">
             <button class="dg-btn dg-btn-s" onclick="dRestart()">Пройти заново</button>
             <button class="btn btn-p" onclick="goPage('services')"><i class="ti ti-apps" style="font-size:13px"></i>К каталогу пакетов</button>
@@ -978,7 +963,7 @@
     <div class="page" id="page-settings">
       <div class="page-hd">
         <h2>Настройки аккаунта</h2>
-        <p>Данные вашей компании в программе Axoft × Сколково</p>
+        <p>Данные вашей компании в программе Акселератор × Сколково</p>
       </div>
 
       <div class="set-section">
@@ -1038,7 +1023,7 @@
 // Page navigation
 const pageTitles = {
   dash: 'Дашборд', diag: 'Диагностика вендора', materials: 'Учебные материалы',
-  services: 'Каталог сервисов', orders: 'Мои заказы', tariffs: 'Тарифы', settings: 'Настройки'
+  services: 'Каталог сервисов', orders: 'Мои заказы', settings: 'Настройки'
 };
 
 window.goPage = function(id) {
@@ -1051,9 +1036,6 @@ window.goPage = function(id) {
   });
 };
 
-window.requestTierUpgrade = function() {
-  showToast('Запрос отправлен! Менеджер свяжется с вами для согласования тарифа UP STRAT.');
-};
 
 // Diagnostics
 const DW={dq1a:2,dq1b:1,dq1c:1,dq2a:3,dq2b:2,dq2c:1,dq3:2,dq4a:3,dq4b:2,dq5a:1,dq5b:1,dq5c:1};
@@ -1073,8 +1055,8 @@ function dRefreshGate(){
   const fb=document.getElementById('dg-fail-box'),fm=document.getElementById('dg-fail-msg'),btn=document.getElementById('dg-gate-btn');
   const g1=document.querySelector('input[name=dg1]:checked'),g2=document.querySelector('input[name=dg2]:checked'),g3=document.querySelector('input[name=dg3]:checked'),g5=document.querySelector('input[name=dg5]:checked');
   let fail=false,msg='';
-  if(g1?.value==='fail'){fail=true;msg='Продукты не из сферы IT не входят в партнёрский канал Axoft.';}
-  else if(g2?.value==='fail'){fail=true;msg='Канал Axoft ориентирован на корпоративный и государственный рынок. B2C-продукты не дистрибутируются.';}
+  if(g1?.value==='fail'){fail=true;msg='Продукты не из сферы IT не входят в партнёрский канал Акселератора.';}
+  else if(g2?.value==='fail'){fail=true;msg='Канал Акселератора ориентирован на корпоративный и государственный рынок. B2C-продукты не дистрибутируются.';}
   else if(g3?.value==='fail'){fail=true;msg='Отсутствие оформленных прав на интеллектуальную собственность — блокирующее условие.';}
   else if(g5?.value==='fail_soft'){fail=true;msg='На стадии концепции без прототипа диагностика преждевременна.';}
   if(fail){fb.classList.add('on');fm.textContent=msg;btn.disabled=true;}
@@ -1128,9 +1110,9 @@ window.dShowResult=function(){
   catSc.forEach((sc2,i)=>{const pct=sc2/DCATMAX[i];let cls,ico,txt;if(pct>=.7){cls='dg-rec-ok';ico='✓';txt=RD[i].good;}else if(pct>=.45){cls='dg-rec-wn';ico='!';txt=RD[i].warn;}else{cls='dg-rec-bd';ico='×';txt=RD[i].bad;}rl.innerHTML+=`<div class="dg-rec ${cls}"><div class="dg-rec-ico">${ico}</div><div><div class="dg-rec-cat">${DCATNAME[i]}</div><div class="dg-rec-txt">${txt}</div></div></div>`;});
   const pel=document.getElementById('dg-pkg');
   let eyebrow,ptitle,desc2;
-  if(total>=70){pel.style.borderColor='var(--green)';pel.style.background='var(--gdim)';eyebrow='<span style="color:var(--green)">Следующий шаг</span>';ptitle='Ваши показатели говорят о хорошей готовности к каналу';desc2='Рекомендуем обратиться к менеджеру Axoft для обсуждения возможностей сотрудничества.';}
-  else if(total>=45){pel.style.borderColor='var(--teal)';pel.style.background='var(--tdim)';eyebrow='<span style="color:var(--teal)">Рекомендованный шаг</span>';ptitle='Пакет «Упаковка»';desc2='Есть хорошая база, но для выхода в канал нужна коммерческая упаковка. Эксперты Axoft помогут подготовить всё необходимое.';}
-  else{pel.style.borderColor='#B06000';pel.style.background='#FFF3DC';eyebrow='<span style="color:#B06000">Рекомендованный шаг</span>';ptitle='Пакет «Аудит»';desc2='Прежде чем выходить в канал, важно понять пробелы. Эксперты Axoft проведут детальный аудит и дадут конкретный план.';}
+  if(total>=70){pel.style.borderColor='var(--green)';pel.style.background='var(--gdim)';eyebrow='<span style="color:var(--green)">Следующий шаг</span>';ptitle='Ваши показатели говорят о хорошей готовности к каналу';desc2='Рекомендуем обратиться к менеджеру Акселератора для обсуждения возможностей сотрудничества.';}
+  else if(total>=45){pel.style.borderColor='var(--teal)';pel.style.background='var(--tdim)';eyebrow='<span style="color:var(--teal)">Рекомендованный шаг</span>';ptitle='Пакет «Упаковка»';desc2='Есть хорошая база, но для выхода в канал нужна коммерческая упаковка. Эксперты Акселератора помогут подготовить всё необходимое.';}
+  else{pel.style.borderColor='#B06000';pel.style.background='#FFF3DC';eyebrow='<span style="color:#B06000">Рекомендованный шаг</span>';ptitle='Пакет «Аудит»';desc2='Прежде чем выходить в канал, важно понять пробелы. Эксперты Акселератора проведут детальный аудит и дадут конкретный план.';}
   pel.innerHTML=`<div class="dg-pkg-eyebrow">${eyebrow}</div><div class="dg-pkg-title">${ptitle}</div><div class="dg-pkg-desc">${desc2}</div>`;
   dGo(3);
 };
@@ -1144,5 +1126,6 @@ window.dRestart=function(){
 </script>
 
 <script type="module" src="js/app.js"></script>
+<script type="module" src="js/skolkovo.js"></script>
 </body>
 </html>
